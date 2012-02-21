@@ -60,6 +60,31 @@ class Migration_Load_tables_permissions extends Migration {
         $this->dbforge->add_field("`user_id` int(11) NOT NULL DEFAULT '-1'");
         $this->dbforge->add_key('id', true);
         $this->dbforge->create_table('teams_owners');
+
+
+        $default_settings = "
+			INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES
+			 ('ootp.league_id', 'ootp', '100'),
+			 ('ootp.use_ootp_details', 'ootp', '1'),
+			 ('ootp.game_version', 'ootp', '12'),
+			 ('ootp.league_name', 'ootp', ''),
+			 ('ootp.league_abbr', 'ootp', ''),
+			 ('ootp.league_icon', 'ootp', ''),
+			 ('ootp.league_txtcolor', 'ootp', ''),
+			 ('ootp.league_bgcolor', 'ootp', ''),
+			 ('ootp.league_file_path', 'ootp', ''),
+			 ('ootp.asset_path', 'ootp', ''),
+			 ('ootp.asset_url', 'ootp', ''),
+			 ('ootp.header_img', 'ootp', ''),
+			 ('ootp.twitter_string', 'ootp', 'ootpbaseball'),
+			 ('ootp.tweet_count', 'ootp', '3'),
+			 ('ootp.sql_path', 'ootp', ''),
+			 ('ootp.auto_split', 'ootp', '-1'),
+			 ('ootp.max_sql_size', 'ootp', ''),
+			 ('ootp.limit_load', 'ootp', '1');
+		";
+
+        $this->db->query($default_settings);
 		
 	}
 	
@@ -90,6 +115,7 @@ class Migration_Load_tables_permissions extends Migration {
 		}
 		//delete the role
 		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOTPOL.SQL.Manage')");
+		$this->db->query("DELETE FROM {$prefix}settings WHERE (name LIKE 'ootp.%')");
 
 	}
 	

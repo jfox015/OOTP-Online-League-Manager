@@ -18,7 +18,7 @@
 			$versions = loadOOTPVersions();
 			foreach( $versions as $ver => $label){
 				echo('<option value="'.$ver.'"');
-				if (isset($settings['ootp.game_version']) && $settings['ootp.game_version'] == $value) { 
+				if (isset($settings['ootp.game_version']) && $settings['ootp.game_version'] == $ver) {
 					echo(' selected="selected"');
 				}
 				echo('">'.$label.'</option>');
@@ -75,7 +75,7 @@
 	<div>
 		<label for="header_img"><?php echo lang('home_settings_header'); ?></label>
 		<input type="file" id="header_img" name="header_img" /><br />
-		<span class="form_inst">Current Image: <?php echo (isset($settings['ootp.header_img'])) ? $settings['ootp.header_img']: set_value('ootp.header_img'); ?></span>
+		<span class="subcaption">Current Image: <?php echo (isset($settings['ootp.header_img'])) ? $settings['ootp.header_img']: set_value('ootp.header_img'); ?></span>
 	</div>
 		<!-- Twitter String -->
 	<div>
