@@ -81,7 +81,14 @@ class Migration_Load_tables_permissions extends Migration {
 			 ('ootp.sql_path', 'ootp', ''),
 			 ('ootp.auto_split', 'ootp', '-1'),
 			 ('ootp.max_sql_size', 'ootp', ''),
-			 ('ootp.limit_load', 'ootp', '1');
+			 ('ootp.limit_load', 'ootp', '1'),
+			 ('ootp.sims_per_week', 'ootp', ''),
+			 ('ootp.sims_occur_on', 'ootp', ''),
+			 ('ootp.sims_details', 'ootp', ''),
+			 ('ootp.league_file_date', 'ootp', ''),
+			 ('ootp.next_sim', 'ootp', ''),
+			 ('ootp.league_date', 'ootp', ''),
+			 ('ootp.league_event', 'ootp', '');
 		";
 
         $this->db->query($default_settings);
@@ -115,7 +122,7 @@ class Migration_Load_tables_permissions extends Migration {
 		}
 		//delete the role
 		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOTPOL.SQL.Manage')");
-		$this->db->query("DELETE FROM {$prefix}settings WHERE (name LIKE 'ootp.%')");
+		$this->db->query("DELETE FROM {$prefix}settings WHERE (module = 'ootp')");
 
 	}
 	

@@ -24,10 +24,11 @@ class Custom extends Admin_Controller {
 
 	public function index()
 	{
-		$settings = read_config('league_manager');
-		$tables = $this->sql_model->get_tables_loaded();
-		if (isset($settings['league_id']) && !empty($settings['league_id'])) {
-			Template::set('owner_count', $this->teams_model->get_owner_count($settings['league_id']));
+		$settings = $this->settings_lib->find_all_by('module','ootp');
+
+        $tables = $this->sql_model->get_tables_loaded();
+		if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
+			Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
 		}
 		Template::set('tables_loaded', sizeof($tables));
 		Template::set('missing_tables', $this->sql_model->validate_loaded_files());
@@ -35,13 +36,13 @@ class Custom extends Admin_Controller {
 		$settings = read_db_config('sql_Loader');
 
         $latestTime = 0;
-		if (isset($settings['sql_path']) && !empty($settings['sql_path'])) :
+		if (isset($settings['ootp.sql_path']) && !empty($settings['ootp.sql_path'])) :
 			$this->load->helper('file');
 			$latestTime = 0;
-			if ($dir = opendir($settings['sql_path'])) {
+			if ($dir = opendir($settings['ootp.sql_path'])) {
 				$loadCnt = 0;
 				while (false !== ($file = readdir($dir)))	{
-					$fileTime=filemtime($settings['sql_path']."/".$file);
+					$fileTime=filemtime($settings['ootp.sql_path']."/".$file);
 					if ($fileTime<$latestTime) {continue;}
 					if ($fileTime<$latestTime) {
 						$latestTime = $fileTime;
@@ -63,8 +64,8 @@ class Custom extends Admin_Controller {
 	//--------------------------------------------------------------------	
 
 	function import_team_owners() {
-		
-		$settings = read_config('league_manager');
+
+        $settings = $this->settings_lib->find_all_by('module','ootp');
 		if (!isset($this->user_model)) {
 			$this->load->model('user_model');
 		}
@@ -74,9 +75,9 @@ class Custom extends Admin_Controller {
         if (!isset($this->teams_model)) {
             $this->load->model('teams_model');
         }
-		$league = $this->leagues_model->find($settings['league_id']);
+		$league = $this->leagues_model->find($settings['ootp.league_id']);
 		if (isset($league) && $league->league_id != NULL) {
-			Template::set('teams',$this->teams_model->get_teams_array($settings['league_id']));
+			Template::set('teams',$this->teams_model->get_teams_array($settings['ootp.league_id']));
 			Template::set('users',$this->user_model->find_all(false));
 		}	
 		if ($this->input->post('submit')) {
@@ -102,33 +103,46 @@ class Custom extends Admin_Controller {
 			$this->form_validation->set_rules('league_date', lang('sim_setting_league_date'), 'trim|xss_clean');
 			$this->form_validation->set_rules('league_event', lang('sim_setting_league_event'), 'number|xss_clean');
 
-			if ($this->form_validation->run() !== FALSE)
-			
-				$data = array(
-					'sims_per_week'			=> $this->input->post('sims_per_week'),
-					'sims_occur_on'			=> implode(",",$this->input->post('sims_occur_on')),
-					'sims_details'			=> ($this->input->post('sims_details')) ? 1 : -1,
-					'league_file_date'		=> $this->input->post('league_file_date'),
-					'next_sim'				=> $this->input->post('next_sim'),
-					'league_date'			=> $this->input->post('league_date'),
-					'league_event'			=> $this->input->post('league_event'),
+			if ($this->form_validation->run() !== FALSE) {
 
+                $data = array(
+                    array('name' => 'ootp.sims_per_week', 'value' => $this->input->post('sims_per_week')),
+                    array('name' => 'ootp.sims_occur_on', 'value' => $this->input->post('sims_occur_on')),
+                    array('name' => 'ootp.sims_details', 'value' => ($this->input->post('sims_details')) ? 1 : -1),
+                    array('name' => 'ootp.league_file_date', 'value' => $this->input->post('league_file_date')),
+                    array('name' => 'ootp.next_sim', 'value' => $this->input->post('next_sim')),
+                    array('name' => 'ootp.league_date', 'value' => $this->input->post('league_date')),
+                    array('name' => 'ootp.league_event', 'value' => $this->input->post('league_event')),
 				);
 
-				if (write_config('sims', $data)) {
+                //destroy the saved update message in case they changed update preferences.
+                if ($this->cache->get('update_message'))
+                {
+                    if (!is_writeable(FCPATH.APPPATH.'cache/'))
+                    {
+                        $this->cache->delete('update_message');
+                    }
+                }
+                // Log the activity
+                $this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'ootp');
+
+                // save the settings to the DB
+				if ($this->settings_model->update_batch($data, 'name')) {
 				// Success, so reload the page, so they can see their settings
 					Template::set_message('Sim settings successfully saved.', 'success');
 					redirect(SITE_AREA .'/custom/league_manager');
 				}
 				else
 				{
-					Template::set_message('There was an error saving the file: config/sims.', 'error');
+					Template::set_message('There was an error saving sim settings.', 'error');
 				}
+            }
 		}
-		
-		$lg_configs = read_config('league_manager');
-        $league_id = ((isset($lg_configs['league_id']))?$lg_configs['league_id']:100);
-		Template::set(read_config('sims'));
+        $settings = $this->settings_lib->find_all();
+        Template::set('settings', $settings);
+
+        $league_id = ((isset($settings['ootp.league_id']))?$settings['ootp.league_id']:100);
+
         if (!isset($this->leagues_model)) {
             $this->load->model('leagues_model');
         }
@@ -156,11 +170,13 @@ class Custom extends Admin_Controller {
         if (!function_exists('return_bytes')) {
             $this->load->helper('general');
         }
-        $cfgs_arr = read_config('league_manager');
+        $settings = $this->settings_lib->find_all_by('module','ootp');
+        Template::set('settings', $settings);
+
         $files_loaded = array();
         if ($this->input->post('submit')) {
 
-			$this->uriVars = $this->uri->uri_to_assoc(3);
+			$this->uriVars = $this->uri->uri_to_assoc(5);
 			
 			$latest_load = $this->sql_model->get_latest_load_time();
 			$required_tables = $this->sql_model->get_required_tables();
@@ -168,13 +184,13 @@ class Custom extends Admin_Controller {
 				$fileList = $this->uriVars['loadList'];
 			} else if (isset($this->uriVars['filename']) && !empty($this->uriVars['filename'])) {
 				$fileList = array($this->uriVars['filename']);
-			} else if (isset($cfgs_arr['limit_load']) && $cfgs_arr['limit_load'] == 1) {
+			} else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
 				$fileList = $required_tables;
 			} else {
-				$fileList = getSQLFileList($cfgs_arr['sql_path'],$latest_load);
+				$fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
 			}
 			
-			$mess = loadSQLFiles($cfgs_arr['sql_path'],$latest_load, $fileList);
+			$mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
 			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0)) {
 				if (is_array($mess)) {
 					$status = "An error occured processing the SQL files.";
@@ -189,9 +205,9 @@ class Custom extends Admin_Controller {
 				$this->sql_model->set_tables_loaded($files_loaded);
 			}
 		}
-		$file_list = getSQLFileList($cfgs_arr['sql_path']);
-		
-		Template::set('config', $cfgs_arr);
+
+		$file_list = getSQLFileList($settings['ootp.sql_path']);
+
 		Template::set('file_list', $file_list);
 		Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
 		Template::set('files_loaded', $files_loaded);
@@ -203,16 +219,16 @@ class Custom extends Admin_Controller {
 	
 	public function load_all_sql() {
 
-        $cfgs_arr = read_config('league_manager');
+        $settings = $this->settings_lib->find_all_by('module','ootp');
         $latest_load = $this->sql_model->get_latest_load_time();
-        if (isset($this->config['limit_load']) && $cfgs_arr['limit_load'] == 1) {
+        if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
 			$fileList = $this->sql_model->get_required_tables();
 		} else {
-			$fileList = getSQLFileList($cfgs_arr['sql_path'],$latest_load);
+			$fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
 		}
 		
 		$files_loaded = array();
-        $mess = loadSQLFiles($cfgs_arr['sql_path'],$latest_load, $fileList);
+        $mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
 		if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0)) {
 			if (is_array($mess)) {
 				$status = "An error occured processing the SQL files.";
@@ -258,8 +274,8 @@ class Custom extends Admin_Controller {
 		
 		Template::set('table_list', $this->sql_model->get_tables());
 		Template::set('required_tables', $this->sql_model->get_required_tables());
-        $cfgs_arr = read_config('league_manager');
-        Template::set('ootp_version', $cfgs_arr['ootp_version']);
+        $settings = $this->settings_lib->find_all_by('module','ootp');
+        Template::set('ootp_version', $settings['ootp.ootp_version']);
 		
 		Template::set_view('league_manager/custom/table_list');
         Template::render('blank');
@@ -275,8 +291,8 @@ class Custom extends Admin_Controller {
 			$this->load->helper('sql_loader/sql');
 		}
 		$this->uriVars = $this->uri->uri_to_assoc(3);
-        $cfgs_arr = read_config('league_manager');
-        $mess = splitFiles($cfgs_arr['sql_path'],$this->uriVars['filename'], $cfgs_arr['max_sql_size']);
+        $settings = $this->settings_lib->find_all_by('module','ootp');
+        $mess = splitFiles($settings['ootp.sql_path'],$this->uriVars['filename'], $settings['ootp.max_sql_size']);
 		if ($mess != "OK") {
 			$status = "error:".$mess;
 		} else {
@@ -291,8 +307,5 @@ class Custom extends Admin_Controller {
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
-	
-	
-	
-	//--------------------------------------------------------------------
+
 }

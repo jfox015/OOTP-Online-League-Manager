@@ -19,7 +19,7 @@
     <b style="color:#c00; font-weight:bold;">NOTE:</b> File names that are required by the fantasy league mod to work correctly are highlighted.<br />
     Files <span class="hilight">highlighted</span> red are required for all OOTP versions.<br />
 
-    <form action='<?php echo($config['fantasy_web_root']); ?>admin/loadSQLFiles' method='post' name="file_list" id="file_list">    
+    <form action='<?php echo($this->uri->uri_string()); ?>' method='post' name="file_list" id="file_list">
    	<div id="activeStatusBox"><div id="activeStatus"></div></div>
     <div class='textbox'>
     <table cellpadding=2 cellspacing=0 border=0 style="width:95%">
@@ -39,19 +39,18 @@
    $splitParents = array();
    foreach ($file_list as $file){
       $ex = explode(".",$file);
-      $fileTime=filemtime($config['sql_path']."/".$file);
+      $fileTime=filemtime($settings['ootp.sql_path']."/".$file);
       $tblName=$ex[0];
       if (($isSplit==0)&&(substr_count($file,".mysql_")>0)) {$isSplit=1;}
       $cls='s'.($cnt%2+1); ?>
       <tr class='<?php echo($cls); ?>'>
       <td class='<?php echo($cls); ?>_l'><?php 
 	  $fileArr = explode(".",$file);
-	 // echo("Table name from file = ".$fileArr[0]."<br />");
 	  $hilite = -1;
-	  if (isset($required_tables) && sizeof($required_tables) > 0) {
+	  if (isset($required_tables) && is_array($required_tables) && sizeof($required_tables) > 0) {
 		  foreach ($required_tables as $table_name) {
 			  //echo("Table name from list = ".$tableName."<br />");
-			  if ($table_name == $fileArr[0]) {
+			  if ($table_name['name'] == $fileArr[0]) {
 				  $hilite = 1;
 				  break;
 			  } // END if
@@ -60,8 +59,8 @@
 	  if ($hilite == 1) { echo('<span class="hilight">'); } else if ($hilite == 2) { echo('<span class="hilight2">'); }// END if
 	  echo($file); 
 	  if ($hilite == 1 || $hilite == 2) { echo('</span>'); } // END if
-      if (isset($files_loaded[$config['sql_path']."/".$file])) { echo("- <b>LOADED</b>"); } // END if
-      $fsize=filesize($config['sql_path']."/".$file);
+      if (isset($files_loaded[$settings['ootp.sql_path']."/".$file])) { echo("- <b>LOADED</b>"); } // END if
+      $fsize=filesize($settings['ootp.sql_path']."/".$file);
 	  ?>
       </td>
       <td sorttable_customkey='<?php echo($fileTime); ?>'><?php echo(date("D M j, Y H:i",$fileTime)); ?></td>
@@ -113,8 +112,8 @@
 
 <script type="text/javascript">
 head.ready(function(){
-    var ajaxWait = '<img src="<?php echo($config['fantasy_web_root']); ?>images/icons/ajax-loader.gif" width="28" height="28" border="0" align="absmiddle" />&nbsp;Operation in progress. Please wait...';
-    var responseError = '<img src="<?php echo($config['fantasy_web_root']); ?>images/icons/icon_fail.png" width="24" height="24" border="0" align="absmiddle" />&nbsp;';
+    var ajaxWait = '<img src="<?php echo Template::theme_url('images/icons/ajax-loader.gif'); ?>" width="28" height="28" border="0" align="absmiddle" />&nbsp;Operation in progress. Please wait...';
+    var responseError = '<img src="<?php echo Template::theme_url('images/icons/icon_fail.png'); ?>" width="24" height="24" border="0" align="absmiddle" />&nbsp;';
     var fader = null;
     var refreshAfterUpdate = false;
 
