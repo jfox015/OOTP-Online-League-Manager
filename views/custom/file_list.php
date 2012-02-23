@@ -19,16 +19,17 @@
     <b style="color:#c00; font-weight:bold;">NOTE:</b> File names that are required by the fantasy league mod to work correctly are highlighted.<br />
     Files <span class="hilight">highlighted</span> red are required for all OOTP versions.<br />
 
-    <form action='<?php echo($this->uri->uri_string()); ?>' method='post' name="file_list" id="file_list">
+    <form action='<?php echo(site_url($this->uri->uri_string())); ?>' method='post' name="file_list" id="file_list">
    	<div id="activeStatusBox"><div id="activeStatus"></div></div>
     <div class='textbox'>
     <table cellpadding=2 cellspacing=0 border=0 style="width:95%">
      <thead>
      <tr class='title'>
-     	<td width="25%" class='hsc_l'>Filename</td>
-        <td width="25%" class='hsc'>Timestamp</td>
-        <td width="25%" class='hsc'>Size</td>
-        <td width="25%" class='hsc' colspan=2>Actions</td>
+     	<td width="20%" class='hsc_l'>Filename</td>
+        <td width="20%" class='hsc'>Timestamp</td>
+        <td width="20%" class='hsc'>Last Updated</td>
+        <td width="20%" class='hsc'>Size</td>
+        <td width="20%" class='hsc' colspan=2>Actions</td>
       </tr>
       </thead>
    <?php 
@@ -64,6 +65,18 @@
 	  ?>
       </td>
       <td sorttable_customkey='<?php echo($fileTime); ?>'><?php echo(date("D M j, Y H:i",$fileTime)); ?></td>
+      <td sorttable_customkey=''>
+          <?php
+          if (isset($files_loaded) && is_array($files_loaded) && sizeof($files_loaded) > 0) {
+              foreach ($files_loaded as $row) {
+              //echo("Table name from list = ".$tableName."<br />");
+                  if ($row['name'] == $fileArr[0]) {
+                    echo(date("D M j, Y H:i",$row->modified_on));
+                    break;
+                  } // END if
+              } // END foreach
+          } // END if
+          ?></td>
       <td sorttable_customkey='<?php echo($fsize); ?>'><?php echo(formatBytes($fsize)); ?></td>
       <td sorttable_customkey=1><?php echo(anchor('custom/sql_loader/load_sql/filename/'.$file,'Load')); ?>
       <?php 
@@ -96,10 +109,10 @@
     <?php } ?>
      <tfoot><tr><td colspan="5" align="right">
      <input type="hidden" name="returnPage" value="file_list" />
-     <a href="#" onclick="checkRequired(); <?php if ($isSplit==1){ ?>uncheckSplitParents();<?php } ?> return false;">Select Only Required</a> | 
+     <a href="#" onclick="checkRequired(); <?php if ($isSplit==1){ ?>uncheckSplitParents();<?php } ?> return false;">Select Only Required</a> |
      <a href="#" onclick="setCheckBoxState(true); return false;">Select All</a> | <a 
      href="#" oncLick="setCheckBoxState(false); return false;">Select None</a><br />
-     <span class="button_bar"><input type='submit' name='Load Checked' value='Load Checked' /></span></td></tr></tfoot>
+     <span class="button_bar"><input type='submit' name='submit' value='Load Checked' /></span></td></tr></tfoot>
     </table>
    </div>
    </form>

@@ -59,9 +59,11 @@ class Players_model extends Base_ootp_model {
      *	@since	1.0.3
      */
     public function getPlayerCount() {
+        $this->db->dbprefix = '';
         $this->db->select('player_id');
         $this->db->from($this->table);
         $count = $this->db->count_all_results();
+        $this->db->dbprefix = $this->dbprefix;
         return $count;
     }
     public function getPlayerDetails($player_id = false) {
@@ -173,6 +175,7 @@ class Players_model extends Base_ootp_model {
 
         $team_id = -1;
         // GET PLAYER POSITION
+        $this->db->dbprefix = '';
         $this->db->select('team_id');
         $this->db->from($this->table);
         $this->db->where('player_id',$player_id);
@@ -182,6 +185,7 @@ class Players_model extends Base_ootp_model {
             $team_id = $row->team_id;
         }
         $query->free_result();
+        $this->db->dbprefix = $this->dbprefix;
         return $team_id;
 
     }
@@ -192,7 +196,7 @@ class Players_model extends Base_ootp_model {
     public function getPlayers($league_id = false,$searchType = 'all', $searchParam = false,$current_scoring_period = 1, $nonFreeAgents = array(),
                                $playerStatus = false, $selectBox = false) {
         $players = array();
-
+        $this->db->dbprefix = '';
         $this->db->select('players.player_id, first_name, last_name, players.position, players.role, players.injury_is_injured, players.injury_dtd_injury, players.injury_career_ending, players.injury_dl_left, players.injury_left, players.injury_id, ');
 
         //$this->db->join('players','players.player_id = fantasy_players.player_id','left');
@@ -246,6 +250,7 @@ class Players_model extends Base_ootp_model {
                 }
             }
         }
+        $this->db->dbprefix = $this->dbprefix;
         return $players;
     }
 
@@ -287,7 +292,7 @@ class Players_model extends Base_ootp_model {
             }
         }
         $excludeLostStr .= ")";
-
+        $this->db->dbprefix = '';
         // BUILD QUERY TO PULL CURRENT GAME DATA FOR THIS PLAYER
         $sql = 'SELECT players.player_id, players.position, players.role, players.player_id ,first_name, last_name,players.injury_is_injured, players.injury_dtd_injury, players.injury_career_ending, players.injury_dl_left, players.injury_left, players.injury_id,rating,';
         $sql .= player_stat_query_builder($playerType, $query_type, $rules);
@@ -375,6 +380,7 @@ class Players_model extends Base_ootp_model {
             }
         }
         $gQuery->free_result();
+        $this->db->dbprefix = $this->dbprefix;
         return $stats;
     }
 
@@ -486,6 +492,7 @@ class Players_model extends Base_ootp_model {
                     /*-----------------------------------------
                          /	2.2.1.1 EXECUTE THE QUERY FOR THIS STAT
                          /----------------------------------------*/
+                    $this->db->dbprefix = '';
                     $this->db->flush_cache();
                     $this->db->select($tmpSelect);
                     $this->db->join($table,'games.game_id = '.$table.'.game_id','left');
@@ -624,6 +631,7 @@ class Players_model extends Base_ootp_model {
             $summary .= $this->lang->line('sim_players_rating_no_players');
         }
         //print("<br />".$summary."<br />");
+        $this->db->dbprefix = $this->dbprefix;
         return array($result,$summary);
     }
 
@@ -644,7 +652,7 @@ class Players_model extends Base_ootp_model {
         $career_stats = array();
         // GET PLAYER POSITION
         $pos = $this->getPlayerPosition();
-
+        $this->db->dbprefix = '';
         $this->db->flush_cache();
         if ($pos == 1) {
             $sql="SELECT pcp.year,pcp.team_id,g,gs,w,l,s,(ip*3+ipf)/3 as ip,ha,r,er,hra,bb,k,hld,cg,sho,ab,sf,vorp";
@@ -671,6 +679,7 @@ class Players_model extends Base_ootp_model {
             } // END foreach
         } // END if
         $query->free_result();
+        $this->db->dbprefix = $this->dbprefix;
         return $career_stats;
     }
     /**
@@ -689,6 +698,7 @@ class Players_model extends Base_ootp_model {
         if ($player_id === false) { $player_id = $this->player_id; }
 
         $awards = array();
+        $this->db->dbprefix = '';
         $this->db->select("award_id,year,position");
         $this->db->from('players_awards');
         $this->db->where('league_id',$ootp_league_id);
@@ -734,6 +744,7 @@ class Players_model extends Base_ootp_model {
             $awards['gg'] = $gg;
             $awards['as'] = $as;
         } // END if
+        $this->db->dbprefix = $this->dbprefix;
         return $awards;
     }
     public function getRecentGameStats($ootp_league_id, $last_date, $lgyear, $days = 7, $player_id = false) {
@@ -741,6 +752,7 @@ class Players_model extends Base_ootp_model {
         if ($player_id === false) { $player_id = $this->player_id; }
 
         // GET ALL TEAMS
+        $this->db->dbprefix = '';
         $teams = array();
         $this->db->select("team_id, abbr");
         $this->db->where("league_id",$ootp_league_id);
@@ -807,6 +819,7 @@ class Players_model extends Base_ootp_model {
                 if ($count >= $days) break;
             }
         }
+        $this->db->dbprefix = $this->dbprefix;
         return $stats;
 
     }
@@ -818,7 +831,6 @@ class Players_model extends Base_ootp_model {
         // GET PLAYER POSITION
         $pos = $this->getPlayerPosition($player_id);
         //print($this->db->last_query()."<br />");
-        $oldprefix = $this->db->dbprefix;
         $this->db->dbprefix = '';
         $this->db->flush_cache();
         if ($pos == 1) {
@@ -841,8 +853,7 @@ class Players_model extends Base_ootp_model {
                 $stats[$field] = $row->$field;
             }
         }
-        $this->db->dbprefix = $oldprefix;
-        //print($this->db->last_query()."<br />");
+        $this->db->dbprefix = $this->dbprefix;
         return $stats;
     }
 }  

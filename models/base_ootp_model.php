@@ -19,10 +19,12 @@
 class Base_ootp_model extends BF_Model {
 
 	//---------------------------------------------------------------
-	
+	protected $dbprefix = '';
+
 	public function __construct()
 	{
 		parent::__construct();
+        $this->dbprefix = $this->db->dbprefix;
 	}
 	
 	//---------------------------------------------------------------

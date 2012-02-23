@@ -28,7 +28,8 @@ class Migration_Load_tables_permissions extends Migration {
         $this->dbforge->create_table('sql_tables');
 
         $this->db->query("INSERT INTO {$prefix}sql_tables VALUES(1, 'cities',0,0,0)");
-        $this->db->query("INSERT INTO {$prefix}sql_tables VALUES(2, 'games',0,0,0)");
+        $this->db->query("INSERT INTO {$prefix}sql_tables VALUES(2, 'continents',0,0,0)");
+        $this->db->query("INSERT INTO {$prefix}sql_tables VALUES(3, 'games',0,0,0)");
 
         // News Articles
         $this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
@@ -40,7 +41,8 @@ class Migration_Load_tables_permissions extends Migration {
         $this->dbforge->create_table('list_tables_versions');
 
         $this->db->query("INSERT INTO {$prefix}list_tables_versions VALUES(1, 1, 10, 100)");
-        $this->db->query("INSERT INTO {$prefix}list_tables_versions VALUES(2, 2, 10, 100)");
+        $this->db->query("INSERT INTO {$prefix}list_tables_versions VALUES(2, 2, 12, 100)");
+        $this->db->query("INSERT INTO {$prefix}list_tables_versions VALUES(3, 3, 10, 100)");
 
         $data = array(
 			'name'        => 'OOTPOL.SQL.Manage' ,

@@ -32,13 +32,25 @@ class SQL_model extends BF_Model {
 		}
 		
 		foreach($tableList as $table) {
-			$this->update_where('name',$table,array('modified_on'=>$modified));
+			$this->update_where('name',$table);
 		}
 	}
 	
 	public function get_tables_loaded() {
-		
-		$this->db->where('modified_on <> "0"');
+
+        $sql_tables = '(';
+        $query = $this->db->select('name')->get('sql_tables');
+		if ($query->num_rows() > 0) {
+            foreach($query->result() as $row) {
+                if ($sql_tables != '(') { $sql_tables .= ','; }
+                $sql_tables .= $row->name;
+            }
+        }
+        $sql_tables .= ')';
+        if ($sql_tables != '()') {
+            $this->db->where('name IN '.$sql_tables);
+        }
+        $this->db->where('modified_on <> "0"');
 		return $this->find_all();
 	}
 	

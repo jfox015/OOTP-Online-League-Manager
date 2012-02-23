@@ -25,7 +25,10 @@ class Custom extends Admin_Controller {
 	public function index()
 	{
 		$settings = $this->settings_lib->find_all_by('module','ootp');
-
+        if (!class_exists('teams_model'))
+        {
+            $this->load->model('teams_model');
+        }
         $tables = $this->sql_model->get_tables_loaded();
 		if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
 			Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
@@ -176,14 +179,16 @@ class Custom extends Admin_Controller {
         $files_loaded = array();
         if ($this->input->post('submit')) {
 
-			$this->uriVars = $this->uri->uri_to_assoc(5);
-			
+			//$this->uriVars = $this->uri->uri_to_assoc(5);
+            //echo("loadList = ".$_POST['loadList']);
+            //echo("filename = ".$_POST['filename']);
+
 			$latest_load = $this->sql_model->get_latest_load_time();
 			$required_tables = $this->sql_model->get_required_tables();
-			if (isset($this->uriVars['loadList']) && sizeof($this->uriVars['loadList']) > 0) {
-				$fileList = $this->uriVars['loadList'];
-			} else if (isset($this->uriVars['filename']) && !empty($this->uriVars['filename'])) {
-				$fileList = array($this->uriVars['filename']);
+			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0) {
+				$fileList = $_POST['loadList'];
+			} else if (isset($_POST['filename']) && !empty($_POST['filename'])) {
+				$fileList = array($_POST['filename']);
 			} else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
 				$fileList = $required_tables;
 			} else {
@@ -216,7 +221,7 @@ class Custom extends Admin_Controller {
         Template::set_view('league_manager/custom/file_list');
         Template::render();
 	}
-	
+
 	public function load_all_sql() {
 
         $settings = $this->settings_lib->find_all_by('module','ootp');
@@ -307,5 +312,4 @@ class Custom extends Admin_Controller {
 	//--------------------------------------------------------------------
 	// !PRIVATE METHODS
 	//--------------------------------------------------------------------
-
 }

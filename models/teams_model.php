@@ -26,8 +26,11 @@ class Teams_model extends Base_ootp_model {
 	 *
 	 */
 	public function get_owner_count() {
-		$this->db->where('league_id',$this->league_id);
-		return $this->db->count_all_results('teams_owners');
+        $this->db->dbprefix = '';
+        $this->db->where('league_id',$this->league_id);
+		$count = $this->db->count_all_results('teams_owners');
+        $this->db->dbprefix = $this->dbprefix;
+        return $count;
 	}
 	/**
 	 *	GET TEAMS.
@@ -39,12 +42,13 @@ class Teams_model extends Base_ootp_model {
 	public function get_teams() {
 		
 		$teams = array();
-		$query = $this->db->select('team_id,abbr,name,nickname,logo_file')
+        $this->db->dbprefix = '';
+        $query = $this->db->select('team_id,abbr,name,nickname,logo_file')
 						  ->where('allstar_team',0)
 						  ->order_by('name,nickname','asc');
 		$teams = $this->find_all_by('league_id',$this->league_id);
-		
-		return $teams;
+        $this->db->dbprefix = $this->dbprefix;
+        return $teams;
 	}
 	/**
 	 *	GET TEAMS ARRAY.
@@ -89,6 +93,7 @@ class Teams_model extends Base_ootp_model {
         if ($team_id === false || ($fields === false || !is_array($fields) || sizeof($fields) < 1)) return false;
 
         $info = array();
+        $this->db->dbprefix = '';
         $select = '';
         foreach($fields as $field) {
             if (!empty($select)) { $select .= ","; }
@@ -103,6 +108,7 @@ class Teams_model extends Base_ootp_model {
             }
             $query->free_result();
         }
+        $this->db->dbprefix = $this->dbprefix;
         return $info;
     }
 
