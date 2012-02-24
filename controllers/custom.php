@@ -4,6 +4,8 @@ class Custom extends Admin_Controller {
 
 	//--------------------------------------------------------------------
 
+    protected $filename = null;
+
 	public function __construct()
 	{
 		parent::__construct();
@@ -25,43 +27,51 @@ class Custom extends Admin_Controller {
 	public function index()
 	{
 		$settings = $this->settings_lib->find_all_by('module','ootp');
-        if (!class_exists('teams_model'))
+        $tables = array();
+        if (!isset($settings['ootp.sql_path']) || empty($settings['ootp.sql_path']))
         {
-            $this->load->model('teams_model');
+            Template::set('settings_incomplete', true);
         }
-        $tables = $this->sql_model->get_tables_loaded();
-		if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
-			Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
-		}
-		Template::set('tables_loaded', sizeof($tables));
-		Template::set('missing_tables', $this->sql_model->validate_loaded_files());
-		Template::set('last_loaded', date('M d, Y h:i:s A',$this->sql_model->get_latest_load_time()));
-		$settings = read_db_config('sql_Loader');
+        else
+        {
+            Template::set('settings_incomplete', false);
+            if (!class_exists('teams_model'))
+            {
+                $this->load->model('teams_model');
+            }
+            $tables = $this->sql_model->get_tables_loaded();
+            if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
+                Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
+            }
 
-        $latestTime = 0;
-		if (isset($settings['ootp.sql_path']) && !empty($settings['ootp.sql_path'])) :
-			$this->load->helper('file');
-			$latestTime = 0;
-			if ($dir = opendir($settings['ootp.sql_path'])) {
-				$loadCnt = 0;
-				while (false !== ($file = readdir($dir)))	{
-					$fileTime=filemtime($settings['ootp.sql_path']."/".$file);
-					if ($fileTime<$latestTime) {continue;}
-					if ($fileTime<$latestTime) {
-						$latestTime = $fileTime;
-					}
-				}
-			}
-			
-        endif;
-        Template::set('last_file_time', date('M d, Y h:i:s A',$latestTime));
-		Assets::add_css(array(Template::theme_url('css/bootstrap-responsive.min.css'),
+            Template::set('missing_tables', $this->sql_model->validate_loaded_files());
+            Template::set('last_loaded', date('M d, Y h:i:s A',$this->sql_model->get_latest_load_time()));
+
+            $latestTime = 0;
+            if (isset($settings['ootp.sql_path']) && !empty($settings['ootp.sql_path'])) :
+                $this->load->helper('file');
+                $latestTime = 0;
+                if ($dir = opendir($settings['ootp.sql_path'])) {
+                    $loadCnt = 0;
+                    while (false !== ($file = readdir($dir)))	{
+                        $fileTime=filemtime($settings['ootp.sql_path']."/".$file);
+                        if ($fileTime<$latestTime) {continue;}
+                        if ($fileTime<$latestTime) {
+                            $latestTime = $fileTime;
+                        }
+                    }
+                }
+
+            endif;
+            Template::set('last_file_time', date('M d, Y h:i:s A',$latestTime));
+        }
+        Template::set('tables_loaded', sizeof($tables));
+         Assets::add_css(array(Template::theme_url('css/bootstrap-responsive.min.css'),
 			Template::theme_url('css/bootstrap.min.css')));
         Assets::add_js(Template::theme_url('js/bootstrap.min.js'));
 		Template::set('toolbar_title', lang('dbrd_settings_title'));
         Template::set_view('league_manager/custom/index');
         Template::render();
-
 	}
 	
 	//--------------------------------------------------------------------	
@@ -160,7 +170,16 @@ class Custom extends Admin_Controller {
         Template::render();
 	}
 	//--------------------------------------------------------------------
-	
+
+    function load_sql_file($filename = '') {
+
+        $filename= $this->uri->segment(5);
+        if (!empty($filename)) {
+            $this->filename = $filename;
+            $this->load_sql();
+        }
+
+    }
 	/**
 	 *	LOAD SQL DATA TABLE(S)
 	 */
@@ -179,16 +198,16 @@ class Custom extends Admin_Controller {
         $files_loaded = array();
         if ($this->input->post('submit')) {
 
-			//$this->uriVars = $this->uri->uri_to_assoc(5);
-            //echo("loadList = ".$_POST['loadList']);
-            //echo("filename = ".$_POST['filename']);
-
+			$file = $this->uri->segment(5);
+            if ($this->filename == null && isset($file)) {
+                $this->filename = $file;
+            }
 			$latest_load = $this->sql_model->get_latest_load_time();
 			$required_tables = $this->sql_model->get_required_tables();
 			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0) {
 				$fileList = $_POST['loadList'];
-			} else if (isset($_POST['filename']) && !empty($_POST['filename'])) {
-				$fileList = array($_POST['filename']);
+			} else if (isset($this->filename) && !empty($this->filename)) {
+				$fileList = array($this->filename);
 			} else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
 				$fileList = $required_tables;
 			} else {
@@ -215,6 +234,7 @@ class Custom extends Admin_Controller {
 
 		Template::set('file_list', $file_list);
 		Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
+		Template::set('load_times', $this->sql_model->get_tables_loaded());
 		Template::set('files_loaded', $files_loaded);
 		Template::set('required_tables', $this->sql_model->get_required_tables());
 		Template::set('toolbar_title', lang('sql_settings_title'));
@@ -295,9 +315,13 @@ class Custom extends Admin_Controller {
 		if (!function_exists('splitFiles')) {
 			$this->load->helper('sql_loader/sql');
 		}
-		$this->uriVars = $this->uri->uri_to_assoc(3);
-        $settings = $this->settings_lib->find_all_by('module','ootp');
-        $mess = splitFiles($settings['ootp.sql_path'],$this->uriVars['filename'], $settings['ootp.max_sql_size']);
+		$mess =  "No filename provided.";
+		$filename = $this->uri->segement(5);
+        $delete = $this->uri->segement(6);
+        if (isset($filename) && !empty($filename)) {
+			$settings = $this->settings_lib->find_all_by('module','ootp');
+			$mess = splitFiles($settings['ootp.sql_path'],$filename, $settings['ootp.max_sql_size']);
+		}
 		if ($mess != "OK") {
 			$status = "error:".$mess;
 		} else {

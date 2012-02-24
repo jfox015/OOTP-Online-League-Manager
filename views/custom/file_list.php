@@ -51,7 +51,7 @@
 	  if (isset($required_tables) && is_array($required_tables) && sizeof($required_tables) > 0) {
 		  foreach ($required_tables as $table_name) {
 			  //echo("Table name from list = ".$tableName."<br />");
-			  if ($table_name['name'] == $fileArr[0]) {
+			  if ($table_name->name == $fileArr[0]) {
 				  $hilite = 1;
 				  break;
 			  } // END if
@@ -67,10 +67,10 @@
       <td sorttable_customkey='<?php echo($fileTime); ?>'><?php echo(date("D M j, Y H:i",$fileTime)); ?></td>
       <td sorttable_customkey=''>
           <?php
-          if (isset($files_loaded) && is_array($files_loaded) && sizeof($files_loaded) > 0) {
-              foreach ($files_loaded as $row) {
+          if (isset($load_times) && is_array($load_times) && sizeof($load_times) > 0) {
+              foreach ($load_times as $row) {
               //echo("Table name from list = ".$tableName."<br />");
-                  if ($row['name'] == $fileArr[0]) {
+                  if ($row->name == $fileArr[0]) {
                     echo(date("D M j, Y H:i",$row->modified_on));
                     break;
                   } // END if
@@ -78,7 +78,7 @@
           } // END if
           ?></td>
       <td sorttable_customkey='<?php echo($fsize); ?>'><?php echo(formatBytes($fsize)); ?></td>
-      <td sorttable_customkey=1><?php echo(anchor('custom/sql_loader/load_sql/filename/'.$file,'Load')); ?>
+      <td sorttable_customkey=1><?php echo(anchor('admin/custom/league_manager/load_sql_file/'.$file,'Load')); ?>
       <?php 
 	  /*--------------------------------------
 	  / Identify files with splits and add them 
@@ -124,20 +124,20 @@
 <br class="clear" />
 
 <script type="text/javascript">
-head.ready(function(){
+
     var ajaxWait = '<img src="<?php echo Template::theme_url('images/icons/ajax-loader.gif'); ?>" width="28" height="28" border="0" align="absmiddle" />&nbsp;Operation in progress. Please wait...';
     var responseError = '<img src="<?php echo Template::theme_url('images/icons/icon_fail.png'); ?>" width="24" height="24" border="0" align="absmiddle" />&nbsp;';
     var fader = null;
     var refreshAfterUpdate = false;
 
-    $(document).ready(function(){
+    head.ready(function(){
         $('a[rel=split]').click(function () {
             refreshAfterUpdate = true;
-            runAjax("<?php echo(Template::theme_url('custom/sql_loader/splitSQLFile/filename/')); ?>"+this.id); return false;
+            runAjax("<?php echo(site_url().'admin/custom/league_manager/splitSQLFile/'); ?>"+this.id); return false;
         });
         $('a[rel=delete]').click(function () {
             refreshAfterUpdate = true;
-            runAjax("<?php echo(Template::theme_url('custom/sql_loader/splitSQLFile/delete/1/filename/'));?>"+this.id); return false;
+            runAjax("<?php echo(site_url().'admin/custom/league_manager/splitSQLFile/');?>"+this.id+'/1'); return false;
         });
         checkRequired();
         <?php
@@ -186,7 +186,7 @@ head.ready(function(){
     <?php
       $count = 0;
       foreach ($required_tables as $tableName) {
-        echo("required[".$count."] = '".$tableName."';");
+        echo("required[".$count."] = '".$tableName->name."';");
         $count++;
       }
     }
@@ -243,5 +243,4 @@ head.ready(function(){
                 form.elements[i].checked = state; // END if
         } // END for
     } // END function
-});
 </script>

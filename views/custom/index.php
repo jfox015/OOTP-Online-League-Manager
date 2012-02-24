@@ -2,6 +2,13 @@
     <div class="row-fluid">
 
         <div class="span9">
+            <?php 
+            if ($settings_incomplete) { ?>
+                <div class="row-fluid">
+                <div class="span9"><p><b>WARNING</b> You must review your <?php echo anchor('admin/settings/league_manager','league settings'); ?> and specify the SQL upload path before continuing.</p></div>
+                </div>
+            <?php } else { ?>
+            
             <div class="row-fluid">
                 <div class="span9"><p>&nbsp;</p></div>
             </div>
@@ -74,7 +81,8 @@
 			  </div><!--/row-->
 			  <?php } ?>
 		  
-		  <?php } ?>
+		  <?php }
+            } ?>
         </div><!--/span-->
 
         <div class="span3">
