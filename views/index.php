@@ -1,13 +1,6 @@
 		<!-- Header -->
-		<div class="head text-right">
-
-			<h1><?php
-			if (isset($header_img) && !empty($header_img)) {
-				echo('<img src="'.$header_img.'" alt="'.config_item('site.title').'" title="'.config_item('site.title').'" />');
-			} else {
-				config_item('site.title');
-			}
-			?></h1>
+		<div class="head text-left">
+			<h1><?php echo config_item('site.title'); ?></h1>
 		</div>
 			
 		<div class="aside">

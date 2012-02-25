@@ -55,7 +55,7 @@
             <div class="span9"><p><h2>League Tasks</h2></p></div>
           </div>
 		  
-		  <?php if (sizeof($tables_loaded) == 0) { ?>
+		  <?php if ($tables_loaded == 0) { ?>
 		  <div class="row-fluid">
             <div class="span1">
               <img src="<?php echo Template::theme_url('images/icons/database_up.png'); ?>" width="24" height="24" border="0" />
@@ -88,11 +88,11 @@
         <div class="span3">
             <h2>Database Profile </h2>
             <p>
-            <?php if (sizeof($tables_loaded) == 0) { ?>
-				<label>Tables:</label> <? echo $tables_loaded ?><br />
-				<label>Latest File Updated:</label> <? echo $last_file_time ?><br />
-				<label>Last Uploaded:</label> <? echo $get_latest_load_time ?><br />
-				<label>Required Table List:</label> <b>Custom</b> <?php echo anchor(SITE_AREA.'/custom/league_manager/table_list','Edit'); ?><br />
+            <?php if ($tables_loaded > 0) { ?>
+				<b>Tables:</b> <?php echo $tables_loaded ?><br />
+				<b>Latest File Updated:</b> <?php echo $last_file_time ?><br />
+				<b>Last Uploaded:</b> <?php echo $last_loaded ?><br />
+				<b>Required Table List:</b> <b>Custom</b> <?php echo anchor(SITE_AREA.'/custom/league_manager/table_list','Edit'); ?><br />
 				</p>
 				<h2>Validation Report</h2>
 				<?php if (isset($missing_tables) && sizeof($missing_tables)>0) { ?>
@@ -108,7 +108,18 @@
 					} ?>
 					</ul>
 					</span>
-				<?php } ?>
+				<?php } else { ?>
+                    <div class="row-fluid">
+                        <div class="span3">
+                            <img src="<?php echo Template::theme_url('images/icons/process_accept.png'); ?>" width="48" height="48" border="0" />
+                        </div>
+                        <div class="span9">
+                            <b>Congrats!</b>
+                            <p>You have all required tables loaded!</p>
+                        </div><!--/span-->
+                    </div><!--/row-->
+
+                <?php }?>
 			<?php } else { ?>
 				The leagues database files have not been loaded yet. Please <?php echo anchor(SITE_AREA.'/custom/league_manager/load_all_sql','Load OOTP MySQL Data'); ?> to 
 				view the database profile.

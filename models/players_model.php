@@ -177,9 +177,8 @@ class Players_model extends Base_ootp_model {
         // GET PLAYER POSITION
         $this->db->dbprefix = '';
         $this->db->select('team_id');
-        $this->db->from($this->table);
         $this->db->where('player_id',$player_id);
-        $query = $this->db->get();
+        $query = $this->db->get($this->table);
         if ($query->num_rows() > 0) {
             $row = $query->row();
             $team_id = $row->team_id;

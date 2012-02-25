@@ -8,7 +8,7 @@
 
 <p class="small"><?php echo lang('bf_required_note'); ?></p>
 
-<?php echo form_open($this->uri->uri_string(), 'class="constrained ajax-form"'); ?>
+<?php echo form_open($this->uri->uri_string(), 'class="constrained ajax-form" name="file_list" id="file_list"'); ?>
 
 <div class="inst_left"><b>Select Tables</b></div>
 <div class="inst_right">Tables Available in OOTP: <b><?php echo($ootp_version); ?></b></div>
@@ -32,18 +32,18 @@
 		<tr class='row_<?php echo(((($cnt%2) == 0) ? "even" : "odd")); ?>'>
 			<td class='<?php echo($cls); ?>'><?php 
 			$checked = false;
-			if (isset($required_tables) && count($required_tables)>0) {
+			if (isset($required_tables) && is_array($required_tables) && count($required_tables)>0) {
 				foreach ($required_tables as $table_name) {
-					if ($table_name == $table) {
+					if ($table_name->name == $table->name) {
 						$checked = true;
 						break;
 					} // END if
 				} // END foreach
 			} // END if
-			echo form_checkbox('required_tables[]',$table,$checked);
+			echo form_checkbox("required_tables[]",$table->name,$checked);
 			?>
 			</td>
-			<td><?php echo($table); ?></td>
+			<td><?php echo($table->name); ?></td>
 		</tr>
 			<?php 
 			$cnt++;
@@ -64,10 +64,10 @@
 
 <script type="text/javascript">
 function setCheckBoxState(state) {
-	var form = document.file_list;
-	for (var i = 0; i < form.elements.length; i++) {
-		if (form.elements[i].type == 'checkbox')
-			form.elements[i].checked = state; // END if
-	} // END for
+    var form = document.file_list;
+    for (var i = 0; i < form.elements.length; i++) {
+        if (form.elements[i].type == 'checkbox')
+            form.elements[i].checked = state; // END if
+    } // END for
 } // END function
 </script>

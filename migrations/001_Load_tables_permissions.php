@@ -44,7 +44,7 @@ class Migration_Load_tables_permissions extends Migration {
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(4, 'divisions',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(5, 'games',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(6, 'games_score',1,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(7, 'human_managers',0,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(7, 'human_managers',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(8, 'human_manager_history',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(9, 'human_manager_history_batting_stats',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(10, 'human_manager_history_fielding_stats_stats',0,0,0,7,100)");
@@ -67,18 +67,18 @@ class Migration_Load_tables_permissions extends Migration {
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(27, 'players',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(28, 'players_at_bat_batting_stats',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(29, 'players_awards',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(30, 'players_batting',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(31, 'players_career_batting_stats',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(32, 'players_career_fielding_stats',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(33, 'players_career_pitching_stats',0,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(30, 'players_batting',1,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(31, 'players_career_batting_stats',1,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(32, 'players_career_fielding_stats',1,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(33, 'players_career_pitching_stats',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(34, 'players_contract',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(35, 'players_contract_extension',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(36, 'players_fielding',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(37, 'players_game_batting',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(38, 'players_game_pitching_stats',0,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(36, 'players_fielding',1,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(37, 'players_game_batting',1,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(38, 'players_game_pitching_stats',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(39, 'players_individual_batting_stats',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(40, 'players_league_leader',0,0,0,7,100)");
-		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(41, 'players_pitching',0,0,0,7,100)");
+		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(41, 'players_pitching',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(42, 'players_roster_status',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(43, 'players_streak',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(44, 'players_value',0,0,0,7,100)");
@@ -134,6 +134,9 @@ class Migration_Load_tables_permissions extends Migration {
 			 ('ootp.max_sql_size', 'ootp', ''),
 			 ('ootp.limit_load', 'ootp', '1'),
 			 ('ootp.sims_per_week', 'ootp', ''),
+			 ('ootp.auto_sim_length', 'ootp', '1'),
+			 ('ootp.sim_length', 'ootp', ''),
+			 ('ootp.calc_length', 'ootp', ''),
 			 ('ootp.sims_occur_on', 'ootp', ''),
 			 ('ootp.sims_details', 'ootp', ''),
 			 ('ootp.league_file_date', 'ootp', ''),

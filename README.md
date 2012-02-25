@@ -4,9 +4,12 @@ A custom online league administration module for OOTP Online LEagues. Built usin
 
 ## Features
 
+- Default Online League Home Page
+- Online League Dashboard
 - Customizable League Details
-- SQL Loading manager
+- SQL Data Loading Manager
 - Sim Update control panel
+- Basic set of OOTP specific data models
 
 ## Keep Current on the Mod
 

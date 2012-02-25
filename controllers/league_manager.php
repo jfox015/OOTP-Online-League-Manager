@@ -9,7 +9,6 @@ class League_Manager extends Admin_Controller {
 		parent::__construct();
 		
 		// Load our current settings
-		Template::set(read_config('league_manager'));
 		if (!isset($this->leagues_model)) {
 			$this->load->model('leagues_model');
 		}
@@ -19,25 +18,27 @@ class League_Manager extends Admin_Controller {
 	
 	public function index()
 	{
-		Template::set_block('home_news_list','league_manager/empty',modules::run('news/get_articles',0,2));
+		Template::set_block('home_news_block','league_manager/empty',modules::run('news/get_articles',0,2));
+		Template::set_block('home_news_list','league_manager/empty',modules::run('news/get_articles',2,5));
 		Template::set_block('sim_details','league_manager/sim_details',$this->sim_details());
 		Template::set_block('tweets','league_manager/tweets',$this->get_tweets());
-		
+
+        Template::set_view('league_manager/index');
 		Template::render();
 	}
 	
 	public function get_tweets() {
 		
-		$mng_configs = read_config('league_manager');
-
-        if (isset($mng_configs['twitter_string'])) {
+		$settings = $this->settings_lib->find_all_by('module','ootp');
+        
+        if (isset($settings['ootp.twitter_string'])) {
 		
-            $tweets = json_decode(@file_get_contents('http://twitter.com/statuses/user_timeline/' . $mng_configs['twitter_string'] . '.json'));
+            $tweets = json_decode(@file_get_contents('http://twitter.com/statuses/user_timeline/' . $settings['ootp.twitter_string'] . '.json'));
 
             // If no number provided, just get 5
-            empty($mng_configs['tweet_count']) AND $mng_configs['tweet_count'] = 5;
+            empty($settings['ootp.tweet_count']) AND $settings['ootp.tweet_count'] = 5;
 
-            $tweets = is_array($tweets) ? array_slice($tweets, 0, $mng_configs['tweet_count']) : array();
+            $tweets = is_array($tweets) ? array_slice($tweets, 0, $settings['tweet_count']) : array();
 
             $patterns = array(
                 // Detect URL's
@@ -53,13 +54,13 @@ class League_Manager extends Admin_Controller {
             foreach ($tweets as &$tweet)
             {
                 $tweet->id		= sprintf('%.0f', $tweet->id);
-                $tweet->text	= str_replace($mng_configs['twitter_string'] . ': ', '', $tweet->text);
+                $tweet->text	= str_replace($settings['ootp.twitter_string'] . ': ', '', $tweet->text);
                 $tweet->text	= preg_replace(array_keys($patterns), $patterns, $tweet->text);
             }
 
             // Store the feed items
             return array(
-                'username'	=> $mng_configs['twitter_string'],
+                'username'	=> $settings['ootp.twitter_string'],
                 'tweets'	=> $tweets
             );
         } else {
@@ -72,30 +73,29 @@ class League_Manager extends Admin_Controller {
 	public function sim_details()
 	{
 		
-		$cfgs_lg = read_config('league_manager');
-		$cfgs_sim = read_config('sims');
-		
+		$settings = $this->settings_lib->find_all_by('module','ootp');
+
 		if (!isset($this->leagues_events_model)) {
 			$this->load->model('leagues_events_model');
 		}
-		$league = $this->leagues_model->find_by('league_id',$cfgs_lg['league_id']);
+		$league = $this->leagues_model->find_by('league_id',$settings['ootp.league_id']);
 		
 		$league_file_date = -1;
 		$league_date = -1;
 		$next_sim = -1;
 		$league_event = '';
 		
-		if (isset($cfgs_sim) && is_array($cfgs_sim) && $cfgs_sim['sims_details'] == -1) {
+		if (isset($league) && $league !== false && $settings['ootp.sims_details'] == -1) {
 			// GET League File 
-			if (isset($cfgs_lg['league_file_path']) && 
-				!empty($cfgs_lg['league_file_path']) && 
-				file_exists($cfgs_lg['league_file_path'])) {
-				$league_file_date = filemtime($cfgs_lg['league_file_path']);
+			if (isset($settings['ootp.league_file_path']) && 
+				!empty($settings['ootp.league_file_path']) && 
+				file_exists($settings['ootp.league_file_path'])) {
+				$league_file_date = filemtime($settings['ootp.league_file_path']);
 			}
 			// Determine Next Sim Date
 			$day_count = 0;
 			$update_day = date('N',$league_file_date);
-			$sim_days = unserlialize($cfgs_sim['sims_occur_on']);
+			$sim_days = unserialize($settings['ootp.sims_occur_on']);
 			if (sizeof($sim_days) == 1) {
 				$day_count = 7;
 			} else if (sizeof($sim_days) > 1) {
@@ -123,15 +123,15 @@ class League_Manager extends Admin_Controller {
 			$evt = $this->leagues_events_model->get_events($league->league_id,$league->current_date,1);
             $league_event = ((isset($evt) && isset($evt->name))? $evt->name: "");
 		} else {
-			$league_file_date = $cfgs_sim['league_file_date'];
-			$next_sim = $cfgs_sim['next_sim'];
-			$league_date = $cfgs_sim['league_date'];
-			$league_event = $cfgs_sim['league_event'];
+			$league_file_date = $settings['ootp.league_file_date'];
+			$next_sim = $settings['ootp.next_sim'];
+			$league_date = $settings['ootp.league_date'];
+			$league_event = $settings['ootp.league_event'];
 		}
 		
 		return array('league_file_date'=>(($league_file_date != -1) ? date('m/d',$league_file_date) : lang('sim_date_na')),
 		'next_sim'=>(($next_sim != -1) ? date('m/d',$next_sim) : lang('sim_date_na'))
-		,'league_date'=>(($league_date != -1) ? date('m/d\Y',$league_date) : lang('sim_date_na')),
+		,'league_date'=>(($league_date != -1) ? date('m/d/Y',$league_date) : lang('sim_date_na')),
         'league_event'=>$league_event);
 	}
 }

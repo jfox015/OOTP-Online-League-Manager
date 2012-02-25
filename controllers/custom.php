@@ -44,7 +44,12 @@ class Custom extends Admin_Controller {
                 Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
             }
 
-            Template::set('missing_tables', $this->sql_model->validate_loaded_files());
+            if (!function_exists('loadSQLFiles'))
+            {
+                $this->load->helper('sql');
+            }
+            $file_list = getSQLFileList($settings['ootp.sql_path']);
+            Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
             Template::set('last_loaded', date('M d, Y h:i:s A',$this->sql_model->get_latest_load_time()));
 
             $latestTime = 0;
@@ -76,7 +81,8 @@ class Custom extends Admin_Controller {
 	
 	//--------------------------------------------------------------------	
 
-	function import_team_owners() {
+	function import_team_owners() 
+	{
 
         $settings = $this->settings_lib->find_all_by('module','ootp');
 		if (!isset($this->user_model)) {
@@ -96,18 +102,20 @@ class Custom extends Admin_Controller {
 		if ($this->input->post('submit')) {
 		
 		}
-		Template::set('toolbar_title', lang('dbrd_import_owners'));
-        Template::set_view('league_manager/custom/import_owners');
-        Template::render();
+		$this->index();
 		
 	}
 	
 	//--------------------------------------------------------------------	
 
-	function sim_details() {
+	function sim_details() 
+	{
 	
 		if ($this->input->post('submit')) {
 		
+			$this->form_validation->set_rules('auto_sim_length', lang('dbrd_settings_autocalc'), 'number|xss_clean');
+			$this->form_validation->set_rules('calc_length', lang('dbrd_settings_calclen'), 'number|xss_clean');
+			$this->form_validation->set_rules('sim_length', lang('sim_setting_simlen'), 'number|xss_clean');
 			$this->form_validation->set_rules('sims_per_week', lang('sim_setting_perweek'), 'required|number|xss_clean');
 			$this->form_validation->set_rules('sims_occur_on', lang('sim_setting_occuron'), 'required|xss_clean');
 			$this->form_validation->set_rules('sims_details', lang('sim_setting_details'), 'number|xss_clean');
@@ -118,16 +126,21 @@ class Custom extends Admin_Controller {
 
 			if ($this->form_validation->run() !== FALSE) {
 
-                $data = array(
+				$this->load->helper('date');
+				$dates = textDateToInt(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
+				$data = array(
+                    array('name' => 'ootp.auto_sim_length', 'value' => $this->input->post('auto_sim_length')),
+                    array('name' => 'ootp.calc_length', 'value' => $this->input->post('calc_length')),
+                    array('name' => 'ootp.sim_length', 'value' => $this->input->post('sim_length')),
                     array('name' => 'ootp.sims_per_week', 'value' => $this->input->post('sims_per_week')),
-                    array('name' => 'ootp.sims_occur_on', 'value' => $this->input->post('sims_occur_on')),
+                    array('name' => 'ootp.sims_occur_on', 'value' => serialize($this->input->post('sims_occur_on'))),
                     array('name' => 'ootp.sims_details', 'value' => ($this->input->post('sims_details')) ? 1 : -1),
-                    array('name' => 'ootp.league_file_date', 'value' => $this->input->post('league_file_date')),
-                    array('name' => 'ootp.next_sim', 'value' => $this->input->post('next_sim')),
-                    array('name' => 'ootp.league_date', 'value' => $this->input->post('league_date')),
+                    array('name' => 'ootp.next_sim', 'value' => $dates['next_sim']),
+					array('name' => 'ootp.league_file_date', 'value' => $dates['league_file_date']),
+					array('name' => 'ootp.league_date', 'value' => $dates['league_date']),
                     array('name' => 'ootp.league_event', 'value' => $this->input->post('league_event')),
 				);
-
+				
                 //destroy the saved update message in case they changed update preferences.
                 if ($this->cache->get('update_message'))
                 {
@@ -171,11 +184,12 @@ class Custom extends Admin_Controller {
 	}
 	//--------------------------------------------------------------------
 
-    function load_sql_file($filename = '') {
+    function load_sql_file($filename = '') 
+	{
 
         $filename= $this->uri->segment(5);
-        if (!empty($filename)) {
-            $this->filename = $filename;
+        if (isset($filename) && !empty($filename)) {
+            $this->filename = urldecode($filename);
             $this->load_sql();
         }
 
@@ -183,46 +197,66 @@ class Custom extends Admin_Controller {
 	/**
 	 *	LOAD SQL DATA TABLE(S)
 	 */
-	function load_sql() {
+	function load_sql() 
+	{
 		//$this->getURIData();
 
-        if (!function_exists('loadSQLFiles')) {
+        if (!function_exists('loadSQLFiles')) 
+		{
             $this->load->helper('sql');
         }
-        if (!function_exists('return_bytes')) {
+        if (!function_exists('return_bytes')) 
+		{
             $this->load->helper('general');
         }
         $settings = $this->settings_lib->find_all_by('module','ootp');
         Template::set('settings', $settings);
 
         $files_loaded = array();
-        if ($this->input->post('submit')) {
+		$required_tables = $this->sql_model->get_required_tables();
+		
+        if ($this->input->post('submit')) 
+		{
 
 			$file = $this->uri->segment(5);
-            if ($this->filename == null && isset($file)) {
+            if ($this->filename == null && isset($file) && !empty($file)) {
                 $this->filename = $file;
             }
 			$latest_load = $this->sql_model->get_latest_load_time();
-			$required_tables = $this->sql_model->get_required_tables();
-			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0) {
+			
+			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0) 
+			{
 				$fileList = $_POST['loadList'];
-			} else if (isset($this->filename) && !empty($this->filename)) {
+			} 
+			else if (isset($this->filename) && !empty($this->filename)) 
+			{
 				$fileList = array($this->filename);
-			} else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
+			} 
+			else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) 
+			{
 				$fileList = $required_tables;
-			} else {
+			}
+			else 
+			{
 				$fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
 			}
 			
 			$mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
-			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0)) {
-				if (is_array($mess)) {
+			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0)) 
+			{
+				if (is_array($mess)) 
+				{
 					$status = "An error occured processing the SQL files.";
-				} else {
+				} 
+				else 
+				{
 					$status = "error: ".$mess;
 				}
-			} else {
-				if (is_array($mess)) {
+			} 
+			else 
+			{
+				if (is_array($mess)) 
+				{
 					$files_loaded = $mess;
 				}
 				Template::set_message('All tables were updated sucessfully.', 'success');
@@ -236,7 +270,7 @@ class Custom extends Admin_Controller {
 		Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
 		Template::set('load_times', $this->sql_model->get_tables_loaded());
 		Template::set('files_loaded', $files_loaded);
-		Template::set('required_tables', $this->sql_model->get_required_tables());
+		Template::set('required_tables', $required_tables);
 		Template::set('toolbar_title', lang('sql_settings_title'));
         Template::set_view('league_manager/custom/file_list');
         Template::render();
@@ -281,12 +315,10 @@ class Custom extends Admin_Controller {
 		
 		if ($this->input->post('submit'))
 		{
-            $this->form_validation->set_rules('required_tables', lang('sql_required_tables'), 'required|trim|xss_clean');
-			
-			if ($this->form_validation->run() !== FALSE)
-			{
-				
-				if ($this->sql_model->set_required_tables($this->input->post('required_tables'))) {
+            $tables = false;
+            if (is_array(($tables = $this->input->post('required_tables')))) {
+
+				if ($this->sql_model->set_required_tables($tables)) {
 					// Success, so reload the page, so they can see their settings
 					Template::set_message('Required table update successfully saved.', 'success');
 				}
@@ -300,10 +332,10 @@ class Custom extends Admin_Controller {
 		Template::set('table_list', $this->sql_model->get_tables());
 		Template::set('required_tables', $this->sql_model->get_required_tables());
         $settings = $this->settings_lib->find_all_by('module','ootp');
-        Template::set('ootp_version', $settings['ootp.ootp_version']);
+        Template::set('ootp_version', $settings['ootp.game_version']);
 		
 		Template::set_view('league_manager/custom/table_list');
-        Template::render('blank');
+        Template::render();
 	}
 	
 	//--------------------------------------------------------------------

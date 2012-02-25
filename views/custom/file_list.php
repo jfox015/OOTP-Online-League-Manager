@@ -78,7 +78,7 @@
           } // END if
           ?></td>
       <td sorttable_customkey='<?php echo($fsize); ?>'><?php echo(formatBytes($fsize)); ?></td>
-      <td sorttable_customkey=1><?php echo(anchor('admin/custom/league_manager/load_sql_file/'.$file,'Load')); ?>
+      <td sorttable_customkey=1><?php echo(anchor('admin/custom/league_manager/load_sql_file/'.urlencode($file),'Load')); ?>
       <?php 
 	  /*--------------------------------------
 	  / Identify files with splits and add them 
@@ -103,7 +103,7 @@
    if ($isSplit==1)
     { ?>
       <tfoot><tr class='headline'><td class='hsc2' colspan=2>&nbsp;</td>
-      <td class='hsc2' colspan=2><?php echo(anchor('/admin/splitSQLFile/delete/1/filename/DELSPLITS','Delete All Splits'));  ?></td>
+      <td class='hsc2' colspan=2><?php echo(anchor('/admin/custom/league_manager/splitSQLFile/DELSPLITS/1','Delete All Splits'));  ?></td>
       <td>&nbsp;</td>
       </tr></tfoot>
     <?php } ?>

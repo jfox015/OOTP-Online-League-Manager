@@ -22,6 +22,31 @@ class Leagues_model extends Base_ootp_model {
 	/	PUBLIC FUNCTIONS
 	/
 	/-------------------------------------------------*/
+    public function find($id) {
+        $this->db->dbprefix = '';
+        $league = parent::find($id);
+        $this->db->dbprefix = $this->dbprefix;
+        return $league;
+    }
+
+    public function find_all($id) {
+        $this->db->dbprefix = '';
+        $league = parent::find_all($id);
+        $this->db->dbprefix = $this->dbprefix;
+        return $league;
+    }
+    public function find_by($field = '', $value='', $type='') {
+        $this->db->dbprefix = '';
+        $league = parent::find_by($field, $value, $type);
+        $this->db->dbprefix = $this->dbprefix;
+        return $league;
+    }
+    public function find_all_by($field = '', $value='') {
+        $this->db->dbprefix = '';
+        $league = parent::find_all_by($field, $value);
+        $this->db->dbprefix = $this->dbprefix;
+        return $league;
+    }
     /**
 	 *	In Season.
 	 *	Returns a list of public leagues.
@@ -46,7 +71,7 @@ class Leagues_model extends Base_ootp_model {
 	 *	Returns a string with the state of the league.
 	 *	@return	String
 	 */
-	public function get_league_state() {
+	public function get_league_state($league_id = 100) {
 		
 		$state = '';
 		

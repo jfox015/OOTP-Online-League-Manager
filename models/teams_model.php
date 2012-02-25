@@ -60,8 +60,12 @@ class Teams_model extends Base_ootp_model {
         $this->db->dbprefix = '';
         $query = $this->db->select('team_id,abbr,name,nickname,logo_file')
 						  ->where('allstar_team',0)
-						  ->order_by('name,nickname','asc');
-		$teams = $this->find_all_by('league_id',$this->league_id);
+						  ->where('league_id',$this->league_id)
+						  ->order_by('name,nickname','asc')
+                          ->get($this->table);
+        if ($query->num_rows() > 0) {
+            $teams = $query->result();
+        }
         $this->db->dbprefix = $this->dbprefix;
         return $teams;
 	}

@@ -15,7 +15,7 @@
 	<div>
 		<label><?php echo lang('dbrd_settings_autocalc'); ?></label>
 		<?php
-		$use_selection = ((isset($auto_sim_length) && $auto_sim_length == 1) || !isset($auto_sim_length)) ? true : false;
+		$use_selection = ((isset($settings['ootp.auto_sim_length']) && $settings['ootp.auto_sim_length'] == 1) || !isset($settings['ootp.auto_sim_length'])) ? true : false;
 		echo form_checkbox('auto_sim_length',1, $use_selection,'id="auto_sim_length"');
 		?>
 		<span><?php echo lang('dbrd_settings_calclen')." ".((isset($settings['ootp.calc_length'])) ? $settings['ootp.calc_length']: '---')." ".lang('sim_setting_simlen_note'); ?></span>
@@ -45,7 +45,7 @@
 	<div>
 		<label class="required"><?php echo lang('sim_setting_occuron'); ?></label>
 		<?php
-		$dayList = (isset($settings['ootp.sims_occur_on']) ? explode(",",$settings['ootp.sims_occur_on']) : array(-1));
+		$dayList = (isset($settings['ootp.sims_occur_on']) ? unserialize($settings['ootp.sims_occur_on']) : array(-1));
 		$days = array(1=>'Su',2=>'Mo',3=>'Tu',4=>'We',5=>'Th',6=>'Fr',7=>'Sa');
 		foreach($days as $num => $day) :
 			$use_selection = in_array($num,$dayList) ? true : false;
@@ -103,7 +103,6 @@
 	
 <?php echo form_close(); ?>
 
-
 <script type="text/javascript">
     head.ready(function(){
         $(document).ready(function() {
@@ -111,8 +110,11 @@
                 $('#ootp_block').toggle(!this.checked);
             });
             $('#ootp_block').toggle(!$('input#sim_details').is(':checked'));
+			
+			$("#next_sim").datepicker();
+			$("#league_date").datepicker();
+			$("#league_file_date").datepicker();
         });
     });
 
 </script>
-

@@ -127,7 +127,6 @@ class SQL_model extends BF_Model
 	 */
 	public function set_required_tables($tables = false, $required = true) 
 	{
-		
 		$tbl_list = array();
 		// Add a string
 		if (is_string($tables))
@@ -139,6 +138,7 @@ class SQL_model extends BF_Model
 		{
 			$tbl_list = $tables;
 		}
+		$required = ($required === true) ? 1 : 0;
 		foreach($tbl_list as $table) 
 		{
 			$row = $this->find_by('name',$table);
