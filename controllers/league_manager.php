@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class League_Manager extends Admin_Controller {
+class League_Manager extends Front_Controller {
 
 	//--------------------------------------------------------------------
 	
