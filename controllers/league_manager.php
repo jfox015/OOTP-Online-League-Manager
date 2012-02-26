@@ -12,6 +12,10 @@ class League_Manager extends Front_Controller {
 		if (!isset($this->leagues_model)) {
 			$this->load->model('leagues_model');
 		}
+        // Setup our default assets to load.
+        Assets::add_js( array(
+            base_url() .'assets/js/jquery-1.7.1.min.js',
+        ));
 	}
 
 	//--------------------------------------------------------------------
@@ -22,6 +26,8 @@ class League_Manager extends Front_Controller {
 		Template::set_block('home_news_list','league_manager/empty',modules::run('news/get_articles',2,5));
 		Template::set_block('sim_details','league_manager/sim_details',$this->sim_details());
 		Template::set_block('tweets','league_manager/tweets',$this->get_tweets());
+
+        Assets::add_css( Template::theme_url() .'css/bootstrap-responsive.min.css','screen');
 
         Template::set_view('league_manager/index');
 		Template::render();
