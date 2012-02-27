@@ -12,6 +12,7 @@ class League_Manager extends Front_Controller {
 		if (!isset($this->leagues_model)) {
 			$this->load->model('leagues_model');
 		}
+        $this->lang->load('manager');
         // Setup our default assets to load.
         Assets::add_js( array(
             base_url() .'assets/js/jquery-1.7.1.min.js',
@@ -22,10 +23,10 @@ class League_Manager extends Front_Controller {
 	
 	public function index()
 	{
-		Template::set_block('home_news_block','league_manager/empty',modules::run('news/get_articles',0,2));
-		Template::set_block('home_news_list','league_manager/empty',modules::run('news/get_articles',2,5));
-		Template::set_block('sim_details','league_manager/sim_details',$this->sim_details());
-		Template::set_block('tweets','league_manager/tweets',$this->get_tweets());
+		Template::set('home_news_block',modules::run('news/get_articles',0,2));
+		Template::set('home_news_list',$this->load->view('news/news_list',modules::run('news/get_article_list',2,5), true));
+		Template::set('sim_details',$this->load->view('league_manager/sim_details',$this->sim_details(), true));
+		Template::set('tweets',$this->load->view('league_manager/tweets',$this->get_tweets(), true));
 
         Assets::add_css( Template::theme_url() .'css/bootstrap-responsive.min.css','screen');
 
@@ -42,9 +43,9 @@ class League_Manager extends Front_Controller {
             $tweets = json_decode(@file_get_contents('http://twitter.com/statuses/user_timeline/' . $settings['ootp.twitter_string'] . '.json'));
 
             // If no number provided, just get 5
-            empty($settings['ootp.tweet_count']) AND $settings['ootp.tweet_count'] = 5;
+            $settings['ootp.tweet_count'] = 3;
 
-            $tweets = is_array($tweets) ? array_slice($tweets, 0, $settings['tweet_count']) : array();
+            $tweets = is_array($tweets) ? array_slice($tweets, 0, $settings['ootp.tweet_count']) : array();
 
             $patterns = array(
                 // Detect URL's

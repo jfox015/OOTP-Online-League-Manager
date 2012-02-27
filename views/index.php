@@ -20,17 +20,25 @@
 					<li><a href="<?php echo site_url('logout');?>">Logout</a></li>
 				</ul>
 			</div>
+            <?php else: ?>
+
 			<?php endif;?>
-			
-			<?php Template::block('sim_details','league_manager/sim_details'); ?>
-			
-			<?php Template::block('home_news_list','league_manager/empty'); ?>
-			
-			<?php Template::block('twitter_feed','league_manager/empty'); ?>
+
+            <div class="clearfix break"></div>
+
+            <?php echo($sim_details); ?>
+
+            <div class="clearfix break"></div>
+
+            <?php echo($home_news_list); ?>
+
+            <div class="clearfix break"></div>
+
+            <?php echo($tweets); ?>
 		</div>
 		
 		<div class="main">
 
-			<?php Template::block('home_news_block','league_manager/empty'); ?>
+            <?php echo($home_news_block); ?>
 
 		</div>	<!-- /main -->
