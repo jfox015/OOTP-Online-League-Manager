@@ -26,32 +26,44 @@ class Base_ootp_model extends BF_Model {
 		parent::__construct();
         $this->dbprefix = $this->db->dbprefix;
 	}
-	
-	//---------------------------------------------------------------
-	
-	public function find($id=null) {
 
+    /*--------------------------------------------------
+     /
+     /	PUBLIC FUNCTIONS
+     /
+     /-------------------------------------------------*/
+    public function find($id) {
+        $this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
-            return parent::find($id);
+            $data = parent::find($id);
         }
+        $this->db->dbprefix = $this->dbprefix;
+        return $data;
     }
 
-    //---------------------------------------------------------------
-
-    public function find_all($id=null) {
-
+    public function find_all($id) {
+        $this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
-            return parent::find_all($id);
+            $data = parent::find_all($id);
         }
+        $this->db->dbprefix = $this->dbprefix;
+        return $data;
     }
-
-	//---------------------------------------------------------------
-	
-	public function find_all_by($field=null, $value=null) {
-
+    public function find_by($field = '', $value='', $type='') {
+        $this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
-            parent::find_all_by($field, $value);
+            $data = parent::find_by($field, $value, $type);
         }
+        $this->db->dbprefix = $this->dbprefix;
+        return $data;
+    }
+    public function find_all_by($field = '', $value='') {
+        $this->db->dbprefix = '';
+        if ($this->db->table_exists($this->table)) {
+            $data = parent::find_all_by($field, $value);
+        }
+        $this->db->dbprefix = $this->dbprefix;
+        return $data;
     }
 
 }

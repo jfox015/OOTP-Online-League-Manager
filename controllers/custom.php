@@ -118,7 +118,7 @@ class Custom extends Admin_Controller {
 			$this->form_validation->set_rules('sim_length', lang('sim_setting_simlen'), 'number|xss_clean');
 			$this->form_validation->set_rules('sims_per_week', lang('sim_setting_perweek'), 'required|number|xss_clean');
 			$this->form_validation->set_rules('sims_occur_on', lang('sim_setting_occuron'), 'required|xss_clean');
-			$this->form_validation->set_rules('sims_details', lang('sim_setting_details'), 'number|xss_clean');
+			$this->form_validation->set_rules('sim_details', lang('sim_setting_details'), 'number|xss_clean');
 			$this->form_validation->set_rules('league_file_date', lang('sim_setting_league_file_date'), 'trim|xss_clean');
 			$this->form_validation->set_rules('next_sim', lang('sim_setting_next_sim'), 'trim|xss_clean');
 			$this->form_validation->set_rules('league_date', lang('sim_setting_league_date'), 'trim|xss_clean');
@@ -129,12 +129,12 @@ class Custom extends Admin_Controller {
 				$this->load->helper('date');
 				$dates = textDateToInt(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
 				$data = array(
-                    array('name' => 'ootp.auto_sim_length', 'value' => $this->input->post('auto_sim_length')),
+                    array('name' => 'ootp.auto_sim_length', 'value' => ($this->input->post('auto_sim_length')) ? 1 : -1),
                     array('name' => 'ootp.calc_length', 'value' => $this->input->post('calc_length')),
                     array('name' => 'ootp.sim_length', 'value' => $this->input->post('sim_length')),
                     array('name' => 'ootp.sims_per_week', 'value' => $this->input->post('sims_per_week')),
                     array('name' => 'ootp.sims_occur_on', 'value' => serialize($this->input->post('sims_occur_on'))),
-                    array('name' => 'ootp.sims_details', 'value' => ($this->input->post('sims_details')) ? 1 : -1),
+                    array('name' => 'ootp.sim_details', 'value' => ($this->input->post('sim_details')) ? 1 : -1),
                     array('name' => 'ootp.next_sim', 'value' => $dates['next_sim']),
 					array('name' => 'ootp.league_file_date', 'value' => $dates['league_file_date']),
 					array('name' => 'ootp.league_date', 'value' => $dates['league_date']),
@@ -173,7 +173,7 @@ class Custom extends Admin_Controller {
             $this->load->model('leagues_model');
         }
         $league = $this->leagues_model->find($league_id);
-		$league_date = ((isset($league->current_date)) ? strtotime($league->current_date) : time());
+		$league_date = ((isset($league->current_date)) ? $league->current_date : date('Y-m-d'));
         if (!isset($this->leagues_events_model)) {
 			$this->load->model('leagues_events_model');
 		}
@@ -221,6 +221,7 @@ class Custom extends Admin_Controller {
 			$file = $this->uri->segment(5);
             if ($this->filename == null && isset($file) && !empty($file)) {
                 $this->filename = $file;
+                print ("Filename: ".$this->filename."<br />");
             }
 			$latest_load = $this->sql_model->get_latest_load_time();
 			

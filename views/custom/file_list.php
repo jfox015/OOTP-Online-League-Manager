@@ -78,7 +78,7 @@
           } // END if
           ?></td>
       <td sorttable_customkey='<?php echo($fsize); ?>'><?php echo(formatBytes($fsize)); ?></td>
-      <td sorttable_customkey=1><?php echo(anchor('admin/custom/league_manager/load_sql_file/'.urlencode($file),'Load')); ?>
+      <td sorttable_customkey=1><?php echo(anchor('admin/custom/league_manager/load_sql/'.urlencode($file),'Load')); ?>
       <?php 
 	  /*--------------------------------------
 	  / Identify files with splits and add them 

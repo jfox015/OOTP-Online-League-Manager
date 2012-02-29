@@ -10,7 +10,7 @@
 require_once(dirname(dirname(__FILE__)).'/models/base_ootp_model.php');
 class Leagues_events_model extends Base_ootp_model {
 
-	protected $table		= 'leagues_events';
+	protected $table		= 'league_events';
 	protected $key			= 'event_id';
 	protected $soft_deletes	= false;
 	protected $date_format	= 'datetime';
@@ -29,28 +29,30 @@ class Leagues_events_model extends Base_ootp_model {
 	 */
 	public function get_events($league_id = 100, $start_date = false, $limit = 3) {
 		$events = array();
+		$this->db->dbprefix = '';
 		if ($this->db->table_exists($this->table)) {
-            $this->db->dbprefix = '';
-            $this->db->select('event_id,start_date,name');
-			$this->db->from($this->table);
+            $this->db->select('start_date,name');
 			$this->db->where('league_id',$league_id);
+			$this->db->where('event_over',0);
 			if ($start_date !== false) {
-				$this->db->where('start_date >',$start_date);
+				$this->db->where('start_date >',date('Y-m-d',strtotime($start_date)));
 			}
-			$this->db->not_like('name','Announcement');
+			$this->db->not_like('name','%nnounce%');
 			$this->db->order_by('start_date','asc');
-			$this->db->limit($limit);
-			$query = $this->db->get();
+			$this->db->limit($limit,0);
+			$query = $this->db->get($this->table);
+            //print($this->db->last_query()."<br />");
 			if ($query->num_rows() > 0) {
-				foreach($query->result() as $row) {
-					array_push($events,array('event_id'=>$row->event_id,'name'=>$row->name,'start_date'=>$row->start_date));
-				}
+				$events = $query->result_array();
+                /*foreach($query->result() as $row) {
+					array_push($events,array('name'=>$row->name,'start_date'=>$row->start_date));
+				}*/
 			}
 			$query->free_result();
-            $this->db->dbprefix = $this->dbprefix;
 		} else {
 			$this->error = 'Required database table "league_events" has not been loaded. No events could be displayed at this time.';
 		}
+		$this->db->dbprefix = $this->dbprefix;
 		return $events;
 	}
 	/*---------------------------------------

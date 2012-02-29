@@ -5,7 +5,7 @@
             <?php 
             if ($settings_incomplete) { ?>
                 <div class="row-fluid">
-                <div class="span9"><p><b>WARNING</b> You must review your <?php echo anchor('admin/settings/league_manager','league settings'); ?> and specify the SQL upload path before continuing.</p></div>
+                <div class="span9"><p><b>WARNING</b> You must review your <?php echo anchor('admin/settings/league_manager','league settings'); ?> before using the tools on this page.</p></div>
                 </div>
             <?php } else { ?>
             
@@ -75,8 +75,8 @@
 				 </div>
 				 <div class="span8">
 				  <b><?php echo anchor(SITE_AREA.'/custom/league_manager/import_team_owners','Import Team Owners'); ?></b>
-				  <p>There are no users assigned as owners to any teams. Run this tool to import team owners and create 
-				  web users or map them to existing users.</p>
+				  <p>There are no users assigned as owners to any teams. Run this tool to import team owners from your OOTP online league 
+				  into the OOLM and create users. The tool will also atrempt to map existing users to OOTP human managers if possible.</p>
 				</div><!--/span-->
 			  </div><!--/row-->
 			  <?php } ?>

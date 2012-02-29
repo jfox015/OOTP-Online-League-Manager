@@ -13,23 +13,38 @@ class League_Manager extends Front_Controller {
 			$this->load->model('leagues_model');
 		}
         $this->lang->load('manager');
-        // Setup our default assets to load.
-        Assets::add_js( array(
-            base_url() .'assets/js/jquery-1.7.1.min.js',
-        ));
+
 	}
 
 	//--------------------------------------------------------------------
 	
 	public function index()
 	{
-		Template::set('home_news_block',modules::run('news/get_articles',0,2));
+		$this->load->helper('navigation/navigation');
+
+        $settings = $this->settings_lib->find_all();
+
+        if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
+            if ((isset($settings['ootp.use_ootp_details']) && $settings['ootp.use_ootp_details'] == 1)) {
+                $league_name = $settings['ootp.league_name'];
+            } else {
+                $league = $this->leagues_model->find($settings['ootp.league_id']);
+                $league_name = $league->name;
+            }
+            Template::set('league_name', $league_name);
+        }
+        Template::set('home_news_block',modules::run('news/get_articles',0,2));
 		Template::set('home_news_list',$this->load->view('news/news_list',modules::run('news/get_article_list',2,5), true));
 		Template::set('sim_details',$this->load->view('league_manager/sim_details',$this->sim_details(), true));
 		Template::set('tweets',$this->load->view('league_manager/tweets',$this->get_tweets(), true));
+		Template::set('settings', $settings);
 
         Assets::add_css( Template::theme_url() .'css/bootstrap-responsive.min.css','screen');
-
+        if (!isset($loggedIn) || !$loggedIn) {
+            if (!function_exists('form_open')) {
+                $this->load->helper('form');
+            }
+        }
         Template::set_view('league_manager/index');
 		Template::render();
 	}
@@ -128,7 +143,7 @@ class League_Manager extends Front_Controller {
 			$next_sim = $league_file_date + ((60*60*24)*$day_count);
 			$league_date = strtotime($league->current_date);
 			$evt = $this->leagues_events_model->get_events($league->league_id,$league->current_date,1);
-            $league_event = ((isset($evt) && isset($evt->name))? $evt->name: "");
+            $league_event = ((isset($evt) && sizeof($evt) > 0)? $evt[0]['name']: "");
 		} else {
 			$league_file_date = $settings['ootp.league_file_date'];
 			$next_sim = $settings['ootp.next_sim'];

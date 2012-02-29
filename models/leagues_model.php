@@ -17,37 +17,7 @@ class Leagues_model extends Base_ootp_model {
 	protected $set_created	= false;
 	protected $set_modified = false;
 	
-	/*--------------------------------------------------
-	/
-	/	PUBLIC FUNCTIONS
-	/
-	/-------------------------------------------------*/
-    public function find($id) {
-        $this->db->dbprefix = '';
-        $league = parent::find($id);
-        $this->db->dbprefix = $this->dbprefix;
-        return $league;
-    }
-
-    public function find_all($id) {
-        $this->db->dbprefix = '';
-        $league = parent::find_all($id);
-        $this->db->dbprefix = $this->dbprefix;
-        return $league;
-    }
-    public function find_by($field = '', $value='', $type='') {
-        $this->db->dbprefix = '';
-        $league = parent::find_by($field, $value, $type);
-        $this->db->dbprefix = $this->dbprefix;
-        return $league;
-    }
-    public function find_all_by($field = '', $value='') {
-        $this->db->dbprefix = '';
-        $league = parent::find_all_by($field, $value);
-        $this->db->dbprefix = $this->dbprefix;
-        return $league;
-    }
-    /**
+	/**
 	 *	In Season.
 	 *	Returns a list of public leagues.
 	 *	@param	$league_id	Defaults to 100

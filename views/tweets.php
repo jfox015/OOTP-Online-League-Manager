@@ -1,6 +1,6 @@
 <h3>Recent Tweets</h3>
-    <p><b><?php echo $username; ?></b></p>
-<ul class="rss">
+<p><b><?php echo $username; ?></b></p>
+<ul class="tweets">
     <?php foreach($tweets as $tweet): ?>
 	<li>
 	    <?php echo $tweet->text; ?>

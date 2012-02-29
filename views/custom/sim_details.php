@@ -66,17 +66,17 @@
             <!-- LEAGUE NAME -->
         <div>
             <label for="league_file_date"><?php echo lang('sim_setting_league_file_date'); ?></label>
-            <input type="text" id="league_file_date" name="league_file_date" value="<?php echo (isset($settings['ootp.league_file_date'])) ? $settings['ootp.league_file_date']: set_value('ootp.league_file_date'); ?>" />
+            <input type="text" id="league_file_date" name="league_file_date" value="<?php echo (isset($settings['ootp.league_file_date'])) ? date('m/d/Y',$settings['ootp.league_file_date']): set_value('ootp.league_file_date'); ?>" />
         </div>
             <!-- LEAGUE ABBR -->
         <div>
             <label for="next_sim"><?php echo lang('sim_setting_next_sim'); ?></label>
-            <input type="text" class="small" id="next_sim" name="next_sim" value="<?php echo (isset($settings['ootp.next_sim'])) ? $settings['ootp.next_sim']: set_value('ootp.next_sim'); ?>" />
+            <input type="text" class="small" id="next_sim" name="next_sim" value="<?php echo (isset($settings['ootp.next_sim'])) ? date('m/d/Y',$settings['ootp.next_sim']): set_value('ootp.next_sim'); ?>" />
         </div>
             <!-- LEAGUE ICON -->
         <div>
             <label for="league_date"><?php echo lang('sim_setting_league_date'); ?></label>
-            <input type="text" class="small" id="league_date" name="league_date" value="<?php echo (isset($settings['ootp.league_date'])) ? $settings['ootp.league_date']: set_value('ootp.league_date'); ?>" />
+            <input type="text" class="small" id="league_date" name="league_date" value="<?php echo (isset($settings['ootp.league_date']) && !empty($settings['ootp.league_date'])) ? date('m/d/Y',$settings['ootp.league_date']): set_value('ootp.league_date'); ?>" />
         </div>
             <!-- LEAGUE Text Color -->
         <div>
@@ -85,11 +85,11 @@
 			<?php
 			if (isset($events) && is_array($events) && count($events)):
 				foreach( $events as $event):
-					echo('<option value="'.$event['event_id'].'"');
-					if (isset($settings['ootp.league_event']) && $settings['ootp.league_event'] == $event['event_id']):
+					echo('<option value="'.$event['name'].'"');
+					if (isset($settings['ootp.league_event']) && $settings['ootp.league_event'] == $event['name']):
 						echo(' selected="selected"');
 					endif;
-					echo('">'.date('/m/d/Y',strtotime($event['start_date'])).''.$event['name'].'</option>');
+					echo('">'.date('m/d/Y',strtotime($event['start_date'])).' - '.$event['name'].'</option>');
 				endforeach;
 			endif;
 			?>

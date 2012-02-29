@@ -63,3 +63,6 @@ $lang['sim_setting_league_file_date']	= 'League File Date';
 $lang['sim_setting_next_sim']			= 'Next Sim Date';
 $lang['sim_setting_league_date']		= 'League Date';
 $lang['sim_setting_league_event']		= 'Next League Event';
+
+$lang['own_map_id_error']				= 'Creation of owbner/user link failed.';
+
