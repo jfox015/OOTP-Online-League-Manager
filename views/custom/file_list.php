@@ -86,12 +86,12 @@
 	  / is skipped in favor of the splits.
 	  /----------------------------------------*/
 	  if (strpos($file,".mysql_")>0) { 
-	  	echo('/<a href="#" id="'.$file.'" rel="delete">Delete Split</a>');
+	  	echo(anchor('admin/custom/league_manager/splitSQLFile/'.urlencode($file).'/1','Delete'));
 		if (!in_array($fileArr[0].".mysql.sql",$splitParents)) {
 			array_push($splitParents,$fileArr[0].".mysql.sql");
 		} // END if
 	  } else { 
-	  	echo('/<a href="#" id="'.$file.'" rel="split">Split</a>');
+		echo(anchor('admin/custom/league_manager/splitSQLFile/'.urlencode($file),'Split'));
 	  } // END if
 	  ?>
       </td>
@@ -125,20 +125,7 @@
 
 <script type="text/javascript">
 
-    var ajaxWait = '<img src="<?php echo Template::theme_url('images/icons/ajax-loader.gif'); ?>" width="28" height="28" border="0" align="absmiddle" />&nbsp;Operation in progress. Please wait...';
-    var responseError = '<img src="<?php echo Template::theme_url('images/icons/icon_fail.png'); ?>" width="24" height="24" border="0" align="absmiddle" />&nbsp;';
-    var fader = null;
-    var refreshAfterUpdate = false;
-
     head.ready(function(){
-        $('a[rel=split]').click(function () {
-            refreshAfterUpdate = true;
-            runAjax("<?php echo(site_url().'admin/custom/league_manager/splitSQLFile/'); ?>"+this.id); return false;
-        });
-        $('a[rel=delete]').click(function () {
-            refreshAfterUpdate = true;
-            runAjax("<?php echo(site_url().'admin/custom/league_manager/splitSQLFile/');?>"+this.id+'/1'); return false;
-        });
         checkRequired();
         <?php
         if (isset($splitParents) && sizeof($splitParents) > 0) { ?>
@@ -147,39 +134,6 @@
         }
         ?>
     });
-    function runAjax (url) {
-            //clearTimeout(fader);
-            $('div#activeStatus').removeClass('error');
-            $('div#activeStatus').removeClass('success');
-            $('div#activeStatus').html(ajaxWait);
-            $('div#activeStatusBox').fadeIn("slow");
-            $.getJSON(url, function(data){
-                error = false;
-                if (data.status.indexOf(":") != -1) {
-                    var status = data.status.split(":");
-                    $('div#activeStatus').addClass(status[0].toLowerCase());
-                    var response = status[1];
-                    if (status[0].toLowerCase() == "error") {
-                        response = responseError + response;
-                        error = true;
-                    }
-                    $('div#activeStatus').html(response);
-                } else {
-                    $('div#activeStatus').addClass('success');
-                    $('div#activeStatus').html('Operation Completed Successfully');
-                }
-                if (!error && refreshAfterUpdate) {
-                    setTimeout('refreshPage()',3000);
-                }
-            });
-        }
-
-        function fadeStatus(type) {
-            $('div#'+type+'StatusBox').fadeOut("normal",function() { clearTimeout(fader); $('div#'+type+'StatusBox').hide(); });
-        }
-        function refreshPage() {
-            document.location.href = '<?php echo($_SERVER['PHP_SELF']); ?>';
-        }
 
     <?php if (isset($required_tables) && sizeof($required_tables) > 0) { ?>
     var required = new Array(<?php echo(sizeof($required_tables)); ?>);

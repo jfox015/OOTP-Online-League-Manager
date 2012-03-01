@@ -1,34 +1,9 @@
-		<!-- Header -->
-		<div class="head text-left">
-			<h1><?php
-                if (isset($league_name) && !empty($league_name)) {
-                    echo $league_name;
-                } else if (isset($settings['site.title']) && !empty($settings['site.title'])) {
-                    echo $settings['site.title'];
-                } else {
-                    echo config_item('site.title');
-                } ?></h1>
-            <div class="title"><?php echo config_item('site.title'); ?></div>
-		</div>
 		
-		<div class="nav">
-				<?php 
-				$attributes['id'] = 'nav';
-				$attributes['class'] = 'dropdown dropdown-horizontal';
-
-				echo show_navigation('hn', FALSE, $attributes); ?>
-		</div>
-			
 		<div class="aside">
 			<?php
-				// acessing our userdata cookie
-				$cookie = unserialize($this->input->cookie($this->config->item('sess_cookie_name')));
-				$logged_in = isset ($cookie['logged_in']);
-				unset ($cookie);
-
 			if ($logged_in) : ?>
 			<div class="profile">
-                <h3>Welcome Jeff Fox (jfox015)</h3>
+                <h3>Welcome <?php echo $username.$user_name ?></h3>
 				<ul>
 					<li><a href="<?php echo site_url('admin');?>">Admin Dashboard</a></li>
 					<br />

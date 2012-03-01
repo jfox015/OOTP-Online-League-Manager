@@ -215,48 +215,50 @@ class Custom extends Admin_Controller {
         $files_loaded = array();
 		$required_tables = $this->sql_model->get_required_tables();
 		
-        if ($this->input->post('submit')) 
+        $file = $this->uri->segment(5);
+		if ($this->filename == null && isset($file) && !empty($file))
+		{
+			$this->filename = $file;
+			//print ("Filename: ".$this->filename."<br />");
+		}
+        $latest_load = $this->sql_model->get_latest_load_time();
+        $fileList = false;
+        if ($this->input->post('submit'))
 		{
 
-			$file = $this->uri->segment(5);
-            if ($this->filename == null && isset($file) && !empty($file)) {
-                $this->filename = $file;
-                print ("Filename: ".$this->filename."<br />");
-            }
-			$latest_load = $this->sql_model->get_latest_load_time();
-			
-			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0) 
+			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0)
 			{
 				$fileList = $_POST['loadList'];
-			} 
-			else if (isset($this->filename) && !empty($this->filename)) 
+			}
+        }
+			else if (isset($this->filename) && !empty($this->filename))
 			{
 				$fileList = array($this->filename);
-			} 
-			else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) 
+			}
+			else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1)
 			{
 				$fileList = $required_tables;
 			}
-			else 
+			else
 			{
 				$fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
 			}
-			
+        if ($fileList !== false) {
 			$mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
-			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0)) 
+			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0))
 			{
-				if (is_array($mess)) 
+				if (is_array($mess))
 				{
 					$status = "An error occured processing the SQL files.";
-				} 
-				else 
+				}
+				else
 				{
 					$status = "error: ".$mess;
 				}
-			} 
-			else 
+			}
+			else
 			{
-				if (is_array($mess)) 
+				if (is_array($mess))
 				{
 					$files_loaded = $mess;
 				}
@@ -346,24 +348,29 @@ class Custom extends Admin_Controller {
 	 */
 	function splitSQLFile() {
 		if (!function_exists('splitFiles')) {
-			$this->load->helper('sql_loader/sql');
+			$this->load->helper('sql');
 		}
 		$mess =  "No filename provided.";
-		$filename = $this->uri->segement(5);
-        $delete = $this->uri->segement(6);
+		$filename = $this->uri->segment(5);
+        $delete = $this->uri->segment(6);
+		$delete = ((isset($delete) && $delete == 1) ? true : false);
+		
         if (isset($filename) && !empty($filename)) {
 			$settings = $this->settings_lib->find_all_by('module','ootp');
-			$mess = splitFiles($settings['ootp.sql_path'],$filename, $settings['ootp.max_sql_size']);
+			$mess = splitFiles($settings['ootp.sql_path'],$filename, $delete, $settings['ootp.max_sql_size']);
 		}
 		if ($mess != "OK") {
-			$status = "error:".$mess;
+			Template::set_message("error:".$mess,'error');
+			//$status = "error:".$mess;
 		} else {
-			$status = "OK";
+            Template::set_message("File successfully split",'success');
+            //$status = "OK";
 		}
-		$code = 200;
+        $this->load_sql();
+		/*$code = 200;
 		$result = '{"result":"'.$mess.'","code":"'.$code.'","status":"'.$status.'"}';
 		$this->output->set_header('Content-type: application/json');
-		$this->output->set_output($result);
+		$this->output->set_output($result);*/
 	}
 	
 	//--------------------------------------------------------------------

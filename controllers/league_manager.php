@@ -20,10 +20,23 @@ class League_Manager extends Front_Controller {
 	
 	public function index()
 	{
-		$this->load->helper('navigation/navigation');
+		$settings = $this->settings_lib->find_all();
 
-        $settings = $this->settings_lib->find_all();
-
+		// acessing our userdata cookie
+		$cookie = unserialize($this->input->cookie($this->config->item('sess_cookie_name')));
+		$logged_in = isset ($cookie['logged_in']);
+		unset ($cookie);
+		
+		$username = ''; // SITE username
+		$user_name = ''; // FULL NAME
+		if ($logged_in && isset($this->auth)) {
+			$username = $this->auth->username();
+			$user_name = "(".$this->auth->user_name().")";
+		}
+		Template::set('logged_in', $logged_in);
+		Template::set('username', $username);
+		Template::set('user_name', $user_name);
+		
         if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
             if ((isset($settings['ootp.use_ootp_details']) && $settings['ootp.use_ootp_details'] == 1)) {
                 $league_name = $settings['ootp.league_name'];
@@ -33,8 +46,9 @@ class League_Manager extends Front_Controller {
             }
             Template::set('league_name', $league_name);
         }
-        Template::set('home_news_block',modules::run('news/get_articles',0,2));
-		Template::set('home_news_list',$this->load->view('news/news_list',modules::run('news/get_article_list',2,5), true));
+        Template::set('home_news_block',modules::run('news/get_articles',2));
+        $data['articles'] = modules::run('news/get_article_list',5,2);
+		Template::set('home_news_list',$this->load->view('news/news_list',$data, true));
 		Template::set('sim_details',$this->load->view('league_manager/sim_details',$this->sim_details(), true));
 		Template::set('tweets',$this->load->view('league_manager/tweets',$this->get_tweets(), true));
 		Template::set('settings', $settings);

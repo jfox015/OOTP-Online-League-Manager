@@ -131,7 +131,7 @@ class Migration_Load_tables_permissions extends Migration {
 			 ('ootp.tweet_count', 'ootp', '3'),
 			 ('ootp.sql_path', 'ootp', ''),
 			 ('ootp.auto_split', 'ootp', '-1'),
-			 ('ootp.max_sql_size', 'ootp', ''),
+			 ('ootp.max_sql_size', 'ootp', '10'),
 			 ('ootp.limit_load', 'ootp', '1'),
 			 ('ootp.sims_per_week', 'ootp', ''),
 			 ('ootp.auto_sim_length', 'ootp', '1'),
