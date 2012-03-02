@@ -29,7 +29,12 @@ class League_Manager extends Front_Controller {
 		
 		$username = ''; // SITE username
 		$user_name = ''; // FULL NAME
-		if ($logged_in && isset($this->auth)) {
+		if (!isset($this->auth)) {
+			// Auth setup
+			$this->load->model('users/User_model', 'user_model');
+			$this->load->library('users/auth');
+		}
+		if ($logged_in) {
 			$username = $this->auth->username();
 			$user_name = "(".$this->auth->user_name().")";
 		}
@@ -37,18 +42,8 @@ class League_Manager extends Front_Controller {
 		Template::set('username', $username);
 		Template::set('user_name', $user_name);
 		
-        if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
-            if ((isset($settings['ootp.use_ootp_details']) && $settings['ootp.use_ootp_details'] == 1)) {
-                $league_name = $settings['ootp.league_name'];
-            } else {
-                $league = $this->leagues_model->find($settings['ootp.league_id']);
-                $league_name = $league->name;
-            }
-            Template::set('league_name', $league_name);
-        }
         Template::set('home_news_block',modules::run('news/get_articles',2));
-        $data['articles'] = modules::run('news/get_article_list',5,2);
-		Template::set('home_news_list',$this->load->view('news/news_list',$data, true));
+		Template::set('home_news_list',$this->load->view('news/news_list',($data['articles'] = modules::run('news/get_article_list',5,2)), true));
 		Template::set('sim_details',$this->load->view('league_manager/sim_details',$this->sim_details(), true));
 		Template::set('tweets',$this->load->view('league_manager/tweets',$this->get_tweets(), true));
 		Template::set('settings', $settings);
@@ -62,6 +57,8 @@ class League_Manager extends Front_Controller {
         Template::set_view('league_manager/index');
 		Template::render();
 	}
+	
+	//--------------------------------------------------------------------
 	
 	public function get_tweets() {
 		
@@ -172,4 +169,4 @@ class League_Manager extends Front_Controller {
 	}
 }
 
-// End User League_Manager class
+// End League_Manager controller class

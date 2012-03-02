@@ -3,7 +3,7 @@
 			<?php
 			if ($logged_in) : ?>
 			<div class="profile">
-                <h3>Welcome <?php echo $username.$user_name ?></h3>
+                <h3>Welcome <?php echo (isset($username) ? $username : '').(isset($user_name) ? $user_name : '') ?></h3>
 				<ul>
 					<li><a href="<?php echo site_url('admin');?>">Admin Dashboard</a></li>
 					<br />

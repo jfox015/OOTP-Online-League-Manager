@@ -21,15 +21,14 @@
 
     <form action='<?php echo(site_url($this->uri->uri_string())); ?>' method='post' name="file_list" id="file_list">
    	<div id="activeStatusBox"><div id="activeStatus"></div></div>
-    <div class='textbox'>
     <table cellpadding=2 cellspacing=0 border=0 style="width:95%">
      <thead>
-     <tr class='title'>
-     	<td width="20%" class='hsc_l'>Filename</td>
-        <td width="20%" class='hsc'>Timestamp</td>
-        <td width="20%" class='hsc'>Last Updated</td>
-        <td width="20%" class='hsc'>Size</td>
-        <td width="20%" class='hsc' colspan=2>Actions</td>
+     <tr'>
+     	<th width="25%">Filename</th>
+        <th width="20%">Timestamp</th>
+        <th width="20%">Last Updated</th>
+        <th width="15%">Size</th>
+        <th width="20%" colspan=2>Actions</th>
       </tr>
       </thead>
    <?php 
@@ -43,9 +42,9 @@
       $fileTime=filemtime($settings['ootp.sql_path']."/".$file);
       $tblName=$ex[0];
       if (($isSplit==0)&&(substr_count($file,".mysql_")>0)) {$isSplit=1;}
-      $cls='s'.($cnt%2+1); ?>
-      <tr class='<?php echo($cls); ?>'>
-      <td class='<?php echo($cls); ?>_l'><?php 
+      //$cls='s'.($cnt%2+1); ?>
+      <tr>
+      <td><?php
 	  $fileArr = explode(".",$file);
 	  $hilite = -1;
 	  if (isset($required_tables) && is_array($required_tables) && sizeof($required_tables) > 0) {
@@ -60,7 +59,7 @@
 	  if ($hilite == 1) { echo('<span class="hilight">'); } else if ($hilite == 2) { echo('<span class="hilight2">'); }// END if
 	  echo($file); 
 	  if ($hilite == 1 || $hilite == 2) { echo('</span>'); } // END if
-      if (isset($files_loaded[$settings['ootp.sql_path']."/".$file])) { echo("- <b>LOADED</b>"); } // END if
+      if (isset($files_loaded[$settings['ootp.sql_path'].PATH_SEPERATOR.$file])) { echo("- <b>LOADED</b>"); } // END if
       $fsize=filesize($settings['ootp.sql_path']."/".$file);
 	  ?>
       </td>
@@ -114,7 +113,6 @@
      href="#" oncLick="setCheckBoxState(false); return false;">Select None</a><br />
      <span class="button_bar"><input type='submit' name='submit' value='Load Checked' /></span></td></tr></tfoot>
     </table>
-   </div>
    </form>
    <?php } else {
     echo("No files found.");

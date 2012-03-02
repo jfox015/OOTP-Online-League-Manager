@@ -26,49 +26,44 @@ function getSQLFileList($sqlLoadPath, $loadTime = false, $timeout = 120, $logPat
 }
 
 function loadSQLFiles($sqlLoadPath, $loadTime, $fileList = false, $timeout = 120, $logPath = false, $max_file_size = 500000000) {
-	// Load SQL Files #####
+
 	$errors = "";
-	include($sqlLoadPath."/ootpfl_db.php");
+	
 	$loadCnt=sizeof($fileList);
 	$filesLoaded = array();
+	
 	if ($logPath === false) $logPath = $sqlLoadPath;
 	if (file_exists($logPath."/sqlloadlog.txt")) {
 		unlink($logPath."/sqlloadlog.txt");
 	}
+	
 	if ($dir = opendir($sqlLoadPath)) {
 		$now=time();    
-		//echo("File load count = ".$loadCnt."<br />");
 		if ($loadCnt>0) {
 			$ci =& get_instance();
+            $ci->load->dbforge();
 			asort($fileList);
+			$log_text = '';
+			
 			foreach ($fileList as $key => $file) {
 				$ex = explode(".",$file);
 				set_time_limit($timeout);
 				$fnow=time();
 				
-				$f = fopen($logPath."/sqlloadlog.txt","a");
-				fwrite($f,"LOADING: ".$file." ... ");
-				fclose($f);
-				//echo("LOADING: ".$file);
-				/*$pFile=fopen("./sqlprocess.txt","w");
-				
-				fclose($pFile);*/
+				$log_text .= "LOADING: ".$file." ... ";
+
 				$tableName=$ex[0];
-				$query="CREATE TABLE IF NOT EXISTS `$tableName';";
-				mysql_query($query,$db);
-				
 				## Import data
-				$file=$sqlLoadPath."/".$file;
-				//echo("File to load = ".$file."<br />");
+				$file=$sqlLoadPath.PATH_SEPERATOR.$file;
 				$fr = fopen($file,"r");
-				//echo("File resource = ".$fr."<br />");
 				$errCnt=0;
 				if (isset($errors)) { 
 					unset($errors);
 					unset($queries);
 				}
 				while (!feof($fr)) {
-					$query=fgets($fr);
+                    $err='';
+                    $query=fgets($fr);
 					if ($query=="") {continue;}
 					$query=str_replace(", , );",",1,1);",$query);
 					//$query=preg_replace("/([\xC2\xC3])([\x80-\xBF])/e","chr(ord('\\1')<<6&0xC0|ord('\\2')&0x3F)",$query);
@@ -77,28 +72,34 @@ function loadSQLFiles($sqlLoadPath, $loadTime, $fileList = false, $timeout = 120
 					if (($tableName=='players_career_batting_stats')||($tableName=='players_career_pitching_stats')) {
 						$query=str_replace("insert into","insert ignore into",$query);
 					}
-					$result=mysql_query($query,$db);
-					$err=mysql_error($db);
+					$result=$ci->db->query($query);
+					if (!$result) {
+						$err="DB Error ".$ci->db->_error_number(). ": ".$ci->db->_error_message();
+						break;
+					}
 					if (($err!="") && ($query!="")) {
-					$errors[$errCnt]=$err;
-					$queries[$errCnt]=$query;
-					$errCnt++;
-					if (!isset($_SESSION['sqlloaderr'])) {$_SESSION['sqlloaderr']=1;}}
+						$errors[$errCnt]=$err;
+						$queries[$errCnt]=$query;
+						$errCnt++;
+						if (!isset($_SESSION['sqlloaderr'])) {$_SESSION['sqlloaderr']=1;}
+					}
 					if ((substr_count($query,"CREATE ")>0)&&(($tableName=='players_career_batting_stats')||($tableName=='players_career_pitching_stats'))) {
 						$query="ALTER TABLE $tableName ADD PRIMARY KEY (player_id,year,team_id,league_id,split_id);";
-						$result=mysql_query($query,$db);
+						$result=$ci->db->query($query);
 					}
 				}
 				fclose($fr);
-				$f = fopen($logPath."/sqlloadlog.txt","a");
-				$fend=time();
-				 if ($errCnt==0) {
-					fwrite($f,"SUCCESSFUL! Processing took ".($fend-$fnow)." seconds\n");
-					$filesLoaded[$file]=1;
-				}
-				fclose($f);
+                $fend=time();
+                if ($errCnt==0) {
+                    $log_text .= "SUCCESSFUL! Processing took ".($fend-$fnow)." seconds\n";
+                    $filesLoaded[$file]=1;
+                }
 				if ($errCnt>0) break;
 			}
+            if (!function_exists('write_file')) {
+                $ci->load->helper('file');
+            }
+			write_file($logPath.PATH_SEPERATOR."sqlloadlog.txt", $log_text);
  		}
      	$end=time();
     } else {
@@ -110,9 +111,9 @@ function loadSQLFiles($sqlLoadPath, $loadTime, $fileList = false, $timeout = 120
 function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_size = false, $timeout = 120 ) {
 	
 	$errors = '';
-	//echo("File name = ".$sqlLoadPath."/".$filename."<br />");
 	if ($filename!="ALL") {
-		$file=$sqlLoadPath."/".$filename;
+		
+		$file=$sqlLoadPath.PATH_SEPERATOR.$filename;
 	
 		if (file_exists($file) && $delete == 1) {
 			unlink($file);
@@ -123,7 +124,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 				while (false !== ($file = readdir($dir))) {
 					$ex = explode(".",$file);
 					$last = count($ex)-1;
-					$filename=$sqlLoadPath."/".$file;
+					$filename=$sqlLoadPath.PATH_SEPERATOR.$file;
 					$isSplit=substr_count($file,".mysql_");
 					
 					#echo "$file :: $filename :: $isSplit<br/>\n";
@@ -167,7 +168,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 					$newFileNm.=".".$e[$j];
 					if ($j==($last-1)) {$newFileNm.="_".$fcnt;} // END if
 				} // END for
-				$newFile=$sqlLoadPath."/".$newFileNm;
+				$newFile=$sqlLoadPath.PATH_SEPERATOR.$newFileNm;
 				$fcnt++;
 		
 				#echo $newFile."<br/>\n";
@@ -181,7 +182,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 			while (false !== ($file = readdir($dir))) {
 				$ex = explode(".",$file);
 				$last = count($ex)-1;
-				$filename=$sqlLoadPath."/".$file;
+				$filename=$sqlLoadPath.PATH_SEPERATOR.$file;
 				$fileTime=filemtime($filename);
 				$fileSize=filesize($filename);
 				
@@ -221,7 +222,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 							$newFileNm.=".".$e[$j];
 							if ($j==($last-1)) {$newFileNm.="_".$fcnt;} // END if
 						} // END for
-						$newFile=$sqlLoadPath."/".$newFileNm;
+						$newFile=$sqlLoadPath.PATH_SEPERATOR.$newFileNm;
 						$fcnt++;
 		
 						#echo $newFile."<br/>\n";

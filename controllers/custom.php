@@ -71,8 +71,7 @@ class Custom extends Admin_Controller {
             Template::set('last_file_time', date('M d, Y h:i:s A',$latestTime));
         }
         Template::set('tables_loaded', sizeof($tables));
-         Assets::add_css(array(Template::theme_url('css/bootstrap-responsive.min.css'),
-			Template::theme_url('css/bootstrap.min.css')));
+        Assets::add_css(Template::theme_url('css/bootstrap-responsive.min.css'));
         Assets::add_js(Template::theme_url('js/bootstrap.min.js'));
 		Template::set('toolbar_title', lang('dbrd_settings_title'));
         Template::set_view('league_manager/custom/index');
@@ -85,6 +84,7 @@ class Custom extends Admin_Controller {
 	{
 
         $settings = $this->settings_lib->find_all_by('module','ootp');
+		
 		if (!isset($this->user_model)) {
 			$this->load->model('user_model');
 		}
@@ -93,6 +93,9 @@ class Custom extends Admin_Controller {
         }
         if (!isset($this->teams_model)) {
             $this->load->model('teams_model');
+        }
+		if (!isset($this->human_managers_model)) {
+            $this->load->model('human_managers_model');
         }
 		$league = $this->leagues_model->find($settings['ootp.league_id']);
 		if (isset($league) && $league->league_id != NULL) {
@@ -182,6 +185,7 @@ class Custom extends Admin_Controller {
         Template::set_view('league_manager/custom/sim_details');
         Template::render();
 	}
+
 	//--------------------------------------------------------------------
 
     function load_sql_file($filename = '') 
@@ -194,7 +198,10 @@ class Custom extends Admin_Controller {
         }
 
     }
-	/**
+
+    //--------------------------------------------------------------------
+
+    /**
 	 *	LOAD SQL DATA TABLE(S)
 	 */
 	function load_sql() 
@@ -225,44 +232,47 @@ class Custom extends Admin_Controller {
         $fileList = false;
         if ($this->input->post('submit'))
 		{
-
 			if (isset($_POST['loadList']) && sizeof($_POST['loadList']) > 0)
 			{
 				$fileList = $_POST['loadList'];
 			}
+            else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1)
+            {
+                $fileList = $required_tables;
+            }
+            else
+            {
+                $fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
+            }
         }
-			else if (isset($this->filename) && !empty($this->filename))
-			{
-				$fileList = array($this->filename);
-			}
-			else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1)
-			{
-				$fileList = $required_tables;
-			}
-			else
-			{
-				$fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
-			}
-        if ($fileList !== false) {
+        else if (isset($this->filename) && !empty($this->filename))
+        {
+            $fileList = array($this->filename);
+        }
+        if ($fileList !== false && is_array($fileList) && sizeof($fileList) > 0) {
 			$mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
 			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0))
 			{
 				if (is_array($mess))
 				{
-					$status = "An error occured processing the SQL files.";
+					$status = "Errors occured processing the SQL files:<br />";
+                    foreach ($mess as $error) {
+                        $status .= $mess."<br />";
+                    }
 				}
 				else
 				{
 					$status = "error: ".$mess;
 				}
+                Template::set_message('$mess', 'error');
 			}
 			else
 			{
 				if (is_array($mess))
-				{
-					$files_loaded = $mess;
+				{;
+                    $files_loaded = $mess;
 				}
-				Template::set_message('All tables were updated sucessfully.', 'success');
+				Template::set_message("All tables were updated sucessfully.", 'success');
 				$this->sql_model->set_tables_loaded($files_loaded);
 			}
 		}
