@@ -180,7 +180,8 @@ class Custom extends Admin_Controller {
         if (!isset($this->leagues_events_model)) {
 			$this->load->model('leagues_events_model');
 		}
-		Template::set('events',$this->leagues_events_model->get_events($league_id,$league_date,10));
+		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
+        Template::set('events',$this->leagues_events_model->get_events($league_id,$league_date,10));
         Template::set('toolbar_title', lang('sim_setting_title'));
         Template::set_view('league_manager/custom/sim_details');
         Template::render();
