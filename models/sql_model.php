@@ -47,7 +47,7 @@ class SQL_model extends BF_Model
 	 *	@param	$ootp_version	int		Specify a specific OOTP version to target
 	 *	@return	array
 	 */
-	public function get_tables($ootp_version = OOTP_CURRENT_VERSION) 
+	public function get_tables($ootp_version = 12)
 	{
 		$this->db->select('id, name');
 		$this->db->where('version_min <= '.$ootp_version);

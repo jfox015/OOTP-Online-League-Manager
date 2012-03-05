@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Migration_Load_tables_permissions extends Migration {
+class Migration_Install_league_manager extends Migration {
 	
 	public function up() 
 	{
@@ -26,7 +26,18 @@ class Migration_Load_tables_permissions extends Migration {
 		
 		// change the roles which don't have any specific login_destination set
 		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-		
+
+        $data = array(
+			'name'        => 'Site.Custom.View' ,
+			'description' => 'Manage SQL Loading and Settings'
+		);
+		$this->db->insert("{$prefix}permissions", $data);
+
+		$permission_id = $this->db->insert_id();
+
+		// change the roles which don't have any specific login_destination set
+		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
+
 		// SQL Table List
         $this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
         $this->dbforge->add_field('`name` varchar(255) NOT NULL');
@@ -38,7 +49,7 @@ class Migration_Load_tables_permissions extends Migration {
         $this->dbforge->add_key('id', true);
         $this->dbforge->create_table('sql_tables');
 
-        $this->db->query("INSERT INTO {$prefix}sql_tables VALUES(1, 'cities',0,0,0,7,100)");
+        $this->db->query("INSERT INTO {$prefix}sql_tables VALUES(1, 'cities',1,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(2, 'coaches',0,0,0,7,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(3, 'continents',0,0,0,12,100)");
 		$this->db->query("INSERT INTO {$prefix}sql_tables VALUES(4, 'divisions',0,0,0,7,100)");
@@ -171,7 +182,16 @@ class Migration_Load_tables_permissions extends Migration {
 		}
 		//delete the permission
 		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOTPOL.SQL.Manage')");
-		
+
+        $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.Custom.View'");
+		foreach ($query->result_array() as $row)
+		{
+			$permission_id = $row['permission_id'];
+			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+		}
+		//delete the permission
+		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.Custom.View')");
+
 		$this->dbforge->drop_table('sql_tables');
         $this->dbforge->drop_table('teams_owners');
 
