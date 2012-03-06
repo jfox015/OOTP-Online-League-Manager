@@ -43,7 +43,8 @@ class League_Manager extends Front_Controller {
 		Template::set('user_name', $user_name);
 		
         Template::set('home_news_block',modules::run('news/get_articles',2));
-		Template::set('home_news_list',$this->load->view('news/news_list',($data['articles'] = modules::run('news/get_article_list',5,2)), true));
+		$data['articles'] = modules::run('news/get_article_list',5,2);
+		Template::set('home_news_list',$this->load->view('news/news_list',$data, true));
 		Template::set('sim_details',$this->load->view('league_manager/sim_details',$this->sim_details(), true));
 		Template::set('tweets',$this->load->view('league_manager/tweets',$this->get_tweets(), true));
 		Template::set('settings', $settings);
@@ -113,12 +114,15 @@ class League_Manager extends Front_Controller {
 		}
 		$league = $this->leagues_model->find_by('league_id',$settings['ootp.league_id']);
 		
-		$league_file_date = -1;
-		$league_date = -1;
-		$next_sim = -1;
+		$league_file_date = false;
+		$league_date = false;
+		$next_sim = false;
 		$league_event = '';
 		
-		if (isset($league) && $league !== false && $settings['ootp.sims_details'] == -1) {
+		if (isset($league) && $league !== false && 
+		(!isset($settings['ootp.sims_details']) || 
+		(isset($settings['ootp.sims_details']) && empty($settings['ootp.sims_details'])) || 
+		(isset($settings['ootp.sims_details']) && $settings['ootp.sims_details'] == -1))) {
 			// GET League File 
 			if (isset($settings['ootp.league_file_path']) && 
 				!empty($settings['ootp.league_file_path']) && 
@@ -162,9 +166,9 @@ class League_Manager extends Front_Controller {
 			$league_event = $settings['ootp.league_event'];
 		}
 		
-		return array('league_file_date'=>(($league_file_date != -1) ? date('m/d',$league_file_date) : lang('sim_date_na')),
-		'next_sim'=>(($next_sim != -1) ? date('m/d',$next_sim) : lang('sim_date_na'))
-		,'league_date'=>(($league_date != -1) ? date('m/d/Y',$league_date) : lang('sim_date_na')),
+		return array('league_file_date'=>(($league_file_date !== false) ? date('m/d',$league_file_date) : lang('sim_date_na')),
+		'next_sim'=>(($next_sim !== false) ? date('m/d',$next_sim) : lang('sim_date_na'))
+		,'league_date'=>(($league_date !== false) ? date('m/d/Y',$league_date) : lang('sim_date_na')),
         'league_event'=>$league_event);
 	}
 }
