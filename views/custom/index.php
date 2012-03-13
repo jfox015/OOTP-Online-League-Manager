@@ -1,7 +1,6 @@
 <div class="container-fluid">
     <div class="row-fluid">
-
-        <div class="span9">
+        <div class="span8 offset1">
             <?php 
             if ($settings_incomplete) { ?>
                 <div class="row-fluid">
@@ -66,26 +65,15 @@
 			  marked as required on the <?php echo anchor('admin/settings/league_manager','required table editor'); ?> page.</p>
             </div><!--/span-->
           </div><!--/row-->
-		  <?php } else { ?>
+		  <?php } else { 
+			// ADD FUNCTIONALITY WHEN TABLES EXIST AND ARE LOADED
 		  
-			  <?php if (!isset($owner_count) || $owner_count == 0) { ?>
-			  <!--div class="row-fluid">
-				<div class="span1">
-				  <img src="<?php echo Template::theme_url('images/icons/users.png'); ?>" width="24" height="24" border="0" />
-				 </div>
-				 <div class="span8">
-				  <b><?php echo anchor(SITE_AREA.'/custom/league_manager/import_team_owners','Import Team Owners'); ?></b>
-				  <p>There are no users assigned as owners to any teams. Run this tool to import team owners from your OOTP online league 
-				  into the OOLM and create users. The tool will also atrempt to map existing users to OOTP human managers if possible.</p>
-				</div><!--/span-->
-			  <!--/div--><!--/row-->
-			  <?php } ?>
-		  
+		  ?>
 		  <?php }
             } ?>
         </div><!--/span-->
 
-        <div class="span3">
+        <div class="span3 offset1">
             <h2>Database Profile</h2>
             <p>
             <?php if ($tables_loaded > 0) { ?>

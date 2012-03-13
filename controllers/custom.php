@@ -71,9 +71,7 @@ class Custom extends Admin_Controller {
             Template::set('last_file_time', date('M d, Y h:i:s A',$latestTime));
         }
         Template::set('tables_loaded', sizeof($tables));
-        Assets::add_css(Template::theme_url('css/bootstrap-responsive.min.css'));
-        Assets::add_js(Template::theme_url('js/bootstrap.min.js'));
-		Template::set('toolbar_title', lang('dbrd_settings_title'));
+        Template::set('toolbar_title', lang('lm_settings_title'));
         Template::set_view('league_manager/custom/index');
         Template::render();
 	}
@@ -116,12 +114,12 @@ class Custom extends Admin_Controller {
 	
 		if ($this->input->post('submit')) {
 		
-			$this->form_validation->set_rules('auto_sim_length', lang('dbrd_settings_autocalc'), 'number|xss_clean');
-			$this->form_validation->set_rules('calc_length', lang('dbrd_settings_calclen'), 'number|xss_clean');
+			$this->form_validation->set_rules('auto_sim_length', lang('sim_ettings_autocalc'), 'number|xss_clean');
+			$this->form_validation->set_rules('calc_length', lang('sim_settings_calclen'), 'number|xss_clean');
 			$this->form_validation->set_rules('sim_length', lang('sim_setting_simlen'), 'number|xss_clean');
 			$this->form_validation->set_rules('sims_per_week', lang('sim_setting_perweek'), 'required|number|xss_clean');
 			$this->form_validation->set_rules('sims_occur_on', lang('sim_setting_occuron'), 'required|xss_clean');
-			$this->form_validation->set_rules('sim_details', lang('sim_setting_details'), 'number|xss_clean');
+			$this->form_validation->set_rules('sim_details', lang('lm_settings_useootp'), 'number|xss_clean');
 			$this->form_validation->set_rules('league_file_date', lang('sim_setting_league_file_date'), 'trim|xss_clean');
 			$this->form_validation->set_rules('next_sim', lang('sim_setting_next_sim'), 'trim|xss_clean');
 			$this->form_validation->set_rules('league_date', lang('sim_setting_league_date'), 'trim|xss_clean');
@@ -130,7 +128,7 @@ class Custom extends Admin_Controller {
 			if ($this->form_validation->run() !== FALSE) {
 
 				$this->load->helper('date');
-				$dates = textDateToInt(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
+				$dates = text_date_to_int(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
 				$data = array(
                     array('name' => 'ootp.auto_sim_length', 'value' => ($this->input->post('auto_sim_length')) ? 1 : -1),
                     array('name' => 'ootp.calc_length', 'value' => $this->input->post('calc_length')),
@@ -280,6 +278,7 @@ class Custom extends Admin_Controller {
 
 		$file_list = getSQLFileList($settings['ootp.sql_path']);
 
+		Assets::add_module_css('league_manager','style.css');
 		Template::set('file_list', $file_list);
 		Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
 		Template::set('load_times', $this->sql_model->get_tables_loaded());
@@ -290,6 +289,11 @@ class Custom extends Admin_Controller {
         Template::render();
 	}
 
+    //--------------------------------------------------------------------
+
+    /**
+	 *	LOAD ALL SQL DATA
+	 */
 	public function load_all_sql() {
 
         $settings = $this->settings_lib->find_all_by('module','ootp');
@@ -323,7 +327,7 @@ class Custom extends Admin_Controller {
 	//--------------------------------------------------------------------
 	
 	/**
-	 *	SPLIT SQL DATA FILE.
+	 *	Required Table List.
 	 */
 	public function table_list() {
 		
@@ -372,19 +376,12 @@ class Custom extends Admin_Controller {
 		}
 		if ($mess != "OK") {
 			Template::set_message("error:".$mess,'error');
-			//$status = "error:".$mess;
 		} else {
             Template::set_message("File successfully split",'success');
-            //$status = "OK";
 		}
         $this->load_sql();
-		/*$code = 200;
-		$result = '{"result":"'.$mess.'","code":"'.$code.'","status":"'.$status.'"}';
-		$this->output->set_header('Content-type: application/json');
-		$this->output->set_output($result);*/
 	}
 	
 	//--------------------------------------------------------------------
-	// !PRIVATE METHODS
-	//--------------------------------------------------------------------
+	
 }

@@ -1,65 +1,67 @@
-<?php if (validation_errors()) : ?>
-<div class="notification error">
-	<?php echo validation_errors(); ?>
+<div class="row-fluid">
+	<div class="span12">	
+		<p class="intro"><?php echo lang('bf_required_note'); ?></p>
+		<div class="row-fluid">
+			<div class="span6"><b>Select Tables</b></div>
+			<div class="span6 text-right">Tables Available in OOTP: <b><?php echo($ootp_version); ?></b></div>	
+		</div>
+	</div>
 </div>
-<?php endif; ?>
 
-<h1><?php echo lang('sql_required_tables_edit'); ?></h1>
+<?php echo form_open($this->uri->uri_string(), 'name="file_list" id="file_list"'); ?>
 
-<p class="small"><?php echo lang('bf_required_note'); ?></p>
-
-<?php echo form_open($this->uri->uri_string(), 'class="constrained ajax-form" name="file_list" id="file_list"'); ?>
-
-<div class="inst_left"><b>Select Tables</b></div>
-<div class="inst_right">Tables Available in OOTP: <b><?php echo($ootp_version); ?></b></div>
-
-<div>
-	<table cellpadding=2 cellspacing=0 border=0 style="width:98%;">
+<div class="admin-box">
+	<h3><?php echo lang('sql_required_tables_edit') ?></h3>
+	
+	<?php if (isset($file_list) && sizeof($file_list) > 0) { ?>
+	
+	<table class="table table-striped">
 		<thead>
-		<tr class='title'>
-			<td width="10%"></td>
-			<td width="90%">Table Name</td>
-		</tr>
+			<tr>
+				<th style="width: 10%"></th>
+				<th style="width: 90%"><?php echo lang('lm_required_tblname'); ?></th>
+			</tr>
 		</thead>
 		<tbody>
 		<?php
         if (isset($table_list) && is_array($table_list) && count($table_list)) :
-		$loadCnt = sizeof($table_list);
-		$cnt=0;
-		if ($loadCnt>0) {asort($table_list);}
-		foreach ($table_list as $table){
-		?>
-		<tr class='row_<?php echo(((($cnt%2) == 0) ? "even" : "odd")); ?>'>
-			<td class='<?php echo($cls); ?>'><?php 
-			$checked = false;
-			if (isset($required_tables) && is_array($required_tables) && count($required_tables)>0) {
-				foreach ($required_tables as $table_name) {
-					if ($table_name->name == $table->name) {
-						$checked = true;
-						break;
-					} // END if
-				} // END foreach
-			} // END if
-			echo form_checkbox("required_tables[]",$table->name,$checked);
+			asort($table_list);
+			foreach ($table_list as $table){
 			?>
-			</td>
-			<td><?php echo($table->name); ?></td>
-		</tr>
-			<?php 
-			$cnt++;
-		}
+			<tr>
+				<td>
+				<?php 
+				$checked = false;
+				if (isset($required_tables) && is_array($required_tables) && count($required_tables)>0) {
+					foreach ($required_tables as $table_name) {
+						if ($table_name->name == $table->name) {
+							$checked = true;
+							break;
+						} // END if
+					} // END foreach
+				} // END if
+				echo form_checkbox("required_tables[]",$table->name,$checked);
+				?>
+				</td>
+				<td><?php echo($table->name); ?></td>
+			</tr>
+				<?php 
+			}
         endif; ?>
 		</tbody>
 	</table>
 </div>
-<div>
-	<a href="#" onclick="setCheckBoxState(true); return false;">Select All</a> | <a 
-	href="#" onclick="setCheckBoxState(false); return false;">Select None</a>
+
+<div class="row-fluid">
+	<div class="span12 text-right">	
+		<a href="#" onclick="setCheckBoxState(true); return false;">Select All</a> | <a 
+		href="#" onclick="setCheckBoxState(false); return false;">Select None</a><br />
+		<div class="form-actions">
+			<input type="submit" name="submit" class="btn primary" value="<?php echo lang('lm_action_load_checked') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/custom/league_manager', lang('bf_action_cancel')); ?>
+		</div>
+	</div>
 </div>
-<div class="submits">
-	<input type="submit" name="submit" value="<?php echo lang('bf_action_save') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/settings', lang('bf_action_cancel')); ?>
-</div>
-	
+
 <?php echo form_close(); ?>
 
 <script type="text/javascript">

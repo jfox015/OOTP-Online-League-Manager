@@ -27,6 +27,10 @@ class Settings extends Admin_Controller {
 		{
 			$this->$method();
 		}
+		else
+		{
+			show_404();
+		}
 	}
     //--------------------------------------------------------------------
 
@@ -48,7 +52,7 @@ class Settings extends Admin_Controller {
         $settings = $this->settings_lib->find_all();
         Template::set('settings', $settings);
 
-        Template::set('toolbar_title', lang('dbrd_settings_title'));
+        Template::set('toolbar_title', lang('lm_settings_title'));
         Template::set_view('league_manager/settings/index');
         Template::render();
     }
@@ -64,17 +68,17 @@ class Settings extends Admin_Controller {
 
 		$this->load->library('form_validation');
 
-        $this->form_validation->set_rules('game_version', lang('dbrd_settings_gamever'), 'required|trim|xss_clean');
-        $this->form_validation->set_rules('league_id', lang('dbrd_settings_leagueid'), 'required|number|trim|xss_clean');
-        $this->form_validation->set_rules('league_name', lang('dbrd_settings_lgname'), 'trim|xss_clean');
-        $this->form_validation->set_rules('league_abbr', lang('dbrd_settings_lgabbr'), 'trim|xss_clean');
-        $this->form_validation->set_rules('league_icon', lang('dbrd_settings_lgicon'), 'trim|xss_clean');
-        $this->form_validation->set_rules('league_txtcolor', lang('dbrd_settings_txtcolor'), 'trim|xss_clean');
-        $this->form_validation->set_rules('league_bgcolor', lang('dbrd_settings_bgcolor'), 'trim|xss_clean');
+        $this->form_validation->set_rules('game_version', lang('lm_settings_gamever'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('league_id', lang('lm_settings_leagueid'), 'required|number|trim|xss_clean');
+        $this->form_validation->set_rules('league_name', lang('lm_settings_lgname'), 'trim|xss_clean');
+        $this->form_validation->set_rules('league_abbr', lang('lm_settings_lgabbr'), 'trim|xss_clean');
+        $this->form_validation->set_rules('league_icon', lang('lm_settings_lgicon'), 'trim|xss_clean');
+        $this->form_validation->set_rules('league_txtcolor', lang('lm_settings_txtcolor'), 'trim|xss_clean');
+        $this->form_validation->set_rules('league_bgcolor', lang('lm_settings_bgcolor'), 'trim|xss_clean');
 
-        $this->form_validation->set_rules('league_file_path', lang('dbrd_settings_lgdfile'), 'number|xss_clean');
-        $this->form_validation->set_rules('asset_path', lang('dbrd_settings_assetpath'), 'required|trim|xss_clean');
-        $this->form_validation->set_rules('asset_url', lang('dbrd_settings_asseturl'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('league_file_path', lang('lm_settings_lgdfile'), 'number|xss_clean');
+        $this->form_validation->set_rules('asset_path', lang('lm_settings_assetpath'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('asset_url', lang('lm_settings_asseturl'), 'required|trim|xss_clean');
 
         $this->form_validation->set_rules('header_img', lang('home_settings_header'), 'trim|xss_clean');
         $this->form_validation->set_rules('twitter_string', lang('home_settings_twitter'), 'trim|xss_clean');
