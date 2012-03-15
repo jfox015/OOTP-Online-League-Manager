@@ -9,7 +9,8 @@ class League_Manager extends Front_Controller {
 		parent::__construct();
 		
 		// Load our current settings
-		if (!isset($this->leagues_model)) {
+		if (!isset($this->leagues_model)) 
+		{
 			$this->load->model('leagues_model');
 		}
         $this->lang->load('manager');
@@ -29,12 +30,14 @@ class League_Manager extends Front_Controller {
 		
 		$username = ''; // SITE username
 		$user_name = ''; // FULL NAME
-		if (!isset($this->auth)) {
+		if (!isset($this->auth)) 
+		{
 			// Auth setup
 			$this->load->model('users/User_model', 'user_model');
 			$this->load->library('users/auth');
 		}
-		if ($logged_in) {
+		if ($logged_in) 
+		{
 			$username = $this->auth->username();
 			$user_name = "(".$this->auth->user_name().")";
 		}
@@ -50,8 +53,10 @@ class League_Manager extends Front_Controller {
 		Template::set('settings', $settings);
 
         Assets::add_css( Template::theme_url() .'css/bootstrap-responsive.min.css','screen');
-        if (!isset($loggedIn) || !$loggedIn) {
-            if (!function_exists('form_open')) {
+        if (!isset($loggedIn) || !$loggedIn) 
+		{
+            if (!function_exists('form_open')) 
+			{
                 $this->load->helper('form');
             }
         }
@@ -65,7 +70,8 @@ class League_Manager extends Front_Controller {
 		
 		$settings = $this->settings_lib->find_all_by('module','ootp');
         
-        if (isset($settings['ootp.twitter_string'])) {
+        if (isset($settings['ootp.twitter_string'])) 
+		{
 		
             $tweets = json_decode(@file_get_contents('http://twitter.com/statuses/user_timeline/' . $settings['ootp.twitter_string'] . '.json'));
 
@@ -97,7 +103,9 @@ class League_Manager extends Front_Controller {
                 'username'	=> $settings['ootp.twitter_string'],
                 'tweets'	=> $tweets
             );
-        } else {
+        } 
+		else 
+		{
 	        return false;
         }
 	}
@@ -109,7 +117,8 @@ class League_Manager extends Front_Controller {
 		
 		$settings = $this->settings_lib->find_all_by('module','ootp');
 
-		if (!isset($this->leagues_events_model)) {
+		if (!isset($this->leagues_events_model)) 
+		{
 			$this->load->model('leagues_events_model');
 		}
 		$league = $this->leagues_model->find_by('league_id',$settings['ootp.league_id']);
@@ -122,34 +131,45 @@ class League_Manager extends Front_Controller {
 		if (isset($league) && $league !== false && 
 		(!isset($settings['ootp.sims_details']) || 
 		(isset($settings['ootp.sims_details']) && empty($settings['ootp.sims_details'])) || 
-		(isset($settings['ootp.sims_details']) && $settings['ootp.sims_details'] == -1))) {
+		(isset($settings['ootp.sims_details']) && $settings['ootp.sims_details'] == -1))) 
+		{
 			// GET League File 
 			if (isset($settings['ootp.league_file_path']) && 
 				!empty($settings['ootp.league_file_path']) && 
-				file_exists($settings['ootp.league_file_path'])) {
+				file_exists($settings['ootp.league_file_path'])) 
+			{
 				$league_file_date = filemtime($settings['ootp.league_file_path']);
 			}
 			// Determine Next Sim Date
 			$day_count = 0;
 			$update_day = date('N',$league_file_date);
 			$sim_days = unserialize($settings['ootp.sims_occur_on']);
-			if (sizeof($sim_days) == 1) {
+			if (sizeof($sim_days) == 1) 
+			{
 				$day_count = 7;
-			} else if (sizeof($sim_days) > 1) {
+			} 
+			else if (sizeof($sim_days) > 1) 
+			{
 				// remove current sim from list
 				$idx = 0;
-				foreach($sim_days as $day) {
-					if ($day == $update_day) {
+				foreach($sim_days as $day) 
+				{
+					if ($day == $update_day) 
+					{
 						$sim_days = array_splice($sim_days,$idx);
 						break;
 					}
 					$idx++;
 				}
 				// Determine next sim D.O.w
-				foreach($sim_days as $day) {
-					if ($update_day < $day) {
+				foreach($sim_days as $day) 
+				{
+					if ($update_day < $day) 
+					{
 						$day_count = $day - $update_day;
-					} else {
+					} 
+					else 
+					{
 						$day_count = ($update_day - 7) + $day;
 					}
 					break;
@@ -159,7 +179,9 @@ class League_Manager extends Front_Controller {
 			$league_date = strtotime($league->current_date);
 			$evt = $this->leagues_events_model->get_events($league->league_id,$league->current_date,1);
             $league_event = ((isset($evt) && sizeof($evt) > 0)? $evt[0]['name']: "");
-		} else {
+		}
+		else 
+		{
 			$league_file_date = $settings['ootp.league_file_date'];
 			$next_sim = $settings['ootp.next_sim'];
 			$league_date = $settings['ootp.league_date'];
