@@ -3,6 +3,6 @@
 $config['module_config'] = array(
 	'description'	=> 'A central control panel to manage OOTP custom Web Tools.',
 	'author'		=> 'Jeff Fox',
-	'name'			=> 'League Management',
+	'name'			=> 'OOTP League Manager',
 	'version'		=> '1.0'
 );
