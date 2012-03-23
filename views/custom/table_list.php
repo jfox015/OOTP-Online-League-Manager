@@ -50,6 +50,7 @@
         endif; ?>
 		</tbody>
 	</table>
+	<?php } ?>
 </div>
 
 <div class="row-fluid">

@@ -83,7 +83,7 @@
 			{ 
 				echo('</span>'); 
 			} // END if
-			if (isset($files_loaded[$settings['ootp.sql_path'].DIRECTORY_SEPERATOR.$file]))
+			if (isset($files_loaded[$settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file]))
 			{ 
 				echo("- <b>LOADED</b>"); 
 			} // END if

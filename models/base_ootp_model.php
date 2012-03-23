@@ -33,7 +33,8 @@ class Base_ootp_model extends BF_Model {
      /
      /-------------------------------------------------*/
     public function find($id) {
-        $this->db->dbprefix = '';
+        $data = array();
+		$this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
             $data = parent::find($id);
         }

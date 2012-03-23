@@ -1,6 +1,6 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-$lang['lm_settings_title']		= 'League Management Tools';
+$lang['lm_settings_title']			= 'League Management Tools';
 $lang['lm_unauthorized']			= 'Unauthorized. Sorry you do not have the appropriate permission to this area.';
 $lang['sql_settings_title']			= 'OOTP SQL Data Loader';
 $lang['lm_updated']					= 'Settings Last Updated: [DATE_TIME] AM by [USER_NAME]';

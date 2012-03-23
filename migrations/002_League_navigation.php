@@ -7,7 +7,7 @@ class Migration_League_navigation extends Migration {
 		$prefix = $this->db->dbprefix;
 		
 		if ($this->db->table_exists('navigation')) {
-			$data = array('nav_id'=>1,
+			$data = array('nav_id'=>0,
 						  'title'=>'Home',
 						  'url'=>'/',
 						  'nav_group_id'=>1,
@@ -15,7 +15,7 @@ class Migration_League_navigation extends Migration {
 						  'parent_id'=>0,
 						  'has_kids'=>0);
 			$this->db->insert("{$prefix}navigation",$data);
-			$data = array('nav_id'=>2,
+			$data = array('nav_id'=>0,
 						  'title'=>'Last Sim',
 						  'url'=>'/lastsim',
 						  'nav_group_id'=>1,
@@ -25,7 +25,7 @@ class Migration_League_navigation extends Migration {
 			$this->db->insert("{$prefix}navigation",$data);
 		}
 		if ($this->db->table_exists('navigation_group')) {
-			$data = array('nav_group_id'=>1,
+			$data = array('nav_group_id'=>0,
 				'title'=>'header_nav',
 				'abbr'=>'hn');
 			$this->db->insert("{$prefix}navigation_group",$data);
