@@ -38,8 +38,8 @@ class League_Manager extends Front_Controller {
 		}
 		if ($logged_in) 
 		{
-			$username = $this->auth->username();
-			$user_name = "(".$this->auth->user_name().")";
+			$username = $this->current_user->username;
+			$user_name = "(".$this->current_user->display_name.")";
 		}
 		Template::set('logged_in', $logged_in);
 		Template::set('username', $username);
@@ -60,7 +60,9 @@ class League_Manager extends Front_Controller {
                 $this->load->helper('form');
             }
         }
+		$this->load->helper('navigation/navigation');
         Template::set_view('league_manager/index');
+        Template::set_theme('ootpol');
 		Template::render();
 	}
 	
@@ -128,7 +130,7 @@ class League_Manager extends Front_Controller {
 		$next_sim = false;
 		$league_event = '';
 		
-		if (isset($league) && $league !== false && 
+		if (isset($league) && $league !== false && count($league) &&
 		(!isset($settings['ootp.sims_details']) || 
 		(isset($settings['ootp.sims_details']) && empty($settings['ootp.sims_details'])) || 
 		(isset($settings['ootp.sims_details']) && $settings['ootp.sims_details'] == -1))) 

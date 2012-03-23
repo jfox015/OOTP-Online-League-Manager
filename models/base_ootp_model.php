@@ -43,7 +43,8 @@ class Base_ootp_model extends BF_Model {
     }
 
     public function find_all($id) {
-        $this->db->dbprefix = '';
+		$data = array();
+		$this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
             $data = parent::find_all($id);
         }
@@ -51,7 +52,8 @@ class Base_ootp_model extends BF_Model {
         return $data;
     }
     public function find_by($field = '', $value='', $type='') {
-        $this->db->dbprefix = '';
+		$data = array();
+		$this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
             $data = parent::find_by($field, $value, $type);
         }
@@ -59,7 +61,8 @@ class Base_ootp_model extends BF_Model {
         return $data;
     }
     public function find_all_by($field = '', $value='') {
-        $this->db->dbprefix = '';
+		$data = array();
+		$this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
             $data = parent::find_all_by($field, $value);
         }
