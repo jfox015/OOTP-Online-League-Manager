@@ -179,7 +179,8 @@ class Custom extends Admin_Controller {
 			$this->load->model('leagues_events_model');
 		}
 		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
-        Template::set('events',$this->leagues_events_model->get_events($league_id,$league_date,10));
+		Assets::add_js($this->load->view('custom/sim_details_js.php',null,true),'inline');
+		Template::set('events',$this->leagues_events_model->get_events($league_id,$league_date,10));
         Template::set('toolbar_title', lang('sim_setting_title'));
         Template::set_view('league_manager/custom/sim_details');
         Template::render();
@@ -279,6 +280,7 @@ class Custom extends Admin_Controller {
 		$file_list = getSQLFileList($settings['ootp.sql_path']);
 
 		Assets::add_module_css('league_manager','style.css');
+		Assets::add_js($this->load->view('custom/file_list_js',null,true),'inline');
 		Template::set('file_list', $file_list);
 		Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
 		Template::set('load_times', $this->sql_model->get_tables_loaded());

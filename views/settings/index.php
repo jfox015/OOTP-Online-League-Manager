@@ -209,16 +209,3 @@
     </div>
 
 <?php echo form_close(); ?>
-
-<script type="text/javascript">
-    head.ready(function(){
-        $(document).ready(function() {
-            $('input#use_ootp_details').click(function() {
-                $('#ootp_block').toggle(!this.checked);
-            });
-            $('#ootp_block').toggle(!$('input#use_ootp_details').is(':checked'));
-        });
-    });
-
-</script>
-

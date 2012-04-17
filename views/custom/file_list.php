@@ -40,7 +40,7 @@
 				<th style="width: 20%"><?php echo lang('lm_sqlfiles_timestamp'); ?></th>
 				<th style="width: 20%"><?php echo lang('lm_sqlfiles_last_updated'); ?></th>
 				<th style="width: 15%"><?php echo lang('lm_sqlfiles_size'); ?></th>
-				<th class="text-center" style="width: 20%"><?php echo lang('lm_table_actions'); ?></th>
+				<th colspan="2" class="text-center" style="width: 20%"><?php echo lang('lm_table_actions'); ?></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -59,7 +59,7 @@
 		}
 		?>
 		<tr>
-			<td>
+			<td
 			<?php
 			$fileArr = explode(".",$file);
 			$hilite = false;
@@ -67,7 +67,7 @@
 			{
 				foreach ($required_tables as $table_name) 
 				{
-					if ($table_name->name == $fileArr[0]) 
+					if ($table_name->name == $fileArr[0])
 					{
 						$hilite = true;
 						break;
@@ -76,19 +76,15 @@
 			} // END if
 			if ($hilite === true) 
 			{ 
-				echo('<span class="hilight">'); 
+				echo(' class="hilight"');
 			} // END if
-			echo($file); 
-			if ($hilite === true) 
-			{ 
-				echo('</span>'); 
-			} // END if
+			echo(">".$file);
 			if (isset($files_loaded[$settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file]))
 			{ 
 				echo("- <b>LOADED</b>"); 
 			} // END if
-			$fsize=filesize($settings['ootp.sql_path']."/".$file);
-			$fileTime = filemtime($settings['ootp.sql_path']."/".$file);
+			$fsize=filesize($settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file);
+			$fileTime = filemtime($settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file);
 			?>
 			</td>
 			<td><?php echo(date("D M j, Y H:i",$fileTime)); ?></td>
@@ -184,78 +180,44 @@
 	?>
 </div>
 
-<script type="text/javascript">
+<?php
+	$outJs = '';
+	if (isset($splitParents) && sizeof($splitParents) > 0) {
+		$outJs .= 'uncheckSplitParents();';
+	}
+	if (isset($required_tables) && sizeof($required_tables) > 0) {
+		$outJs .= 'var required = new Array('.sizeof($required_tables).');';
+		$count = 0;
+		foreach ($required_tables as $tableName) {
+			$outJs .= 'required['.$count.'] = "'.$tableName->name.'";';
+			$count++;
+		}
+	}
+    if (isset($splitParents) && sizeof($splitParents) > 0) {
+		$outJs .= 'var parentList = new Array('.sizeof($splitParents).');';
+		$count = 0;
+		foreach($splitParents as $parent) {
+			$outJs .= 'parentList['.$count.'] = "'.$parent.'";';
+			$count++;
+		}
+$outJs .= <<<EOL
+		function uncheckSplitParents() {
+			var form = document.file_list;
+			if (parentList != null) {
+				for (var i = 0; i < parentList.length; i++) {
+					for (var j = 0; j < form.elements.length; j++) {
+						if (form.elements[j].type == 'checkbox' && form.elements[j].value == parentList[i]) {
+							form.elements[j].checked = false; // END if
+							break;
+						}
+					}
+				}
+			}
+		}
 
-    head.ready(function(){
-        checkRequired();
-        <?php
-        if (isset($splitParents) && sizeof($splitParents) > 0) { ?>
-        uncheckSplitParents();
-        <?php
-        }
-        ?>
-    });
-
-    <?php if (isset($required_tables) && sizeof($required_tables) > 0) { ?>
-    var required = new Array(<?php echo(sizeof($required_tables)); ?>);
-    <?php
-      $count = 0;
-      foreach ($required_tables as $tableName) {
-        echo("required[".$count."] = '".$tableName->name."';");
-        $count++;
-      }
-    }
-    if (isset($splitParents) && sizeof($splitParents) > 0) { ?>
-    var parentList = new Array(<?php echo(sizeof($splitParents)); ?>);
-    <?php
-        $count = 0;
-        foreach($splitParents as $parent) {
-            echo('parentList['.$count.'] = "'.$parent.'";');
-            $count++;
-        }
-    ?>
-    function uncheckSplitParents() {
-        var form = document.file_list;
-        if (parentList != null) {
-            for (var i = 0; i < parentList.length; i++) {
-                for (var j = 0; j < form.elements.length; j++) {
-                    if (form.elements[j].type == 'checkbox' && form.elements[j].value == parentList[i]) {
-                        form.elements[j].checked = false; // END if
-                        break;
-                    }
-                }
-            }
-        }
-    }
-    <?php
-    }
-    ?>
-    function checkRequired() {
-        var form = document.file_list;
-        if (required != null) {
-            var startIndex = 0;
-            for (var i = 0; i < required.length; i++) {
-                for (var j = startIndex; j < form.elements.length; j++) {
-                    if (i == 0) {
-                        //alert(form.elements[j].value);
-                        //alert(required[i]);
-                    }
-                    if (form.elements[j].type == 'checkbox') {
-                        var table = form.elements[j].value.split(".");
-                        if (table[0] == required[i]) {
-                            form.elements[j].checked = true; // END if
-                            //startIndex = j;
-                        }
-                    }
-                } // END for
-            }
-        }
-    }
-    function setCheckBoxState(state) {
-        var form = document.file_list;
-        for (var i = 0; i < form.elements.length; i++) {
-            if (form.elements[i].type == 'checkbox')
-                form.elements[i].checked = state; // END if
-        } // END for
-    } // END function
-</script>
+EOL;
+	};
+	$outJs .= 'checkRequired();';
+Assets::add_js( $outJs, 'inline' );
+unset ( $outJs );
+?>

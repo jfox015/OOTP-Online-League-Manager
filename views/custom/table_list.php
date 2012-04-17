@@ -12,9 +12,7 @@
 
 <div class="admin-box">
 	<h3><?php echo lang('sql_required_tables_edit') ?></h3>
-	
-	<?php if (isset($file_list) && sizeof($file_list) > 0) { ?>
-	
+
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -50,7 +48,6 @@
         endif; ?>
 		</tbody>
 	</table>
-	<?php } ?>
 </div>
 
 <div class="row-fluid">

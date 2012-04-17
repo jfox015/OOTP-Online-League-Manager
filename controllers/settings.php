@@ -51,6 +51,7 @@ class Settings extends Admin_Controller {
         $this->load->helper('datalist');
         $settings = $this->settings_lib->find_all();
         Template::set('settings', $settings);
+		Assets::add_js($this->load->view('settings/settings_js.php',null,true),'inline');
 
         Template::set('toolbar_title', lang('lm_settings_title'));
         Template::set_view('league_manager/settings/index');
