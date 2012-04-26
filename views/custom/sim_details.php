@@ -14,7 +14,7 @@
 		
 			<!-- Auto Calculate Sim Length -->
         <div class="control-group <?php echo form_error('auto_sim_length') ? 'error' : '' ?>">
-            <label><?php echo lang('sim_settings_autocalc') ?></label>
+            <label class="control-label"><?php echo lang('sim_settings_autocalc') ?></label>
             <div class="controls">
 				<?php
 				$use_selection = ((isset($settings['ootp.auto_sim_length']) && $settings['ootp.auto_sim_length'] == 1) || !isset($settings['ootp.auto_sim_length'])) ? true : false;
@@ -29,7 +29,7 @@
 		
 			<!-- Manual Sim length -->
 		<div class="control-group <?php echo form_error('sim_length') ? 'error' : '' ?>">
-            <label><?php echo lang('sim_setting_simlen') ?></label>
+            <label class="control-label"><?php echo lang('sim_setting_simlen') ?></label>
             <div class="controls">
 				<input type="text" style="width:3em;" id="sim_length" name="sim_length" value="<?php echo (isset($settings['ootp.sim_length'])) ? $settings['ootp.sim_length']: set_value('ootp.sim_length'); ?>" />
 				<span class="help-inline"><?php if (form_error('sim_length')) echo form_error('sim_length'); else echo lang('sim_setting_simlen_note'); ?></span>
@@ -38,7 +38,7 @@
 	
 			<!-- Sims per week -->
 		 <div class="control-group <?php echo form_error('sims_per_week') ? 'error' : '' ?>">
-			<label><?php echo lang('sim_setting_perweek') ?></label>
+			<label class="control-label"><?php echo lang('sim_setting_perweek') ?></label>
 			<div class="controls">
 				<select class="tiny" id="sims_per_week" name="sims_per_week">
 				<?php
@@ -57,13 +57,13 @@
 			<!-- Sims occur on -->
 
 		 <div class="control-group <?php echo form_error('') ? 'error' : '' ?>">
-			 <label class="required"><?php echo lang('sim_setting_occuron'); ?></label>
+			 <label class="control-label"><?php echo lang('sim_setting_occuron'); ?></label>
 			 <div class="controls">
 				 <?php
 				 $dayList = (isset($settings['ootp.sims_occur_on']) ? unserialize($settings['ootp.sims_occur_on']) : array(-1));
 				 $days = array(1=>'Su',2=>'Mo',3=>'Tu',4=>'We',5=>'Th',6=>'Fr',7=>'Sa');
 				 foreach($days as $num => $day) :
-					 $use_selection = in_array($num,$dayList) ? true : false;
+					 $use_selection = (isset($dayList) && is_array($dayList) && in_array($num,$dayList)) ? true : false;
 					 echo form_checkbox('sims_occur_on[]',$num, $use_selection,'id="sims_occur_on_'.$num.'"')." ".$day." ";
 				 endforeach;
 				 ?>
@@ -78,7 +78,7 @@
 		<!-- OOTP DETAILS OVERRIDE -->
 
 	 <div class="control-group <?php echo form_error('sim_details') ? 'error' : '' ?>">
-		<label><?php echo lang('lm_settings_useootp') ?></label>
+		<label class="control-label"><?php echo lang('lm_settings_useootp') ?></label>
 		<div class="controls">
 			<?php
 			$use_selection = ((isset($settings['ootp.sim_details']) && $settings['ootp.sim_details'] == 1) || !isset($settings['ootp.sim_details'])) ? true : false;
@@ -91,7 +91,7 @@
 	<div id="ootp_block">
             <!-- LEAGUE NAME -->
 		 <div class="control-group <?php echo form_error('league_file_date') ? 'error' : '' ?>">
-			<label><?php echo lang('sim_setting_league_file_date') ?></label>
+			<label class="control-label"><?php echo lang('sim_setting_league_file_date') ?></label>
 			<div class="controls">
 				<input type="text" id="" name="league_file_date" value="<?php echo (isset($settings['ootp.league_file_date'])) ? date('m/d/Y',$settings['ootp.league_file_date']): set_value('ootp.league_file_date'); ?>" />
 				<?php if (form_error('league_file_date')) echo '<span class="help-inline">'.form_error('league_file_date').'</span>'; ?>
@@ -100,16 +100,16 @@
 
             <!-- LEAGUE ABBR -->
 		 <div class="control-group <?php echo form_error('next_sim') ? 'error' : '' ?>">
-			<label><?php echo lang('sim_setting_next_sim') ?></label>
+			<label class="control-label"><?php echo lang('sim_setting_next_sim') ?></label>
 			<div class="controls">
-				<input type="text" class="small" id="next_sim" name="next_sim" value="<?php echo (isset($settings['ootp.next_sim'])) ? date('m/d/Y',$settings['ootp.next_sim']): set_value('ootp.next_sim'); ?>" />
+				<input type="text" class="small" id="next_sim" name="next_sim" value="<?php echo (isset($settings['ootp.next_sim']) && !empty($settings['ootp.next_sim'])) ? date('m/d/Y',$settings['ootp.next_sim']): set_value('ootp.next_sim'); ?>" />
 				<?php if (form_error('next_sim')) echo '<span class="help-inline">'.form_error('next_sim').'</span>'; ?>
 			</div>
 		</div>
 
             <!-- LEAGUE ICON -->
 		 <div class="control-group <?php echo form_error('league_date') ? 'error' : '' ?>">
-			<label><?php echo lang('sim_setting_league_date') ?></label>
+			<label class="control-label"><?php echo lang('sim_setting_league_date') ?></label>
 			<div class="controls">
 				<input type="text" class="small" id="league_date" name="league_date" value="<?php echo (isset($settings['ootp.league_date']) && !empty($settings['ootp.league_date'])) ? date('m/d/Y',$settings['ootp.league_date']): set_value('ootp.league_date'); ?>" />
 				<?php if (form_error('league_date')) echo '<span class="help-inline">'.form_error('league_date').'</span>'; ?>
@@ -118,7 +118,7 @@
 
             <!-- LEAGUE Text Color -->
 		 <div class="control-group <?php echo form_error('league_event') ? 'error' : '' ?>">
-			<label><?php echo lang('sim_setting_league_event') ?></label>
+			<label class="control-label"><?php echo lang('sim_setting_league_event') ?></label>
 			<div class="controls">
 				<select id="league_event" name="" class="small" >
 				<?php

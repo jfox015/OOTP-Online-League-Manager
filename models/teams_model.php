@@ -42,10 +42,97 @@ class Teams_model extends Base_ootp_model {
 	 *	@return				Array of DB Result Objects
 	 *
 	 */
-	public function get_owner_count() {
-        $this->db->where('league_id',$this->league_id);
-		$count = $this->db->count_all_results('teams_owners');
-        return $count;
+	public function get_owner_count($league_id = false) {
+		if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
+		return $this->db->where('league_id',$league_id)
+					    ->count_all_results('teams_owners');
+	}
+	
+	/**
+	 *	GET TEAM COUNT.
+	 *	Counts the number of teams in the database for the given league id
+	 *	@param	@return				Array of DB Result Objects
+	 *
+	 */
+	public function get_team_count($league_id = false) {
+		if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
+		$this->db->dbprefix = '';
+        $team_count = $this->db->where('league_id',$league_id)
+							   ->where('level',1)
+							   ->where('allstar_team',0)
+							   ->count_all_results($this->table);
+		$this->db->dbprefix = $this->dbprefix;
+        return $team_count;
+	}
+	/**
+	 *	GET OWNERS.
+	 *	Counts the number of team owners assigned int he database
+	 *	@return				Array of DB Result Objects
+	 *
+	 */
+	public function get_team_owner_list($league_id = false) {
+        
+		if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
+		$this->db->dbprefix = '';
+		$this->select($this->table.'.team_id, '.$this->table.'.name, '.$this->table.'.nickname, logo_file, user_id')
+			 ->join($this->dbprefix.'teams_owners',$this->dbprefix.'teams_owners.team_id = '.$this->table.'.team_id', 'left')
+			 ->where($this->table.'.league_id',$league_id)
+			 ->where($this->table.'.allstar_team',0)
+			 ->where($this->table.'.level',1);
+		$team_owner_list = $this->find_all();
+		$this->db->dbprefix = $this->dbprefix;
+        return $team_owner_list;
+	}
+
+	public function set_team_owner($team_id = false, $user_id = false, $league_id = false)
+	{
+		if ($team_id === false)
+		{
+			$this->error = "no team ID was specified.";
+			return false;
+		}
+		if ($user_id === false)
+		{
+			$this->error = "No team owner ID was specified.";
+			return false;
+		}
+		if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
+		$this->db->where('league_id',$league_id)
+				 ->where('team_id',$team_id)
+				 ->update('teams_owners',array('user_id'=>$user_id));
+		if ($this->db->affected_rows() == 0)
+		{
+			$this->db->insert('teams_owners', array('league_id',$league_id, 'team_id',$team_id, 'user_id'=>$user_id));
+		}
+		return ($this->db->affected_rows() > 0);
+	}
+	public function delete_team_owner($team_id = false, $league_id = false)
+	{
+		if ($team_id === false)
+		{
+			$this->error = "no team ID was specified.";
+			return false;
+		}
+		if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
+		$this->db->where('league_id',$league_id)
+				 ->where('team_id',$team_id)
+				 ->delete('teams_owners');
+		return ($this->db->affected_rows() > 0);
 	}
 	/**
 	 *	GET TEAMS.
@@ -54,15 +141,19 @@ class Teams_model extends Base_ootp_model {
 	 *	@return				Array of DB Result Objects
 	 *
 	 */
-	public function get_teams() {
+	public function get_teams($league_id = false) {
 		
+		if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
 		$teams = array();
         $this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
 
             $query = $this->db->select('team_id,abbr,name,nickname,logo_file')
                 ->where('allstar_team',0)
-                ->where('league_id',$this->league_id)
+                ->where('league_id',$league_id)
                 ->order_by('name,nickname','asc')
                 ->get($this->table);
             if ($query->num_rows() > 0) {
@@ -80,9 +171,13 @@ class Teams_model extends Base_ootp_model {
 	 *	@return				Array of team values
 	 *
 	 */
-	public function get_teams_array() {
+	public function get_teams_array($league_id = false) {
 
-        $teams = array();
+        if ($league_id === false)
+		{
+			$league_id = $this->league_id;
+		}
+		$teams = array();
 		$teams_result = $this->get_teams($this->league_id);
 		if (isset($teams_result) && is_array($teams_result) && sizeof($teams_result) > 0) {
 			foreach($teams_result as $row) {

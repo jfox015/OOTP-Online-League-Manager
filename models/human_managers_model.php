@@ -1,17 +1,34 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
-/**
- *	HUMAN MANAGERS MODEL CLASS.
- *
- *	@author			Jeff Fox <jfox015 (at) gmail (dot) com>
- *  @copyright   	(c)2012 Jeff Fox/Aeolian Digital Studios
- *	@version		1.0
- *
+/*
+	Class: Human_managers_model
+
+	Deals with human team owner information from OOTP games for online leagues.
+	
+	Copyright (c) 2012 Jeff Fox.
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
 */
 require_once(dirname(dirname(__FILE__)).'/models/base_ootp_model.php');
 class Human_managers_model extends Base_ootp_model {
 
 	protected $table		= 'human_managers';
-	protected $key			= 'email';
+	protected $key			= 'human_manager_id';
 	protected $soft_deletes	= false;
 	protected $set_created	= false;
 	protected $set_modified = false;
@@ -21,7 +38,15 @@ class Human_managers_model extends Base_ootp_model {
 	/	PUBLIC FUNCTIONS
 	/
 	/-------------------------------------------------*/
-	public function get_owner_users_matches($league_id = 100, $exclusions = false) {
+	
+	public function find_all_by($field=NULL, $value=NULL)
+	{
+		$this->join('teams','teams.team_id = '.$this->table.'.team_id');
+		$this->select('human_manager_id, first_name, last_name, teams.team_id, teams.name as team_name, teams.nickname as teams_nick');
+		return parent::find_all_by($field, $value);
+	}
+	
+	public function get_owner_user_matches($league_id = 100, $exclusions = false) {
 		
 		$userMatches = array();
 		if (!isset($this->users_model)) {
@@ -29,27 +54,19 @@ class Human_managers_model extends Base_ootp_model {
 		}
 		$users = $this->users_model->find_all();
 		
-		$this->select("email, teams.team_id, teams.team_name, teams.nick_name");
-		$exclud_str = "(";
-		if ($exclusions !== false && is_array($exclusions) && count($exclusions)) {
-			foreach ($exclusions as $email) {
-				if ($exclud_str != "(") { $exclud_str .= ","; }
-				$exclud_str .= $email;
-			}
-		}
-		$exclud_str = ")";
-		if ($exclud_str != "()") {
-			$this->db->where_not_in('email',$exclud_str);
-		}
-		$this->db->join('teams','teams.team_id = '.$this->table.'.team_id','left');
-		$query = $this->find_all_by('teams.league_id',$league_id);
+		$this->select("first_name, last_name, teams.team_id, teams.name, teams.nickname")
+			 ->join('teams','teams.team_id = '.$this->table.'.team_id','left')
+			 ->where($this->table.'.team_id <> 0');
+		$human_managers = $this->find_all_by($this->table.'.league_id',$league_id);
 		
-		if ($query->num_rows() > 0) {
-			foreach ($query->result as $row) {
+		if (count($human_managers) > 0) {
+			foreach ($human_managers as $row) {
 				 foreach($users as $user) {
-					if ($user->email ==$row->email) {
-						array_push($userMatches, array('username'=>$user->username,'email'=>$user->email,'team_id'=>$row->team_id,
-														'team'=>$row->team_name." ".$row->nick_name));
+					if ((isset($user->first_name) && !empty($user->first_name) && $row->first_name == $user->first_name) &&
+					(isset($user->last_name) && !empty($user->last_name) && $row->last_name == $user->last_name))
+					{
+						array_push($userMatches, array('human_manager_id'=>$row->id, 'first_name'=>$row->first_name, 'last_name'=>$row->last_name, 'user_id'=>$user->id,
+						'username'=>$user->username);
 					}
 				}
 			}
@@ -57,24 +74,27 @@ class Human_managers_model extends Base_ootp_model {
 		$this->$query->free_result();
 		return $userMatches;
 	}
-	public create_users_from_owners($owners = false) {
-		if ($owners !== false && is_array($owners) && count($owners)) {
-			$email_str = "(";
-			if ($owners !== false && is_array($owners) && count($owners)) {
-				foreach ($owners as $email) {
-					if ($email_str != "(") { $email_str .= ","; }
-					$email_str .= $email;
-				}
+	public create_users_from_human_managers() {
+		
+		$human_manager_ids = $this->input->post('human_manager_ids');
+		
+		if (isset($human_manager_ids) && is_array($human_manager_ids) && count($human_manager_ids) > 0) {
+			
+			$id_str = "(";
+			foreach ($human_manager_ids as $id) 
+			{
+				if ($id_str != "(") { $id_str .= ","; }
+				$id_str .= $email
 			}
-			$email_str = ")";
-			if ($email_str != "()") {
-				$this->db->where_in('email',$email_str);
-			}
-			$query = $this->find_all();
-			if ($query->num_rows() > 0) {
-			foreach ($query->result as $row) {
-				$username = explode("@",$row->email);
-				if ($this->create_user($username, $row->email)) {
+			$id_str = ")";
+			$this->db->where_in('human_manager_id',$id_str);
+			$managers = $this->select('first_name, last_name')->find_all();
+			
+			foreach ($managers as $manager) 
+			{
+				$username = $manager->first_name." ".$manager->last_name;
+				$email = ($this->input->post($manager->human_manager_id)) ? $this->input->post($manager->human_manager_id) : '';
+				if ($this->create_user($username, $email)) {
 					$user_id = $this->db->insert_id();
 					$data = array(
 						'league_id'	=> $row->league_id,
@@ -89,7 +109,7 @@ class Human_managers_model extends Base_ootp_model {
 				}
 			}
 		} else {
-			$this->error = "No owners were received.";
+			$this->error = "No managers were found.";
 			return false;
 		}
 		return true;

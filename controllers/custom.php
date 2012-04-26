@@ -20,6 +20,7 @@ class Custom extends Admin_Controller {
 		{
 			$this->load->model('sql_model');
 		}
+		Template::set_block('sub_nav', 'custom/_sub_nav');
 	}
 	
 	//--------------------------------------------------------------------	
@@ -27,7 +28,7 @@ class Custom extends Admin_Controller {
 	public function index()
 	{
 		$settings = $this->settings_lib->find_all_by('module','ootp');
-        $tables = array();
+        $tables = false;
         if (!isset($settings['ootp.sql_path']) || empty($settings['ootp.sql_path']))
         {
             Template::set('settings_incomplete', true);
@@ -35,15 +36,24 @@ class Custom extends Admin_Controller {
         else
         {
             Template::set('settings_incomplete', false);
+            if (!isset($this->leagues_model))
+            {
+                $this->load->model('leagues_model');
+            }
             if (!class_exists('teams_model'))
             {
                 $this->load->model('teams_model');
             }
-            $tables = $this->sql_model->get_tables_loaded();
+            $tables_loaded = $this->sql_model->count_tables_loaded();
             if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
-                Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
+                $league = $this->leagues_model->find($settings['ootp.league_id']);
+                if (isset($league) && isset($league->league_id) && $league->league_id != null)
+                {
+                    Template::set('user_count', $this->user_model->count_all(false));
+                    Template::set('team_count', $this->teams_model->get_team_count($settings['ootp.league_id']));
+                    Template::set('owner_count', $this->teams_model->get_owner_count($settings['ootp.league_id']));
+                }
             }
-
             if (!function_exists('loadSQLFiles'))
             {
                 $this->load->helper('sql');
@@ -70,7 +80,7 @@ class Custom extends Admin_Controller {
             endif;
             Template::set('last_file_time', date('M d, Y h:i:s A',$latestTime));
         }
-        Template::set('tables_loaded', sizeof($tables));
+        Template::set('tables_loaded', $tables_loaded);
         Template::set('toolbar_title', lang('lm_settings_title'));
         Template::set_view('league_manager/custom/index');
         Template::render();
@@ -78,33 +88,97 @@ class Custom extends Admin_Controller {
 	
 	//--------------------------------------------------------------------	
 
-	function import_team_owners() 
+	function map_users_to_teams() 
 	{
 
         $settings = $this->settings_lib->find_all_by('module','ootp');
-		
-		if (!isset($this->user_model)) {
-			$this->load->model('user_model');
+		if (!isset($this->author_model)) 
+		{
+			$this->load->model('news/author_model');
 		}
-        if (!isset($this->leagues_model)) {
-            $this->load->model('leagues_model');
-        }
-        if (!isset($this->teams_model)) {
-            $this->load->model('teams_model');
-        }
-		if (!isset($this->human_managers_model)) {
-            $this->load->model('human_managers_model');
-        }
-		$league = $this->leagues_model->find($settings['ootp.league_id']);
-		if (isset($league) && $league->league_id != NULL) {
-			Template::set('teams',$this->teams_model->get_teams_array($settings['ootp.league_id']));
-			Template::set('users',$this->user_model->find_all(false));
-		}	
-		if ($this->input->post('submit')) {
-		
+		if (!isset($this->leagues_model))
+		{
+			$this->load->model('leagues_model');
 		}
-		$this->index();
-		
+		if (!isset($this->teams_model))
+		{
+			$this->load->model('teams_model');
+		}
+        $league = $this->leagues_model->find($settings['ootp.league_id']);
+		if (isset($league) && $league->league_id != null) 
+		{
+			$teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
+			if ($this->input->post('submit')) {
+				if ($this->save_team_owners($teams_owners, $settings['ootp.league_id'])) {
+					Template::set_message('Team owner settings saved.','success');
+				}
+				else
+				{
+					Template::set_message('Error saving owner information.','error');
+				}
+			}
+			Template::set('settings',$settings);
+			Template::set('users',$this->author_model->get_users_select(true));
+			Template::set('team_owners',$teams_owners);	
+		}
+		else
+		{
+			Template::set_message('The league ID specified in the OOTP League Manager settings was not found.', 'error');
+		}
+		Template::set('leagues', $this->leagues_model->find_all());
+		Template::set('toolbar_title', lang('lm_owners_to_users'));
+		Template::set_view('league_manager/custom/map_users_to_teams');
+		Template::render();
+	}	
+	//--------------------------------------------------------------------	
+
+	function import_members_from_game() 
+	{
+
+        $settings = $this->settings_lib->find_all_by('module','ootp');
+		if (!isset($this->author_model)) 
+		{
+			$this->load->model('news/author_model');
+		}
+		if (!isset($this->human_managers_model))
+		{
+			$this->load->model('human_managers_model');
+		}
+		if (!isset($this->leagues_model))
+		{
+			$this->load->model('leagues_model');
+		}
+		if (!isset($this->teams_model))
+		{
+			$this->load->model('teams_model');
+		}
+        $league = $this->leagues_model->find($settings['ootp.league_id']);
+		if (isset($league) && $league->league_id != null) 
+		{
+			$teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
+			if ($this->input->post('submit')) {
+				if ($this->create_team_owners($teams_owners, $settings['ootp.league_id'])) {
+					Template::set_message('New members were created and assigned to teams successfully.','success');
+				}
+				else
+				{
+					Template::set_message('Error saving owner information.','error');
+				}
+			}
+			Template::set('settings',$settings);
+			Template::set('human_managers',$this->human_managers_model->find_all($settings['ootp.league_id']));
+			Template::set('users',$this->author_model->get_users_select(true));
+			Template::set('team',$this->teams_model->get_teams_array($settings['ootp.league_id']));
+			Template::set('team_owners',$teams_owners);	
+		}
+		else
+		{
+			Template::set_message('The league ID specified in the OOTP League Manager settings was not found.', 'error');
+		}
+		Template::set('leagues', $this->leagues_model->find_all());
+		Template::set('toolbar_title', lang('lm_owners_to_users'));
+		Template::set_view('league_manager/custom/map_users_to_teams');
+		Template::render();
 	}
 	
 	//--------------------------------------------------------------------	
@@ -386,4 +460,26 @@ class Custom extends Admin_Controller {
 	
 	//--------------------------------------------------------------------
 	
+	private function save_team_owners($teams_owners = false, $league_id = false)
+	{
+		if (is_array($teams_owners) && count($teams_owners) > 0)
+		{
+			foreach ($teams_owners as $team)
+			{
+				$owner_id = $this->input->post($team->id);
+				if (isset($owner_id) && $owner_id != -999) 
+				{
+					return $this->teams_model->set_team_owner($team->id, $this->input->post($team->id), $league_id);
+				}
+				else
+				{
+					return $this->teams_model->delete_team_owner($team->id, $league_id);
+				}
+			}
+		}
+	}
+	private function save_owners_users()
+	{
+		return;
+	}
 }

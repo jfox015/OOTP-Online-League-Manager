@@ -54,7 +54,9 @@
             <div class="span9"><p><h2>League Tasks</h2></p></div>
           </div>
 		  
-		  <?php if ($tables_loaded == 0) { ?>
+		  <?php
+             $drawn = false;
+                if ($tables_loaded == 0) { ?>
 		  <div class="row-fluid">
             <div class="span1">
               <img src="<?php echo Template::theme_url('images/icons/database_up.png'); ?>" width="24" height="24" border="0" />
@@ -62,17 +64,51 @@
 			 <div class="span8">
               <b><?php echo anchor(SITE_AREA.'/custom/league_manager/load_all_sql','Load OOTP MySQL Data'); ?></b>
               <p>Automatically load all MySQL data. You can limit the loading to only those files that are 
-			  marked as required on the <?php echo anchor('admin/settings/league_manager','required table editor'); ?> page.</p>
+			  marked as required on the <?php echo anchor(SITE_AREA.'/custom/league_manager/table_list','required table editor'); ?> page.</p>
             </div><!--/span-->
           </div><!--/row-->
-		  <?php } else { 
+		  <?php
+                $drawn = true;
+                } else {
 			// ADD FUNCTIONALITY WHEN TABLES EXIST AND ARE LOADED
-		  
-		  ?>
-		  <?php }
-            } ?>
+				
+				if (isset($team_count) && $team_count > 0 && $user_count > 0) : ?>
+				<div class="row-fluid">
+					<div class="span1">
+						<img src="<?php echo Template::theme_url('images/icons/users.png'); ?>" width="24" height="24" border="0" />
+						</div>
+						<div class="span8">
+						<b><?php echo anchor(SITE_AREA.'/custom/league_manager/map_users_to_teams','Manage Team Owners'); ?></b>
+						<p>Assign ownership of OOTP teams to web site users.</p>
+					</div><!--/span-->
+				</div><!--/row-->
+				<?php
+					if ($owner_count == 0 || $owner_count < $team_count) : ?> 
+					<div class="row-fluid">
+						<div class="span9"><p>&nbsp;</p></div>
+					</div>
+					  
+					<div class="row-fluid">
+						<div class="span1">
+							<img src="<?php echo Template::theme_url('images/icons/user_accept.png'); ?>" width="24" height="24" border="0" />
+							</div>
+							<div class="span8">
+							<b><?php echo anchor(SITE_AREA.'/custom/league_manager/import_members_from_game','Import users from OOTP game'); ?></b>
+							<p>Create new users for the site based on human manager profiles from an OOTP league and automatically 
+							map their team ownership.</p>
+						</div><!--/span-->
+					</div><!--/row-->
+					<?php	
+					endif;
+                    $drawn = true;
+                endif;
+				}
+            }
+            if (!$drawn) {
+                echo("No tasks are aviable at this time");
+            }
+            ?>
         </div><!--/span-->
-
         <div class="span3 offset1">
             <h2>Database Profile</h2>
             <p>

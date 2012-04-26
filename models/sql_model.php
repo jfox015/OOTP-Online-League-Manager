@@ -60,34 +60,19 @@ class SQL_model extends BF_Model
 	 *	(have been loaded) and they're last modified time.
 	 *	@return	array
 	 */
-	public function get_tables_loaded() 
+	public function count_tables_loaded()
 	{
-
-        $sql_tables = '(';
-        $query = $this->db->select('name')->get('sql_tables');
-		if ($query->num_rows() > 0) 
-		{
-            foreach($query->result() as $row) 
-			{
-                if ($sql_tables != '(') 
-				{ 
-					$sql_tables .= ','; 
-				}
-                $sql_tables .= "'".$row->name."'";
-            }
-        }
-		$query->free_result();
-        $sql_tables .= ')';
-        if ($sql_tables != '()') 
-		{
-            $this->db->where('name IN '.$sql_tables);
-			$this->db->where('modified_on <> "0"');
-			return $this->find_all();
-        }
-		else
-		{
-			return false;
-		}
+        return $this->db->where('modified_on <> 0')->count_all_results($this->table);
+	}
+    /**
+	 *	Get Tables Loaded.
+	 *	Returns an array of all tables from the sql_table_list that are present int he DB
+	 *	(have been loaded) and they're last modified time.
+	 *	@return	array
+	 */
+	public function get_tables_loaded()
+	{
+        return $this->where('modified_on <> 0')->find_all();
 	}
 	/**
 	 *	Set Tables Loaded.

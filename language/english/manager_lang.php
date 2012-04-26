@@ -20,13 +20,13 @@ $lang['lm_settings_lgicon']			= 'League Icon';
 $lang['lm_settings_txtcolor']		= 'Text Color';
 $lang['lm_settings_bgcolor']		= 'Background Color';
 
-$lang['lm_settings_paths']		= 'Paths and Reports';
+$lang['lm_settings_paths']			= 'Paths and Reports';
 $lang['lm_settings_lgdfile']		= 'League File Path';
 $lang['lm_settings_lgdfilenote']	= 'Full Server path to OOTP league file, Including file name!';
-$lang['lm_settings_assetpath']	= 'Asset Path';
-$lang['lm_settings_assetpnote']	= 'Full server path to OOTP Image assets folder. NO TRAILING SLASH!';
+$lang['lm_settings_assetpath']		= 'Asset Path';
+$lang['lm_settings_assetpnote']		= 'Full server path to OOTP Image assets folder. NO TRAILING SLASH!';
 $lang['lm_settings_asseturl']		= 'Asset URL:';
-$lang['lm_settings_assetunote']	= 'Web accessible URL to the OOTP Image assets folder.';
+$lang['lm_settings_assetunote']		= 'Web accessible URL to the OOTP Image assets folder.';
 
 $lang['lm_settings_home']			= 'Home Page Settings';
 
@@ -34,7 +34,11 @@ $lang['lm_settings_twitter']		= 'Twitter User Handle';
 $lang['lm_settings_twtrwnote']		= '<i>Example:</i> @handleName';
 $lang['lm_settings_tweets']			= 'No. of Tweets';
 
-$lang['lm_import_owners']			= 'Import team Owners';
+$lang['lm_import_owners']			= 'Create Users from Human Managers';
+$lang['lm_team_owners']				= 'Map Users teams';
+$lang['lm_otu_notes']				= 'Use this tool to map human managers from the OOTP league on the site to users on the web site. This allows site users to interact with tools based on their game profile.';
+$lang['lm_save_owner_map']			= 'Save owner mapping';
+$lang['lm_select_user']				= 'Select User';
 
 $lang['sql_settings_subhead']		 	= 'SQL Settings';
 $lang['sql_settings_path_note']			= 'Server path to MySQL Data Upload directory. NO TRAILING SLASH.';
