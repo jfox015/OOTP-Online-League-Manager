@@ -35,10 +35,16 @@ $lang['lm_settings_twtrwnote']		= '<i>Example:</i> @handleName';
 $lang['lm_settings_tweets']			= 'No. of Tweets';
 
 $lang['lm_import_owners']			= 'Create Users from Human Managers';
+$lang['lm_create_user_notes']		= 'Use this tool to create user accounts based on human manager profiles in the game.';
+$lang['lm_manager_matches']			= 'Human Manager/Site User Matches';
+$lang['lm_manager_matches_notes']	= 'The following human manager names match with users in the site and no team owner is yet assigned.';
+$lang['lm_manager_no_match_notes']	= 'The following human manager names do not match with any users in the site.';
+$lang['lm_manager_new']				= 'Create New Users';
 $lang['lm_team_owners']				= 'Map Users teams';
 $lang['lm_otu_notes']				= 'Use this tool to map human managers from the OOTP league on the site to users on the web site. This allows site users to interact with tools based on their game profile.';
 $lang['lm_save_owner_map']			= 'Save owner mapping';
 $lang['lm_select_user']				= 'Select User';
+$lang['lm_site_account_created']	= 'A new account on [SITE_TITLE] has been created for you';
 
 $lang['sql_settings_subhead']		 	= 'SQL Settings';
 $lang['sql_settings_path_note']			= 'Server path to MySQL Data Upload directory. NO TRAILING SLASH.';

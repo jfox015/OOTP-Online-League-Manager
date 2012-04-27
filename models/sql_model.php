@@ -89,7 +89,7 @@ class SQL_model extends BF_Model
 			return false;
 		}
 		foreach($fileList as $file => $loaded) {
-            $path = explode("/",$file);
+            $path = explode(DIRECTORY_SEPARATOR,$file);
             $tableName = explode(".",$path[sizeof($path)-1]);
 			$this->update_where('name',$tableName[0],array('modified_on'=>$modified));
 		}
@@ -144,13 +144,17 @@ class SQL_model extends BF_Model
 		$required_tables = $this->get_required_tables();
 		if (sizeof($required_tables) > 0) 
 		{
-			foreach ($required_tables as $tableName) 
+            $oldPrefix = $this->db->dbprefix;
+            $this->db->dbprefix = '';foreach ($required_tables as $tableName)
 			{
-				if (!$this->db->table_exists($tableName->name))
+
+                if (!$this->db->table_exists($tableName->name))
 				{
 					array_push($missingTables,$tableName->name);
 				}
+
 			}
+            $this->db->dbprefix = $oldPrefix;
 		}
 		return $missingTables;
 	}

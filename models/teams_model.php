@@ -92,7 +92,15 @@ class Teams_model extends Base_ootp_model {
 		$this->db->dbprefix = $this->dbprefix;
         return $team_owner_list;
 	}
-
+	/**
+	 *	SET TEAM OWNER.
+	 *	Counts the number of team owners assigned int he database
+	 *	@param		$team_id	Team Int ID
+	 *	@param		$user_id	User Int ID
+	 *	@param		$league_id	League Int ID
+	 *	@return					TRUE if set, FALSE on error
+	 *
+	 */
 	public function set_team_owner($team_id = false, $user_id = false, $league_id = false)
 	{
 		if ($team_id === false)

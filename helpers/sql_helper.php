@@ -33,8 +33,10 @@ function loadSQLFiles($sqlLoadPath, $loadTime, $fileList = false, $timeout = 120
 	$filesLoaded = array();
 	
 	if ($logPath === false) $logPath = $sqlLoadPath;
-	if (file_exists($logPath."/sqlloadlog.txt")) {
-		unlink($logPath."/sqlloadlog.txt");
+	$logFile = $logPath.DIRECTORY_SEPARATOR."sqlloadlog.txt";
+	//echo("Log file = ".$logFile."<br />");
+	if (file_exists($logFile)) {
+		unlink($logFile);
 	}
 	
 	if ($dir = opendir($sqlLoadPath)) {
@@ -54,7 +56,7 @@ function loadSQLFiles($sqlLoadPath, $loadTime, $fileList = false, $timeout = 120
 
 				$tableName=$ex[0];
 				## Import data
-				$file=$sqlLoadPath.DIRECTORY_SEPERATOR.$file;
+				$file=$sqlLoadPath.DIRECTORY_SEPARATOR.$file;
 				$fr = fopen($file,"r");
 				$errCnt=0;
 				if (isset($errors)) { 
@@ -99,7 +101,7 @@ function loadSQLFiles($sqlLoadPath, $loadTime, $fileList = false, $timeout = 120
             if (!function_exists('write_file')) {
                 $ci->load->helper('file');
             }
-			write_file($logPath.DIRECTORY_SEPERATOR."sqlloadlog.txt", $log_text);
+			write_file($logPath.DIRECTORY_SEPARATOR."sqlloadlog.txt", $log_text);
  		}
      	$end=time();
     } else {
@@ -113,7 +115,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 	$errors = '';
 	if ($filename!="ALL") {
 		
-		$file=$sqlLoadPath.DIRECTORY_SEPERATOR.$filename;
+		$file=$sqlLoadPath.DIRECTORY_SEPARATOR.$filename;
 	
 		if (file_exists($file) && $delete == 1) {
 			unlink($file);
@@ -124,7 +126,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 				while (false !== ($file = readdir($dir))) {
 					$ex = explode(".",$file);
 					$last = count($ex)-1;
-					$filename=$sqlLoadPath.DIRECTORY_SEPERATOR.$file;
+					$filename=$sqlLoadPath.DIRECTORY_SEPARATOR.$file;
 					$isSplit=substr_count($file,".mysql_");
 					
 					#echo "$file :: $filename :: $isSplit<br/>\n";
@@ -168,7 +170,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 					$newFileNm.=".".$e[$j];
 					if ($j==($last-1)) {$newFileNm.="_".$fcnt;} // END if
 				} // END for
-				$newFile=$sqlLoadPath.DIRECTORY_SEPERATOR.$newFileNm;
+				$newFile=$sqlLoadPath.DIRECTORY_SEPARATOR.$newFileNm;
 				$fcnt++;
 		
 				#echo $newFile."<br/>\n";
@@ -182,7 +184,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 			while (false !== ($file = readdir($dir))) {
 				$ex = explode(".",$file);
 				$last = count($ex)-1;
-				$filename=$sqlLoadPath.DIRECTORY_SEPERATOR.$file;
+				$filename=$sqlLoadPath.DIRECTORY_SEPARATOR.$file;
 				$fileTime=filemtime($filename);
 				$fileSize=filesize($filename);
 				
@@ -222,7 +224,7 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 							$newFileNm.=".".$e[$j];
 							if ($j==($last-1)) {$newFileNm.="_".$fcnt;} // END if
 						} // END for
-						$newFile=$sqlLoadPath.DIRECTORY_SEPERATOR.$newFileNm;
+						$newFile=$sqlLoadPath.DIRECTORY_SEPARATOR.$newFileNm;
 						$fcnt++;
 		
 						#echo $newFile."<br/>\n";

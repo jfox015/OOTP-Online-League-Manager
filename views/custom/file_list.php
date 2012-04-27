@@ -179,14 +179,45 @@
 	} // END if 
 	?>
 </div>
-
+<script>
+    var required = null;
+    function checkRequired() {
+        var form = document.file_list;
+        if (required != null) {
+            var startIndex = 0;
+            for (var i = 0; i < required.length; i++) {
+                for (var j = startIndex; j < form.elements.length; j++) {
+                    if (i == 0) {
+                        //alert(form.elements[j].value);
+                        //alert(required[i]);
+                    }
+                    if (form.elements[j].type == 'checkbox') {
+                        var table = form.elements[j].value.split(".");
+                        if (table[0] == required[i]) {
+                            form.elements[j].checked = true; // END if
+                            //startIndex = j;
+                        }
+                    }
+                } // END for
+            }
+        }
+    }
+    function setCheckBoxState(state) {
+        var form = document.file_list;
+        for (var i = 0; i < form.elements.length; i++) {
+            if (form.elements[i].type == 'checkbox')
+                form.elements[i].checked = state; // END if
+        } // END for
+    } // END function
+</script>
 <?php
+    echo("Module path = ".module_path('league_manager')."<br />");
 	$outJs = '';
 	if (isset($splitParents) && sizeof($splitParents) > 0) {
 		$outJs .= 'uncheckSplitParents();';
 	}
 	if (isset($required_tables) && sizeof($required_tables) > 0) {
-		$outJs .= 'var required = new Array('.sizeof($required_tables).');';
+		$outJs .= 'required = new Array('.sizeof($required_tables).');';
 		$count = 0;
 		foreach ($required_tables as $tableName) {
 			$outJs .= 'required['.$count.'] = "'.$tableName->name.'";';
