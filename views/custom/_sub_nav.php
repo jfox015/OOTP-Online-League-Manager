@@ -8,7 +8,7 @@
 	<li <?php echo $this->uri->segment(4) == 'sim_details' ? 'class="active"' : '' ?>>
 		<a href="<?php echo site_url(SITE_AREA .'/custom/league_manager/sim_details') ?>" id="sim_details"><?php echo 'Set Sim Details'; ?></a>
 	</li>
-	<li <?php echo $this->uri->segment(4) == 'export' ? 'class="active"' : '' ?>>
+	<li <?php echo $this->uri->segment(4) == 'table_list' ? 'class="active"' : '' ?>>
 		<a href="<?php echo site_url(SITE_AREA .'/custom/league_manager/table_list') ?>" id="table_list"><?php echo "Manage Required Tables"; ?></a>
 	</li>
 </ul>

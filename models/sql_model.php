@@ -55,14 +55,14 @@ class SQL_model extends BF_Model
         return $this->find_all();
 	}
 	/**
-	 *	Get Tables Loaded.
-	 *	Returns an array of all tables from the sql_table_list that are present int he DB 
+	 *	Count Tables Loaded.
+	 *	Returns an array of all tables from the sql_table_list that are present int he DB
 	 *	(have been loaded) and they're last modified time.
-	 *	@return	array
+	 *	@return	int
 	 */
 	public function count_tables_loaded()
 	{
-        return $this->db->where('modified_on <> 0')->count_all_results($this->table);
+        return (int)($this->count_required_tables() - sizeof($this->getMissingTables()));
 	}
     /**
 	 *	Get Tables Loaded.
@@ -95,11 +95,20 @@ class SQL_model extends BF_Model
 		}
 	}
 	/**
+	 *	COUNT Required Tables.
+	 *	Returns an array of all tables marked required.
+	 *	@return	array
+	 */
+	public function count_required_tables()
+	{
+		return $this->db->where('required',1)->count_all_results($this->table);
+	}
+	/**
 	 *	Get Required Tables.
 	 *	Returns an array of all tables marked required.
 	 *	@return	array
 	 */
-	public function get_required_tables() 
+	public function get_required_tables()
 	{
 		return $this->find_all_by('required',1);
 	}
@@ -123,7 +132,8 @@ class SQL_model extends BF_Model
 		{
 			$tbl_list = $tables;
 		}
-		$required = ($required === true) ? 1 : 0;
+        $this->db->update($this->table,array('required'=>0));
+        $required = ($required === true) ? 1 : 0;
 		foreach($tbl_list as $table) 
 		{
 			$row = $this->find_by('name',$table);
@@ -145,14 +155,13 @@ class SQL_model extends BF_Model
 		if (sizeof($required_tables) > 0) 
 		{
             $oldPrefix = $this->db->dbprefix;
-            $this->db->dbprefix = '';foreach ($required_tables as $tableName)
+            $this->db->dbprefix = '';
+            foreach ($required_tables as $tableName)
 			{
-
                 if (!$this->db->table_exists($tableName->name))
 				{
 					array_push($missingTables,$tableName->name);
 				}
-
 			}
             $this->db->dbprefix = $oldPrefix;
 		}

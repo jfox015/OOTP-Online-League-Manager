@@ -83,6 +83,7 @@ class Custom extends Admin_Controller {
         }
         Template::set('settings', $settings);
         Template::set('tables_loaded', $tables_loaded);
+        Template::set('required_table_count', $this->sql_model->count_required_tables());
         Template::set('toolbar_title', lang('lm_settings_title'));
         Template::set_view('league_manager/custom/index');
         Template::render();
@@ -111,17 +112,42 @@ class Custom extends Admin_Controller {
 		{
 			$teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
 			if ($this->input->post('submit')) {
-				if ($this->save_team_owners($teams_owners, $settings['ootp.league_id'])) {
+				$duped_ids = $this->save_team_owners($teams_owners, $settings['ootp.league_id']);
+                if (sizeof($duped_ids) == 0 && empty($this->teams_model->error)) {
 					Template::set_message('Team owner settings saved.','success');
 				}
 				else
 				{
-					Template::set_message('Error saving owner information.','error');
+                    $errorStr = '';
+                    if (sizeof($duped_ids) > 0)
+                    {
+                        $errorStr .= '<br />The following user id&#039;s were selected more than once. Obly the first selection for each user is saved.:<ul>';
+
+                        if (sizeof($duped_ids) > 1)
+                        {
+                            foreach ($duped_ids as $id)
+                            {
+                                $errorStr .= '<li>'.$this->author_model->find_author($id).'</li>';
+                            }
+                        }
+                        else
+                        {
+                            $errorStr .= '<li>'.$this->author_model->find_author($duped_ids[0]).'</li>';
+                        }
+                        $errorStr .= '</ul>';
+                    }
+                    if (!empty($this->teams_model->error))
+                    {
+                        $errorStr .= $this->teams_model->error;
+                    }
+                    Template::set_message('Error saving owner information. Errors:'.$errorStr,'error');
 				}
 			}
 			Template::set('settings',$settings);
-			Template::set('users',$this->author_model->get_users_select(true));
-			Template::set('team_owners',$teams_owners);	
+			$this->lang->load('news/news');
+            Template::set('users',$this->author_model->get_users_select(true));
+            $teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
+            Template::set('team_owners',$teams_owners);
 		}
 		else
 		{
@@ -155,9 +181,7 @@ class Custom extends Admin_Controller {
 			$use_usernames = $this->settings_lib->item('auth.use_own_names');
 			if ($this->input->post('submit')) 
 			{
-                $teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
-                $this->save_team_owners($teams_owners, $settings['ootp.league_id']);
-				if ($this->create_team_owners($settings['ootp.league_id']))
+                if ($this->create_team_owners($settings['ootp.league_id']))
 				{
 					Template::set_message('New members were created and assigned to teams successfully.','success');
 				}
@@ -170,6 +194,7 @@ class Custom extends Admin_Controller {
 			$arrays = $this->human_managers_model->get_owner_user_matches($settings['ootp.league_id']);
 			Template::set('owner_matches',$arrays[0]);
 			Template::set('non_matches',$arrays[1]);
+			Template::set('use_usernames',$use_usernames);
 		}
 		else
 		{
@@ -177,7 +202,7 @@ class Custom extends Admin_Controller {
 		}
 		Template::set('leagues', $this->leagues_model->find_all());
 		Template::set('toolbar_title', lang('lm_owners_to_users'));
-		Template::set_view('league_manager/custom/create_users_from_game');
+		Template::set_view('league_manager/custom/create_members_from_game');
 		Template::render();
 	}
 	
@@ -225,7 +250,7 @@ class Custom extends Admin_Controller {
                     }
                 }
                 // Log the activity
-                $this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'ootp');
+                //$this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'ootp');
 
                 // save the settings to the DB
 				if ($this->settings_model->update_batch($data, 'name')) {
@@ -252,8 +277,9 @@ class Custom extends Admin_Controller {
         if (!isset($this->leagues_events_model)) {
 			$this->load->model('leagues_events_model');
 		}
-		Assets::add_css(Template::theme_url('css/jquery.ui.datepicker.css'),'screen');
-		Assets::add_js($this->load->view('custom/sim_details_js.php',null,true),'inline');
+        Assets::add_css(css_path() . 'bootstrap-datepicker.css');
+        Assets::add_js( js_path() . 'bootstrap-datepicker.js');
+        Assets::add_js($this->load->view('custom/sim_details_js.php',null,true),'inline');
 		Template::set('events',$this->leagues_events_model->get_events($league_id,$league_date,10));
         Template::set('toolbar_title', lang('sim_setting_title'));
         Template::set_view('league_manager/custom/sim_details');
@@ -463,21 +489,38 @@ class Custom extends Admin_Controller {
 	
 	private function save_team_owners($teams_owners = false, $league_id = false)
 	{
-		if (is_array($teams_owners) && count($teams_owners) > 0)
+        $duped_ids = array();
+        if (is_array($teams_owners) && count($teams_owners) > 0)
 		{
-			foreach ($teams_owners as $team)
+            $used_ids = array();
+            foreach ($teams_owners as $team)
 			{
-				$owner_id = $this->input->post($team->id);
-				if (isset($owner_id) && $owner_id != -999) 
+                $success = false;
+                $owner_id = ($this->input->post($team->team_id)) ? $this->input->post($team->team_id) : -999;
+				if (isset($owner_id) && $owner_id != -999)
 				{
-					return $this->teams_model->set_team_owner($team->id, $this->input->post($team->id), $league_id);
+					if (!in_array($owner_id, $used_ids)) {
+                        $success = $this->teams_model->set_team_owner($team->team_id, $owner_id, $league_id);
+                        array_push($used_ids,$owner_id);
+                    }
+                    else
+                    {
+                        if (!in_array($owner_id, $duped_ids)) {
+                            array_push($duped_ids,$owner_id);
+                        }
+                        $success = true;
+                    }
 				}
 				else
 				{
-					return $this->teams_model->delete_team_owner($team->id, $league_id);
+                    $success = $this->teams_model->delete_team_owner($team->team_id, $league_id);
 				}
+                if (!$success) {
+                    return false;
+                }
 			}
 		}
+        return $duped_ids;
 	}
 
     //--------------------------------------------------------------------
@@ -493,8 +536,9 @@ class Custom extends Admin_Controller {
 			{
 				if ($use_usernames)
 				{
-					$this->form_validation->set_rules('username', lang('bf_username'), 'required|trim|strip_tags|max_length[30]|unique['.$this->db->dbprefix.'_users.username,'.$this->db->dbprefix.'_users.id]|xss_clean');
+					$this->form_validation->set_rules($manager->human_manager_id.'_username', lang('bf_username'), 'required|trim|strip_tags|max_length[30]|unique['.$this->db->dbprefix.'users.username,'.$this->db->dbprefix.'users.id]|xss_clean');
 				}
+				$this->form_validation->set_rules($manager->human_manager_id.'_display_name', lang('bf__display_name'), 'trim|max_length[255]|strip_tags|xss_clean');
 				$this->form_validation->set_rules($manager->human_manager_id.'_email', lang('bf_email'), 'trim|unique[bf_users.email]|valid_email|max_length[120]|xss_clean');
 			}
 		}
@@ -502,20 +546,22 @@ class Custom extends Admin_Controller {
 		{
 			return false;
 		}
-		$this->lang->load('users');
+		$this->lang->load('users/users');
 		foreach ($managers as $manager) 
 		{
+			$display_name = $this->input->post($manager->human_manager_id."_display_name");
 			$username = ($use_usernames) ? $this->input->post($manager->human_manager_id."_username") : '';
 			$email = $this->input->post($manager->human_manager_id."_email");
 			$activation = $this->input->post($manager->human_manager_id."_activate");
 			
-			$data = $this->human_managers_model->create_user($email, $activation, $username);
-			if (isset($data) && is_array($data) && count($data) > 0)
+			$data = $this->human_managers_model->create_user($email, $activation, $display_name, $username);
+			if ($data !== false && count($data) > 0)
 			{
-				$this->teams_model->set_team_owner($manager->team, $data['user_id'], $league_id);
+				$this->teams_model->set_team_owner($manager->team_id, $data['user_id'], $league_id);
 				$subject 		= str_replace('[SITE_TITLE]',$this->settings_lib->item('site.title'),lang('lm_site_account_created'));
-				$email_mess 	= $this->load->view('league_manager/custom/user_created', array('title'=>$this->settings_lib->item('site.title'),'link' => site_url(), 'password'=>$data['password'], 'login'=>($use_usernames ? $username: $email)), true);
+				$email_mess 	= $this->load->view('league_manager/_emails/user_created', array('title'=>$this->settings_lib->item('site.title'),'link' => site_url(), 'password'=>$data['password'], 'login'=>($use_usernames ? $username: $email)), true);
 			}
 		}
+		return true;
 	}
 }

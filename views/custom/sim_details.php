@@ -31,7 +31,7 @@
 		<div class="control-group <?php echo form_error('sim_length') ? 'error' : '' ?>">
             <label class="control-label"><?php echo lang('sim_setting_simlen') ?></label>
             <div class="controls">
-				<input type="text" style="width:3em;" id="sim_length" name="sim_length" value="<?php echo (isset($settings['ootp.sim_length'])) ? $settings['ootp.sim_length']: set_value('ootp.sim_length'); ?>" />
+				<input type="text" class="span1" id="sim_length" name="sim_length" value="<?php echo (isset($settings['ootp.sim_length'])) ? $settings['ootp.sim_length']: set_value('ootp.sim_length'); ?>" />
 				<span class="help-inline"><?php if (form_error('sim_length')) echo form_error('sim_length'); else echo lang('sim_setting_simlen_note'); ?></span>
             </div>
         </div>
@@ -40,7 +40,7 @@
 		 <div class="control-group <?php echo form_error('sims_per_week') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sim_setting_perweek') ?></label>
 			<div class="controls">
-				<select class="tiny" id="sims_per_week" name="sims_per_week">
+				<select class="span1" id="sims_per_week" name="sims_per_week">
 				<?php
 					for( $i = 1; $i < 8; $i++){
 						echo('<option value="'.$i.'"');
@@ -93,7 +93,7 @@
 		 <div class="control-group <?php echo form_error('league_file_date') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sim_setting_league_file_date') ?></label>
 			<div class="controls">
-				<input type="text" id="" name="league_file_date" value="<?php echo (isset($settings['ootp.league_file_date'])) ? date('m/d/Y',$settings['ootp.league_file_date']): set_value('ootp.league_file_date'); ?>" />
+				<input type="text" class="span3" id="league_file_date" name="league_file_date" value="<?php echo (isset($settings['ootp.league_file_date']) && !empty($settings['ootp.league_file_date'])) ? date('m/d/Y',$settings['ootp.league_file_date']): set_value('ootp.league_file_date'); ?>" />
 				<?php if (form_error('league_file_date')) echo '<span class="help-inline">'.form_error('league_file_date').'</span>'; ?>
 			</div>
 		</div>
@@ -102,7 +102,7 @@
 		 <div class="control-group <?php echo form_error('next_sim') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sim_setting_next_sim') ?></label>
 			<div class="controls">
-				<input type="text" class="small" id="next_sim" name="next_sim" value="<?php echo (isset($settings['ootp.next_sim']) && !empty($settings['ootp.next_sim'])) ? date('m/d/Y',$settings['ootp.next_sim']): set_value('ootp.next_sim'); ?>" />
+				<input type="text" class="span3" id="next_sim" name="next_sim" value="<?php echo (isset($settings['ootp.next_sim']) && !empty($settings['ootp.next_sim'])) ? date('m/d/Y',$settings['ootp.next_sim']): set_value('ootp.next_sim'); ?>" />
 				<?php if (form_error('next_sim')) echo '<span class="help-inline">'.form_error('next_sim').'</span>'; ?>
 			</div>
 		</div>
@@ -111,7 +111,7 @@
 		 <div class="control-group <?php echo form_error('league_date') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sim_setting_league_date') ?></label>
 			<div class="controls">
-				<input type="text" class="small" id="league_date" name="league_date" value="<?php echo (isset($settings['ootp.league_date']) && !empty($settings['ootp.league_date'])) ? date('m/d/Y',$settings['ootp.league_date']): set_value('ootp.league_date'); ?>" />
+				<input type="text" class="span3" id="league_date" name="league_date" value="<?php echo (isset($settings['ootp.league_date']) && !empty($settings['ootp.league_date'])) ? date('m/d/Y',$settings['ootp.league_date']): set_value('ootp.league_date'); ?>" />
 				<?php if (form_error('league_date')) echo '<span class="help-inline">'.form_error('league_date').'</span>'; ?>
 			</div>
 		</div>
@@ -120,7 +120,7 @@
 		 <div class="control-group <?php echo form_error('league_event') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sim_setting_league_event') ?></label>
 			<div class="controls">
-				<select id="league_event" name="" class="small" >
+				<select id="league_event" name="league_event" class="span3" >
 				<?php
 				if (isset($events) && is_array($events) && count($events)):
 					foreach( $events as $event):

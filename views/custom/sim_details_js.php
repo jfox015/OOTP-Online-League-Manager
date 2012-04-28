@@ -3,6 +3,4 @@
             });
             $('#ootp_block').toggle(!$('input#sim_details').is(':checked'));
 			
-			$("#next_sim").datepicker();
-			$("#league_date").datepicker();
-			$("#league_file_date").datepicker();
+			$("#next_sim, #league_date, #league_file_date").datepicker();

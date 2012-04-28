@@ -42,11 +42,11 @@ class Base_ootp_model extends BF_Model {
         return $data;
     }
 
-    public function find_all($id) {
+    public function find_all() {
 		$data = array();
 		$this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
-            $data = parent::find_all($id);
+            $data = parent::find_all();
         }
         $this->db->dbprefix = $this->dbprefix;
         return $data;

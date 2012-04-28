@@ -55,7 +55,7 @@
 		<a href="#" onclick="setCheckBoxState(true); return false;">Select All</a> | <a 
 		href="#" onclick="setCheckBoxState(false); return false;">Select None</a><br />
 		<div class="form-actions">
-			<input type="submit" name="submit" class="btn primary" value="<?php echo lang('lm_action_load_checked') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/custom/league_manager', lang('bf_action_cancel')); ?>
+			<input type="submit" name="submit" class="btn primary" value="<?php echo lang('bf_action_save') ?> " /> <?php echo lang('bf_or') ?> <?php echo anchor(SITE_AREA .'/custom/league_manager', lang('bf_action_cancel')); ?>
 		</div>
 	</div>
 </div>

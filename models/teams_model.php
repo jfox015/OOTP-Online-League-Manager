@@ -47,7 +47,7 @@ class Teams_model extends Base_ootp_model {
 		{
 			$league_id = $this->league_id;
 		}
-		return $this->db->where('league_id',$league_id)
+        return $this->db->where('league_id',$league_id)
 					    ->count_all_results('teams_owners');
 	}
 	
@@ -62,12 +62,16 @@ class Teams_model extends Base_ootp_model {
 		{
 			$league_id = $this->league_id;
 		}
-		$this->db->dbprefix = '';
-        $team_count = $this->db->where('league_id',$league_id)
-							   ->where('level',1)
-							   ->where('allstar_team',0)
-							   ->count_all_results($this->table);
-		$this->db->dbprefix = $this->dbprefix;
+        $team_count = 0;
+        $this->db->dbprefix = '';
+        if ($this->db->table_exists($this->table)) {
+            $team_count = $this->db->where('league_id',$league_id)
+                                   ->where('level',1)
+                                   ->where('allstar_team',0)
+                                   ->count_all_results($this->table);
+
+        }
+        $this->db->dbprefix = $this->dbprefix;
         return $team_count;
 	}
 	/**
@@ -82,14 +86,18 @@ class Teams_model extends Base_ootp_model {
 		{
 			$league_id = $this->league_id;
 		}
-		$this->db->dbprefix = '';
-		$this->select($this->table.'.team_id, '.$this->table.'.name, '.$this->table.'.nickname, logo_file, user_id')
-			 ->join($this->dbprefix.'teams_owners',$this->dbprefix.'teams_owners.team_id = '.$this->table.'.team_id', 'left')
-			 ->where($this->table.'.league_id',$league_id)
-			 ->where($this->table.'.allstar_team',0)
-			 ->where($this->table.'.level',1);
-		$team_owner_list = $this->find_all();
-		$this->db->dbprefix = $this->dbprefix;
+        $team_owner_list = array();
+        $this->db->dbprefix = '';
+        if ($this->db->table_exists($this->table)) {
+            $this->select($this->table.'.team_id, '.$this->table.'.name, '.$this->table.'.nickname, logo_file, user_id')
+                 ->join($this->dbprefix.'teams_owners',$this->dbprefix.'teams_owners.team_id = '.$this->table.'.team_id', 'left outer')
+                 ->where($this->table.'.league_id',$league_id)
+                 ->where($this->table.'.allstar_team',0)
+                 ->where($this->table.'.level',1);
+            $team_owner_list = $this->find_all();
+
+        }
+        $this->db->dbprefix = $this->dbprefix;
         return $team_owner_list;
 	}
 	/**
@@ -117,14 +125,16 @@ class Teams_model extends Base_ootp_model {
 		{
 			$league_id = $this->league_id;
 		}
-		$this->db->where('league_id',$league_id)
-				 ->where('team_id',$team_id)
-				 ->update('teams_owners',array('user_id'=>$user_id));
-		if ($this->db->affected_rows() == 0)
+        $prev = $this->db->select('id')->where('team_id',$team_id)->where('league_id',$league_id)->count_all_results('teams_owners');
+        if ($prev == 0)
 		{
-			$this->db->insert('teams_owners', array('league_id',$league_id, 'team_id',$team_id, 'user_id'=>$user_id));
+			$this->db->insert('teams_owners', array('league_id'=>$league_id, 'team_id'=>$team_id, 'user_id'=>$user_id));
 		}
-		return ($this->db->affected_rows() > 0);
+        else
+        {
+            $this->db->where('league_id',$league_id)->where('team_id',$team_id)->update('teams_owners',array('user_id'=>$user_id));
+        }
+		return true;
 	}
 	public function delete_team_owner($team_id = false, $league_id = false)
 	{
@@ -137,10 +147,12 @@ class Teams_model extends Base_ootp_model {
 		{
 			$league_id = $this->league_id;
 		}
-		$this->db->where('league_id',$league_id)
-				 ->where('team_id',$team_id)
-				 ->delete('teams_owners');
-		return ($this->db->affected_rows() > 0);
+        $prev = $this->where('team_id',$team_id)->where('league_id',$league_id)->find_all();
+        if (isset($prev) && count($prev) > 0)
+        {
+            $this->db->where('league_id',$league_id)->where('team_id',$team_id)->delete('teams_owners');
+        }
+		return true;
 	}
 	/**
 	 *	GET TEAMS.

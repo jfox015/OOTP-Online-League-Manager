@@ -27,14 +27,14 @@
 			foreach ($team_owners as $team):
 				$team_name = $team->name." ".$team->nickname; ?>
 			<tr>
-				<td><img src="<?php echo $settings['ootp.asset_url'].'/images/'.str_replace(".","_50.",$team->logo_file); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /></td>
+				<td><img src="<?php echo $settings['ootp.asset_url'].'images/'.str_replace(".","_50.",$team->logo_file); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /></td>
 				<td><?php echo $team_name; ?></td>
 				<td>
 				<?php 
 				$selected = '';
-				foreach ($users as $user) :
-					if ($user->id == $team->user_id) :
-						$selected = $user->id;
+				foreach ($users as $id => $display_name) :
+					if ($id == $team->user_id) :
+						$selected = $id;
 						break;
 					endif;
 				endforeach;

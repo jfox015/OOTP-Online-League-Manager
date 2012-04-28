@@ -80,6 +80,9 @@
 						<div class="span6">
 						<b><?php echo anchor(SITE_AREA.'/custom/league_manager/map_users_to_teams','Manage Team Owners'); ?></b>
 						<p>Assign ownership of OOTP teams to web site users.</p>
+                        <div class="alert <?php echo ($owner_count == $team_count ? "alert-success" : "alert-error"); ?>">
+                                <?php echo "<b>".$owner_count."</b> of <b>".$team_count."</b> teams have owners."; ?>
+                        </div>
 					</div><!--/span-->
 				</div><!--/row-->
 				<?php
@@ -93,12 +96,12 @@
 							<img src="<?php echo Template::theme_url('images/icons/user_accept.png'); ?>" width="24" height="24" border="0" />
 							</div>
 							<div class="span6">
-							<b><?php echo anchor(SITE_AREA.'/custom/league_manager/import_members_from_game','Import users from OOTP game'); ?></b>
+							<b><?php echo anchor(SITE_AREA.'/custom/league_manager/create_members_from_game','Import users from OOTP game'); ?></b>
 							<p>Create new users for the site based on human manager profiles from an OOTP league and automatically 
 							map their team ownership.</p>
 						</div><!--/span-->
 					</div><!--/row-->
-					<?php	
+					<?php
 					endif;
                     $drawn = true;
                 endif;
@@ -115,8 +118,17 @@
             <?php if ($tables_loaded > 0) { ?>
                 <table class="table table-stripped table-bordered">
                 <tr>
+                    <th>Required Tables:</th>
+                    <td><?php echo $required_table_count ?></td>
+                </tr>
+                <tr>
                     <th>OOTP Tables Loaded:</th>
-                    <td><?php echo $tables_loaded ?></td>
+                    <td>
+                        <?php if ($tables_loaded < $required_table_count) { ?>
+                        <span class="alert alert-error"><?php } ?>
+                        <?php echo $tables_loaded ?></td>
+                        <?php if ($tables_loaded < $required_table_count) { ?>
+                        </span><?php } ?>
                 </tr>
                 <tr>
                     <th>Latest SQL File Updated:</th>
@@ -135,12 +147,16 @@
 
                     <?php if (isset($missing_files) && sizeof($missing_files)>0) { ?>
                     <div class="row-fluid">
+                        <div class="span12">
+                            <div class="alert alert-error"><b>Error: Required data files missing!</b></div>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
                         <div class="span3">
                             <img src="<?php echo Template::theme_url('images/icons/database_remove.png'); ?>" width="48" height="48" border="0" />
                         </div>
                         <div class="span9">
-                            <div class="notification error"><b>Error: Required data files missing!</b></div>
-                            <p>
+                           <p>
                                 The following <b>required</b> OOTP MySQL files were not found locally. Please assure all
                                 required SQL files listed below are loaded on the server before continuing to try and load you database.
                             </p>
@@ -154,12 +170,16 @@
                     <?php } ?>
 
                     <div class="row-fluid">
-                        <div class="span3">
+                        <div class="span12">
+                            <div class="alert alert-error"><b>Error: Required tables are missing!</b></div>
+                        </div>
+                    </div>
+                    <div class="row-fluid">
+                       <div class="span3">
                             <img src="<?php echo Template::theme_url('images/icons/database_remove.png'); ?>" width="48" height="48" border="0" />
                         </div>
                         <div class="span9">
-                            <div class="notification error"><b>Error: Required tables are missing!</b></div>
-							<p>
+                            <p>
 							The following <b>required</b> tables were not found in the database. Please assure all
                                 required tables listed below are loaded. Cetrtain features of the site may not work until all required tables are loaded.
 							</p>

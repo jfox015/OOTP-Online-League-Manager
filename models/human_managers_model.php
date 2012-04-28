@@ -41,8 +41,8 @@ class Human_managers_model extends Base_ootp_model {
 	
 	public function find_all_by($field=NULL, $value=NULL)
 	{
-		$this->join('teams','teams.team_id = '.$this->table.'.team_id');
-		$this->select('human_manager_id, first_name, last_name, teams.team_id, teams.name as team_name, teams.nickname as teams_nick');
+		$this->join('teams','teams.team_id = '.$this->table.'.team_id','right outer');
+		$this->select('human_manager_id, first_name, last_name, teams.team_id, teams.name as team_name, teams.nickname as team_nick, teams.logo_file');
 		return parent::find_all_by($field, $value);
 	}
 	
@@ -50,9 +50,9 @@ class Human_managers_model extends Base_ootp_model {
 	public function get_unowned_team_managers($league_id = 100, $team_exclusions = false) 
 	{
 		$this->db->dbprefix = '';
-		$this->select("first_name, last_name, teams.team_id, teams.name as team_name, teams.nickname as team_nick, teams.logo_file")
-			 ->join('teams','teams.team_id = '.$this->table.'.team_id','left')
-			 ->join($this->dbprefix.'teams_owners',$this->dbprefix.'teams_owners.team_id = '.$this->table.'.team_id','right outer')
+		$this->select("human_manager_id, first_name, last_name, teams.team_id, teams.name as team_name, teams.nickname as team_nick, teams.logo_file")
+			 //->join('teams','teams.team_id = '.$this->table.'.team_id','left')
+			 ->join($this->dbprefix.'teams_owners',$this->dbprefix.'teams_owners.team_id = '.$this->table.'.team_id','left')
 			 ->where($this->dbprefix.'teams_owners.team_id IS NULL')
 			 ->where($this->table.'.team_id <> 0');
 		if ($team_exclusions !== false)
@@ -76,7 +76,7 @@ class Human_managers_model extends Base_ootp_model {
 				$this->where($this->table.'.team_id NOT IN '.$exclude_team_str);
 			}
 		}
-		$human_managers = $this->find_all_by($this->table.'.league_id',$league_id);
+		$human_managers = $this->find_all_by($this->table.'.league_id',(int)$league_id);
 		$this->db->dbprefix = $this->dbprefix;
         return $human_managers;
 	}
@@ -85,13 +85,12 @@ class Human_managers_model extends Base_ootp_model {
 		
 		$userMatches = array();
 		$nonMatches = array();
-		if (!isset($this->users_model)) {
-			$this->load->model('users_model');
+		if (!isset($this->user_model)) {
+			$this->load->model('user_model');
 		}
-		$users = $this->users_model->find_all();
+		$users = $this->user_model->find_all();
 		
-		$human_managers = $this->get_unowned_team_managers($league_id, $exclusions)
-		
+		$human_managers = $this->get_unowned_team_managers($league_id, $exclusions);
 		if (count($human_managers) > 0) {
 			foreach ($human_managers as $row) {
 				$match = false;
@@ -100,7 +99,8 @@ class Human_managers_model extends Base_ootp_model {
 					if ((isset($user->first_name) && !empty($user->first_name) && $row->first_name == $user->first_name) &&
 					(isset($user->last_name) && !empty($user->last_name) && $row->last_name == $user->last_name))
 					{
-						array_push($userMatches, array('human_manager_id'=>$row->id, 'first_name'=>$row->first_name, 'last_name'=>$row->last_name, 'user_id'=>$user->id,'username'=>$user->username));
+						array_push($userMatches, array('human_manager_id'=>$row->human_manager_id, 'first_name'=>$row->first_name, 'last_name'=>$row->last_name, 'user_id'=>$user->id,'username'=>$user->username,
+                        'team_name'=>$row->team_name,'team_nick'=>$row->team_nick,'logo_file'=>$row->logo_file));
 						array_splice($users, $userCount, 1); // REMOVE THE USER MATCH
 						$match = true;
 					}
@@ -108,7 +108,7 @@ class Human_managers_model extends Base_ootp_model {
 				}
 				if ($match === false)
 				{
-					array_push($nonMatches, array('human_manager_id'=>$row->id, 'first_name'=>$row->first_name, 'last_name'=>$row->last_name));
+					array_push($nonMatches, array('human_manager_id'=>$row->human_manager_id, 'first_name'=>$row->first_name, 'last_name'=>$row->last_name,'team_name'=>$row->team_name,'team_nick'=>$row->team_nick,'logo_file'=>$row->logo_file));
 				}
 			}
 		}
@@ -117,12 +117,16 @@ class Human_managers_model extends Base_ootp_model {
 	/*---------------------------------------
 	/	PRIVATE/PROTECTED FUNCTIONS
 	/--------------------------------------*/
-	public function create_user($email='', $activation = 1, $username='', $role =  5) {
+	public function create_user($email='', $activation = 1, $display_name = '', $username='', $role =  4) {
 		$data = array(
 			'role_id'	=> $role,
 			'email'		=> $email,
 			'username'	=> $username,
+			'display_name'	=> $display_name,
+			'banned'	=> 0,
+			'ban_message'	=> '',
 			'active'	=> ($activation == 1 ? 1 : 0),
+            'activate_hash' => ($activation == 1 ? '' :do_hash(random_string('alnum', 40) . time()))
 		);
 		
 		$pw = substr(md5($email.time()),0,12);
@@ -137,8 +141,8 @@ class Human_managers_model extends Base_ootp_model {
 			return false;
 		}
 		else 
-		}
-			return array('user_id'=>$this->db->insert_id, 'password'=>$pw);
+        {
+			return array('user_id'=>$this->db->insert_id(), 'password'=>$pw);
 		}
 	}
 	/*
