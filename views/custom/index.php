@@ -118,8 +118,8 @@
             <?php if ($tables_loaded > 0) { ?>
                 <table class="table table-stripped table-bordered">
                 <tr>
-                    <th>Required Tables:</th>
-                    <td><?php echo $required_table_count ?></td>
+                    <th width="45%">Required Tables:</th>
+                    <td width="55%"><?php echo $required_table_count ?></td>
                 </tr>
                 <tr>
                     <th>OOTP Tables Loaded:</th>

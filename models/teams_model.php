@@ -162,20 +162,19 @@ class Teams_model extends Base_ootp_model {
 	 *
 	 */
 	public function get_teams($league_id = false) {
-		
-		if ($league_id === false)
-		{
-			$league_id = $this->league_id;
-		}
+
 		$teams = array();
         $this->db->dbprefix = '';
         if ($this->db->table_exists($this->table)) {
 
-            $query = $this->db->select('team_id,abbr,name,nickname,logo_file')
+            $this->db->select('team_id,abbr,name,nickname,logo_file')
                 ->where('allstar_team',0)
-                ->where('league_id',$league_id)
-                ->order_by('name,nickname','asc')
-                ->get($this->table);
+                ->order_by('name,nickname','asc');
+            if ($league_id !== false)
+            {
+                $this->db->where('league_id',$league_id);
+            }
+            $query = $this->db->get($this->table);
             if ($query->num_rows() > 0) {
                 $teams = $query->result();
             }
@@ -193,12 +192,8 @@ class Teams_model extends Base_ootp_model {
 	 */
 	public function get_teams_array($league_id = false) {
 
-        if ($league_id === false)
-		{
-			$league_id = $this->league_id;
-		}
 		$teams = array();
-		$teams_result = $this->get_teams($this->league_id);
+		$teams_result = $this->get_teams($league_id);
 		if (isset($teams_result) && is_array($teams_result) && sizeof($teams_result) > 0) {
 			foreach($teams_result as $row) {
 				$teams = $teams + array($row->team_id=>array('team_id'=>$row->team_id,'abbr'=>$row->abbr,'name'=>$row->name,

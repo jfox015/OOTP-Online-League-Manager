@@ -822,37 +822,53 @@ class Players_model extends Base_ootp_model {
         return $stats;
 
     }
-    public function getCurrentStats($ootp_league_id, $lgyear, $player_id = false) {
-        if ($player_id === false) { $player_id = $this->player_id; }
-
-        $stats = array();
-        $pos = 0;
-        // GET PLAYER POSITION
-        $pos = $this->getPlayerPosition($player_id);
-        //print($this->db->last_query()."<br />");
+    public function get_current_stats($position = 1, $league_id = false, $league_year = false, $team_id = false) {
+       
+		$players_list = array();
         $this->db->dbprefix = '';
         $this->db->flush_cache();
-        if ($pos == 1) {
-            $this->db->select('ip,w,l,s,k,bb,er,ha,hra');
-            $this->db->from('players_career_pitching_stats');
+        $table = '';
+		$select = 'first_name, last_name, players.position, players.role, age, throws, bats, ';
+		if ($position == 1) {
+            $select .= "w,l,if((ip+(ipf/3))=0,0,9*er/(ip+(ipf/3))) as era,g,gs,(ip+(ipf/3)) as ip,k,bb,hra,s";
+            $table = 'players_career_pitching_stats';
         } else {
-            $this->db->select('ab,r,hr,rbi,bb,k,sb,h,d,t');
-            $this->db->from('players_career_batting_stats');
+            $select .= "if(ab=0, 0,(h/ab) ) as avg,g,ab,r,h,hr,rbi,bb,k,sb,cs";
+            $table = 'players_career_batting_stats';
         }
-        $this->db->where('player_id',$player_id);
-        $this->db->where('split_id',1);
-        $this->db->where('year',$lgyear);
-        $this->db->where('league_id',$ootp_league_id);
-        $this->db->where('level_id',1);
-        $query = $this->db->get();
+		$this->db->select($select, false)
+				 ->join('players','players.player_id = '.$table.'.player_id', 'left outer');
+		if ($team_id !== false)
+		{
+			$this->db->where('players.team_id',(int)$team_id);
+        }
+		$this->db->where('split_id',1);
+        if ($league_year !== false)
+		{
+			$this->db->where('year',(int)$league_year);
+		}
+        if ($league_id !== false)
+        {
+            $this->db->where('players.league_id',(int)$league_id);
+        }
+        if ($position == 1) {
+			$this->db->where('players.position',1);
+		} else {
+			$this->db->where('players.position <> 1');
+		}
+        $this->db->order_by('players.position','ASC');
+        $query = $this->db->get($table);
         $fields = $query->list_fields();
         if ($query->num_rows() > 0) {
-            $row = $query->row();
-            foreach($fields as $field) {
-                $stats[$field] = $row->$field;
-            }
+            foreach($query->result() as $row) {
+				$stats = array();
+				foreach($fields as $field) {
+					$stats[$field] = $row->$field;
+				}
+				array_push($players_list,$stats);
+			}
         }
         $this->db->dbprefix = $this->dbprefix;
-        return $stats;
+        return $players_list;
     }
 }  

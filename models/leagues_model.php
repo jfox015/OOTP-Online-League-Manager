@@ -38,6 +38,52 @@ class Leagues_model extends Base_ootp_model {
 		}
 	}
 	/**
+	 *	get_all_seasons.
+	 *	Returns a list of years as found in the players stats tables.
+	 *	@param	$league_id	int		Defaults to 100
+	 *	@return				array	Array of year values
+	 */
+	public function get_all_seasons($league_id = 100) {
+		$years = array();
+		$this->db->dbprefix = '';
+		$sql="SELECT DISTINCT year FROM players_career_batting_stats WHERE league_id=".$league_id." GROUP BY year ORDER BY year DESC;";
+		$query = $this->db->query($sql);
+		if ($query->num_rows() > 0) {
+			foreach($query->result_array() as $row) {
+			   array_push($years,$row['year']);
+			}
+		}
+		$query->free_result();
+		$this->db->dbprefix = $this->dbprefix;
+		return $years;
+	}
+	/**
+	 *	Returns a string with the state of the league.
+	 *	@return	String
+	 */
+	public function get_league_date($date_type = false, $league_id = 100) 
+	{
+		$league = $this->find_all_by('league_id',$league_id);
+		if (isset($league) && is_array($league) && count($league)) 
+		{
+			$date = '';
+			switch($date_type) 
+			{
+				case 'current':
+					$date = $league->current_date;
+					break;
+				case 'start':
+					$date = $league->start_date;
+					break;
+			}
+			return $date;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	/**
 	 *	Returns a string with the state of the league.
 	 *	@return	String
 	 */

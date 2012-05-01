@@ -61,7 +61,8 @@ class Custom extends Admin_Controller {
             $file_list = getSQLFileList($settings['ootp.sql_path']);
             Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
             Template::set('missing_tables', $this->sql_model->getMissingTables());
-            Template::set('last_loaded', date('M d, Y h:i:s A',$this->sql_model->get_latest_load_time()));
+            $last_load = $this->sql_model->get_latest_load_time();
+            Template::set('last_loaded', ($last_load != '0') ? date('M d, Y h:i:s A',$last_load): "- - - ");
 
             $latestTime = 0;
             if (isset($settings['ootp.sql_path']) && !empty($settings['ootp.sql_path'])) :
@@ -79,7 +80,7 @@ class Custom extends Admin_Controller {
                 }
 
             endif;
-            Template::set('last_file_time', date('M d, Y h:i:s A',$latestTime));
+            Template::set('last_file_time', ($latestTime != '0') ? date('M d, Y h:i:s A',$latestTime) : '- - -');
         }
         Template::set('settings', $settings);
         Template::set('tables_loaded', $tables_loaded);

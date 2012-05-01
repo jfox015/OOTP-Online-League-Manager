@@ -213,15 +213,14 @@ class SQL_model extends BF_Model
 	}
 	public function get_latest_load_time() 
 	{
-		$time = '';
+		$time = '0';
 		$this->db->select('modified_on');
 		$this->db->order_by('modified_on','desc');
 		$this->db->limit(1);
 		$query = $this->db->get($this->table);
 		if ($query->num_rows > 0) 
 		{
-			$time = $query->row()
-						  ->modified_on;
+			$time = $query->row()->modified_on;
 		}
 		$query->free_result();
 		return $time;

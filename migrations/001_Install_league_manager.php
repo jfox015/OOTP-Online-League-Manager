@@ -7,7 +7,7 @@ class Migration_Install_league_manager extends Migration {
 		$prefix = $this->db->dbprefix;
 		
 		$data = array(
-			'name'        => 'OOTPOL.Site.Manage' ,
+			'name'        => 'OOLM.Site.Manage' ,
 			'description' => 'Manage OOTP Online Settings and Content' 
 		);
 		$this->db->insert("{$prefix}permissions", $data);
@@ -17,7 +17,7 @@ class Migration_Install_league_manager extends Migration {
 		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
 		
 		$data = array(
-			'name'        => 'OOTPOL.SQL.Manage' ,
+			'name'        => 'OOLM.SQL.Manage' ,
 			'description' => 'Manage SQL Loading and Settings' 
 		);
 		$this->db->insert("{$prefix}permissions", $data);
@@ -28,8 +28,8 @@ class Migration_Install_league_manager extends Migration {
 		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
 
         $data = array(
-			'name'        => 'Site.Custom.View' ,
-			'description' => 'Manage SQL Loading and Settings'
+			'name'        => 'OOLM.Sim.Manage' ,
+			'description' => 'Manage Sim details and Settings'
 		);
 		$this->db->insert("{$prefix}permissions", $data);
 
@@ -165,32 +165,32 @@ class Migration_Install_league_manager extends Migration {
 	{
 		$prefix = $this->db->dbprefix;
 		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOTPOL.Site.Manage'");
+		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOLM.Site.Manage'");
 		foreach ($query->result_array() as $row)
 		{
 			$permission_id = $row['permission_id'];
 			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
 		}
 		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOTPOL.Site.Manage')");
+		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOLM.Site.Manage')");
 
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOTPOL.SQL.Manage'");
+		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOLM.SQL.Manage'");
 		foreach ($query->result_array() as $row)
 		{
 			$permission_id = $row['permission_id'];
 			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
 		}
 		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOTPOL.SQL.Manage')");
+		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOLM.SQL.Manage')");
 
-        $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'Site.Custom.View'");
+        $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOLM.Sim.Manage'");
 		foreach ($query->result_array() as $row)
 		{
 			$permission_id = $row['permission_id'];
 			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
 		}
 		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'Site.Custom.View')");
+		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOLM.Sim.Manage')");
 
 		$this->dbforge->drop_table('sql_tables');
         $this->dbforge->drop_table('teams_owners');
