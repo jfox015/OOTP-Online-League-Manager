@@ -141,6 +141,7 @@ class Migration_Install_league_manager extends Migration {
 			 ('ootp.twitter_string', 'ootp', 'ootpbaseball'),
 			 ('ootp.tweet_count', 'ootp', '3'),
 			 ('ootp.sql_path', 'ootp', ''),
+			 ('ootp.use_db_prefix', 'ootp', '1'),
 			 ('ootp.auto_split', 'ootp', '-1'),
 			 ('ootp.max_sql_size', 'ootp', '10'),
 			 ('ootp.limit_load', 'ootp', '1'),

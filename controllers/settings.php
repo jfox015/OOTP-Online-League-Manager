@@ -48,7 +48,7 @@ class Settings extends Admin_Controller {
             }
         }
         // Read our current settings
-        $this->load->helper('datalist');
+        $this->load->helper('ootp_web_toolkit/datalist');
         $settings = $this->settings_lib->find_all();
         Template::set('settings', $settings);
 		Assets::add_js($this->load->view('settings/settings_js.php',null,true),'inline');
@@ -70,14 +70,14 @@ class Settings extends Admin_Controller {
 		$this->load->library('form_validation');
 
         $this->form_validation->set_rules('game_version', lang('lm_settings_gamever'), 'required|trim|xss_clean');
-        $this->form_validation->set_rules('league_id', lang('lm_settings_leagueid'), 'required|number|trim|xss_clean');
+        $this->form_validation->set_rules('league_id', lang('lm_settings_leagueid'), 'required|numeric|trim|xss_clean');
         $this->form_validation->set_rules('league_name', lang('lm_settings_lgname'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_abbr', lang('lm_settings_lgabbr'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_icon', lang('lm_settings_lgicon'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_txtcolor', lang('lm_settings_txtcolor'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_bgcolor', lang('lm_settings_bgcolor'), 'trim|xss_clean');
 
-        $this->form_validation->set_rules('league_file_path', lang('lm_settings_lgdfile'), 'number|xss_clean');
+        $this->form_validation->set_rules('league_file_path', lang('lm_settings_lgdfile'), 'trim|strip_tags|xss_clean');
         $this->form_validation->set_rules('asset_path', lang('lm_settings_assetpath'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('asset_url', lang('lm_settings_asseturl'), 'required|trim|xss_clean');
 
@@ -86,9 +86,10 @@ class Settings extends Admin_Controller {
         $this->form_validation->set_rules('tweet_count', lang('home_settings_tweets'), 'trim|xss_clean');
 
         $this->form_validation->set_rules('sql_path', lang('sql_settings_mysqlpath'), 'required|trim|xss_clean');
-        $this->form_validation->set_rules('max_sql_size', lang('sql_settings_max'), 'number|xss_clean');
-        $this->form_validation->set_rules('auto_split', lang('sql_settings_autosplit'), 'number|xss_clean');
-        $this->form_validation->set_rules('limit_load', lang('sql_settings_auto_load'), 'required|number|xss_clean');
+        $this->form_validation->set_rules('max_sql_size', lang('sql_settings_max'), 'numeric|xss_clean');
+        $this->form_validation->set_rules('auto_split', lang('sql_settings_autosplit'), 'numeric|xss_clean');
+        $this->form_validation->set_rules('use_db_prefix', lang('sql_use_db_prefix'), 'numeric|xss_clean');
+        $this->form_validation->set_rules('limit_load', lang('sql_settings_auto_load'), 'required|numeric|xss_clean');
 
         if ($this->form_validation->run() === false)
         {
@@ -111,7 +112,8 @@ class Settings extends Admin_Controller {
             array('name' => 'ootp.twitter_string', 'value' => $this->input->post('twitter_string')),
             array('name' => 'ootp.tweet_count', 'value' => $this->input->post('tweet_count')),
             array('name' => 'ootp.sql_path', 'value' => $this->input->post('sql_path')),
-            array('name' => 'ootp.auto_split', 'value' => $this->input->post('auto_split')),
+            array('name' => 'ootp.auto_split', 'value' => ($this->input->post('auto_split')?1:0)),
+            array('name' => 'ootp.use_db_prefix', 'value' => ($this->input->post('use_db_prefix')?1:0)),
             array('name' => 'ootp.max_sql_size', 'value' => $this->input->post('max_sql_size')),
             array('name' => 'ootp.limit_load', 'value' => $this->input->post('limit_load')),
 

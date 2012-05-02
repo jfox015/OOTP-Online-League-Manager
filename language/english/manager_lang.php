@@ -24,14 +24,14 @@ $lang['lm_settings_paths']			= 'Paths and Reports';
 $lang['lm_settings_lgdfile']		= 'League File Path';
 $lang['lm_settings_lgdfilenote']	= 'Full Server path to OOTP league file, Including file name!';
 $lang['lm_settings_assetpath']		= 'Asset Path';
-$lang['lm_settings_assetpnote']		= 'Full server path to OOTP Image assets folder. NO TRAILING SLASH!';
+$lang['lm_settings_assetpnote']		= 'Full server path to OOTP HTML assets folder. NO TRAILING SLASH!';
 $lang['lm_settings_asseturl']		= 'Asset URL:';
-$lang['lm_settings_assetunote']		= 'Web accessible URL to the OOTP Image assets folder.';
+$lang['lm_settings_assetunote']		= 'Web accessible URL to the OOTP HTML assets folder.';
 
 $lang['lm_settings_home']			= 'Home Page Settings';
 
 $lang['lm_settings_twitter']		= 'Twitter User Handle';
-$lang['lm_settings_twtrwnote']		= '<i>Example:</i> @handleName';
+$lang['lm_settings_twtrwnote']		= '<i>Example:</i> handleName';
 $lang['lm_settings_tweets']			= 'No. of Tweets';
 
 $lang['lm_import_owners']			= 'Create Users from Human Managers';
@@ -49,6 +49,8 @@ $lang['lm_site_account_created']	= 'A new account on [SITE_TITLE] has been creat
 $lang['sql_settings_subhead']		 	= 'SQL Settings';
 $lang['sql_settings_path_note']			= 'Server path to MySQL Data Upload directory. NO TRAILING SLASH.';
 $lang['sql_settings_mysqlpath']			= 'MySQL File Load Path:';
+$lang['sql_use_db_prefix']			    = 'Use Database Prefix for OOTP data tables';
+$lang['sql_use_db_prefix_note']			= 'Check this if your OOTP data tables use the same prefix as the site database. IF ootp table have no prefix, uncheck this option.';
 $lang['sql_settings_max']			    = 'Max SQL File Size';
 $lang['sql_settings_max_note']			= 'Specify in Megabytes (mB)';
 $lang['sql_settings_autosplit']			= 'Auto split files over max?';

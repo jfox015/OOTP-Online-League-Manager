@@ -38,11 +38,11 @@ class Custom extends Admin_Controller {
             Template::set('settings_incomplete', false);
             if (!isset($this->leagues_model))
             {
-                $this->load->model('leagues_model');
+                $this->load->model('ootp_web_toolkit/leagues_model');
             }
             if (!class_exists('teams_model'))
             {
-                $this->load->model('teams_model');
+                $this->load->model('ootp_web_toolkit/teams_model');
             }
             $tables_loaded = $this->sql_model->count_tables_loaded();
             if (isset($settings['ootp.league_id']) && !empty($settings['ootp.league_id'])) {
@@ -102,19 +102,19 @@ class Custom extends Admin_Controller {
 		}
 		if (!isset($this->leagues_model))
 		{
-			$this->load->model('leagues_model');
+			$this->load->model('ootp_web_toolkit/leagues_model');
 		}
-		if (!isset($this->teams_model))
+		if (!isset($this->teams_owners_model))
 		{
-			$this->load->model('teams_model');
+			$this->load->model('league_manager/teams_owners_model');
 		}
         $league = $this->leagues_model->find($settings['ootp.league_id']);
 		if (isset($league) && $league->league_id != null) 
 		{
-			$teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
+			$teams_owners = $this->teams_owners_model->get_team_owner_list($settings['ootp.league_id']);
 			if ($this->input->post('submit')) {
 				$duped_ids = $this->save_team_owners($teams_owners, $settings['ootp.league_id']);
-                if (sizeof($duped_ids) == 0 && empty($this->teams_model->error)) {
+                if (sizeof($duped_ids) == 0 && empty($this->teams_owners_model->error)) {
 					Template::set_message('Team owner settings saved.','success');
 				}
 				else
@@ -137,9 +137,9 @@ class Custom extends Admin_Controller {
                         }
                         $errorStr .= '</ul>';
                     }
-                    if (!empty($this->teams_model->error))
+                    if (!empty($this->teams_owners_model->error))
                     {
-                        $errorStr .= $this->teams_model->error;
+                        $errorStr .= $this->teams_owners_model->error;
                     }
                     Template::set_message('Error saving owner information. Errors:'.$errorStr,'error');
 				}
@@ -147,7 +147,7 @@ class Custom extends Admin_Controller {
 			Template::set('settings',$settings);
 			$this->lang->load('news/news');
             Template::set('users',$this->author_model->get_users_select(true));
-            $teams_owners = $this->teams_model->get_team_owner_list($settings['ootp.league_id']);
+            $teams_owners = $this->teams_owners_model->get_team_owner_list($settings['ootp.league_id']);
             Template::set('team_owners',$teams_owners);
 		}
 		else
@@ -166,15 +166,15 @@ class Custom extends Admin_Controller {
         $settings = $this->settings_lib->find_all_by('module','ootp');
 		if (!isset($this->human_managers_model))
 		{
-			$this->load->model('human_managers_model');
+			$this->load->model('ootp_web_toolkit/human_managers_model');
 		}
 		if (!isset($this->leagues_model))
 		{
-			$this->load->model('leagues_model');
+			$this->load->model('ootp_web_toolkit/leagues_model');
 		}
-		if (!isset($this->teams_model))
+		 if (!isset($this->teams_owners_model))
 		{
-			$this->load->model('teams_model');
+			$this->load->model('league_manager/teams_owners_model');
 		}
         $league = $this->leagues_model->find($settings['ootp.league_id']);
 		if (isset($league) && $league->league_id != null) 
@@ -271,12 +271,12 @@ class Custom extends Admin_Controller {
         $league_id = ((isset($settings['ootp.league_id']))?$settings['ootp.league_id']:100);
 
         if (!isset($this->leagues_model)) {
-            $this->load->model('leagues_model');
+            $this->load->model('ootp_web_toolkit/leagues_model');
         }
         $league = $this->leagues_model->find($league_id);
 		$league_date = ((isset($league->current_date)) ? $league->current_date : date('Y-m-d'));
         if (!isset($this->leagues_events_model)) {
-			$this->load->model('leagues_events_model');
+			$this->load->model('ootp_web_toolkit/leagues_events_model');
 		}
         Assets::add_css(css_path() . 'bootstrap-datepicker.css');
         Assets::add_js( js_path() . 'bootstrap-datepicker.js');
@@ -315,7 +315,7 @@ class Custom extends Admin_Controller {
         }
         if (!function_exists('return_bytes')) 
 		{
-            $this->load->helper('general');
+            $this->load->helper('ootp_web_toolkit/general');
         }
         $settings = $this->settings_lib->find_all_by('module','ootp');
         Template::set('settings', $settings);
@@ -501,7 +501,7 @@ class Custom extends Admin_Controller {
 				if (isset($owner_id) && $owner_id != -999)
 				{
 					if (!in_array($owner_id, $used_ids)) {
-                        $success = $this->teams_model->set_team_owner($team->team_id, $owner_id, $league_id);
+                        $success = $this->teams_owners_model->set_team_owner($team->team_id, $owner_id, $league_id);
                         array_push($used_ids,$owner_id);
                     }
                     else
@@ -514,7 +514,7 @@ class Custom extends Admin_Controller {
 				}
 				else
 				{
-                    $success = $this->teams_model->delete_team_owner($team->team_id, $league_id);
+                    $success = $this->teams_owners_model->delete_team_owner($team->team_id, $league_id);
 				}
                 if (!$success) {
                     return false;
@@ -555,10 +555,10 @@ class Custom extends Admin_Controller {
 			$email = $this->input->post($manager->human_manager_id."_email");
 			$activation = $this->input->post($manager->human_manager_id."_activate");
 			
-			$data = $this->human_managers_model->create_user($email, $activation, $display_name, $username);
+			$data = $this->teams_owners_model->create_user($email, $activation, $display_name, $username);
 			if ($data !== false && count($data) > 0)
 			{
-				$this->teams_model->set_team_owner($manager->team_id, $data['user_id'], $league_id);
+				$this->teams_owners_model->set_team_owner($manager->team_id, $data['user_id'], $league_id);
 				$subject 		= str_replace('[SITE_TITLE]',$this->settings_lib->item('site.title'),lang('lm_site_account_created'));
 				$email_mess 	= $this->load->view('league_manager/_emails/user_created', array('title'=>$this->settings_lib->item('site.title'),'link' => site_url(), 'password'=>$data['password'], 'login'=>($use_usernames ? $username: $email)), true);
 			}

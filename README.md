@@ -1,15 +1,15 @@
-# OOTP Online Leagues Web Manager
+# OOTP Online Leagues Manager Module
 
-A custom online league administration module for OOTP Online LEagues. Built using the Bonfire Admin Dashboard mod for CodeIgniter 2.0+. 
+A custom online league administration module for OOTP Online Leagues. Built using the Bonfire HMVC Admin Dashboard mod for CodeIgniter 2.0+. 
 
 ## Features
 
 - Default Online League Home Page
-- Online League Dashboard
 - Customizable League Details
+- Set site members as team owners
+-Create site members for unclaimed teams
 - SQL Data Loading Manager
 - Sim Update control panel
-- Basic set of OOTP specific data models
 
 ## Keep Current on the Mod
 
