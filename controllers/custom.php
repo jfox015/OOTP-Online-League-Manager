@@ -10,8 +10,8 @@ class Custom extends Admin_Controller {
 	{
 		parent::__construct();
 
-		$this->auth->restrict('OOTPOL.Site.Manage');
-		$this->auth->restrict('OOTPOL.SQL.Manage');
+		$this->auth->restrict('OOLM.Site.Manage');
+		$this->auth->restrict('OOLM.SQL.Manage');
 
 		$this->lang->load('manager');
         $this->lang->load('sqlload');
@@ -29,6 +29,7 @@ class Custom extends Admin_Controller {
 	{
 		$settings = $this->settings_lib->find_all_by('module','ootp');
         $tables = false;
+        $tables_loaded = 0;
         if (!isset($settings['ootp.sql_path']) || empty($settings['ootp.sql_path']))
         {
             Template::set('settings_incomplete', true);
@@ -211,8 +212,10 @@ class Custom extends Admin_Controller {
 
 	function sim_details() 
 	{
-	
-		if ($this->input->post('submit')) {
+
+        $this->auth->restrict('OOLM.Sim.Manage');
+
+        if ($this->input->post('submit')) {
 		
 			$this->form_validation->set_rules('auto_sim_length', lang('sim_ettings_autocalc'), 'number|xss_clean');
 			$this->form_validation->set_rules('calc_length', lang('sim_settings_calclen'), 'number|xss_clean');

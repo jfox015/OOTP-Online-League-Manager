@@ -1,7 +1,8 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <div class="span7 offset1">
-            <?php 
+            <?php
+            $drawn = false;
             if ($settings_incomplete) { ?>
                 <div class="row-fluid">
                 <div class="span9"><p><b>WARNING</b> You must review your <?php echo anchor('admin/settings/league_manager','league settings'); ?> before using the tools on this page.</p></div>
@@ -55,7 +56,7 @@
           </div>
 		  
 		  <?php
-             $drawn = false;
+
                 if ($tables_loaded == 0) { ?>
 		  <div class="row-fluid">
             <div class="span1">

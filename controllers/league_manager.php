@@ -184,9 +184,9 @@ class League_Manager extends Front_Controller {
 		}
 		else 
 		{
-			$league_file_date = $settings['ootp.league_file_date'];
-			$next_sim = $settings['ootp.next_sim'];
-			$league_date = $settings['ootp.league_date'];
+			$league_file_date = strtotime($settings['ootp.league_file_date']);
+			$next_sim = strtotime($settings['ootp.next_sim']);
+			$league_date = strtotime($settings['ootp.league_date']);
 			$league_event = $settings['ootp.league_event'];
 		}
 		
