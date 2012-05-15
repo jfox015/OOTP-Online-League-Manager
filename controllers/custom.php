@@ -90,8 +90,23 @@ class Custom extends Admin_Controller {
         Template::set_view('league_manager/custom/index');
         Template::render();
 	}
-	
-	//--------------------------------------------------------------------	
+
+    //--------------------------------------------------------------------
+
+    public function about() {
+
+        Template::set('toolbar_title', lang('lm_about_title'));
+        Template::render();
+    }
+
+    //--------------------------------------------------------------------
+
+    public function license() {
+
+        Template::set('toolbar_title', lang('lm_license_title'));
+        Template::render();
+    }
+	//--------------------------------------------------------------------
 
 	function map_users_to_teams() 
 	{
@@ -458,8 +473,9 @@ class Custom extends Admin_Controller {
 		Template::set('required_tables', $this->sql_model->get_required_tables());
         $settings = $this->settings_lib->find_all_by('module','ootp');
         Template::set('ootp_version', $settings['ootp.game_version']);
-		
-		Template::set_view('league_manager/custom/table_list');
+
+        Template::set('toolbar_title', lang('lm_required_title'));
+        Template::set_view('league_manager/custom/table_list');
         Template::render();
 	}
 	

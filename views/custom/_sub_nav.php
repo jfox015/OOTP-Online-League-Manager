@@ -11,4 +11,7 @@
 	<li <?php echo $this->uri->segment(4) == 'table_list' ? 'class="active"' : '' ?>>
 		<a href="<?php echo site_url(SITE_AREA .'/custom/league_manager/table_list') ?>" id="table_list"><?php echo "Manage Required Tables"; ?></a>
 	</li>
+	<li <?php echo $this->uri->segment(4) == 'about' ? 'class="active"' : '' ?>>
+		<a href="<?php echo site_url(SITE_AREA .'/custom/league_manager/about') ?>" id="about"><?php echo "About"; ?></a>
+	</li>
 </ul>

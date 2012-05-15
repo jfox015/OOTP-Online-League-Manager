@@ -3,6 +3,9 @@
 $lang['lm_settings_title']			= 'League Management Tools';
 $lang['lm_unauthorized']			= 'Unauthorized. Sorry you do not have the appropriate permission to this area.';
 $lang['sql_settings_title']			= 'OOTP SQL Data Loader';
+$lang['lm_about_title']			    = 'About the OOTP Online League Manager';
+$lang['lm_license_title']			= 'License';
+$lang['lm_required_title']			= 'Manage Required Tables';
 $lang['lm_updated']					= 'Settings Last Updated: [DATE_TIME] AM by [USER_NAME]';
 
 $lang['lm_league_settings']			= 'League Settings';
