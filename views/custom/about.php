@@ -15,11 +15,10 @@
                     <p><img src="<?php echo Template::theme_url('images/logo_codigniter.png'); ?>" align="absmiddle" />
                         Made with <a href="http://codeigniter.com/" target="_blank"><b>CodeIgniter</b></a>, an open source MVC Framework by Ellis Labs.</p>
                     <p>
-                        <img src="<?php echo Template::theme_url('images/logo_fork_github.png'); ?>" align="absmiddle" /> Fork the project on GitHub.
+                        <img src="<?php echo Template::theme_url('images/logo_fork_github.png'); ?>" align="absmiddle" /> Fork the project on <a href="https://github.com/jfox015/OOTP-Online-League-Manager" target="_blank">GitHub</a>.
                     </p>
 
-                    <p style="float: right; margin-right: 80px;">Page rendered in {elapsed_time} seconds, using {memory_usage}.</p>
-                </div><!--/span-->
+                     </div><!--/span-->
             </div><!--/row-->
 
             <div class="row-fluid">
@@ -27,10 +26,10 @@
                 <h2>Thanks and Acknowledgments</h2>
                 <ul>
                     <li>
-                        Thanks to <b>Frank Essenlink</b> for his excellent work on <a href="http://www.ootpdevelopments.com/board/ootp-mods-database-tools/211987-statslab12.html" target="_blank">StatsLab</a> and code contributions to this project.
+                        <b>Frank Esselink</b> for his excellent work on <a href="http://www.ootpdevelopments.com/board/ootp-mods-database-tools/211987-statslab12.html" target="_blank">StatsLab</a> and code contributions to this project.
                     </li>
                     <li>
-                        Thanks to <b>Fidel Montoya</b> at <a href="http://www.allsimbaseball.com/"
+                        <b>Fidel Montoya</b> at <a href="http://www.allsimbaseball.com/"
                                                       target="_blank">All Sim baseball</a> for web hosting for this project.
                     </li>
                     <li>
@@ -45,16 +44,18 @@
         <div class="span3">
              <p>
                 The OOTP Online League Manager is a free collection of standard web based tools and
-                ultilities for OOTP online league web sites.
+                ultilities for OOTP online league web sites. It is the primary module of the
+                 <a href="http://www.ootpdevelopments.com/board/ootp-mods/220959-ootp-open-web-platform-oowp.html" target="_blank">OOTP Open Web platform</a>, a 
+				 collaboartive OOTP web development platform.
             </p>
             <p>
                 <b>Version:</b> 0.2<br />
-                <b>Author:</b> 	Jeff Fox<br />
+                <b>Author:</b> 	<a href="http://www.aeoliandigital.com/" target="_blank">Jeff Fox</a><br />
                 <b>License:</b> <?php echo anchor('admin/custom/league_manager/license','MIT License'); ?><br />
-                <b>Forums:</b> <a href="" target="_blank">Open Web platform Thread</a><br />
+                <b>Forums:</b> <a href="http://www.ootpdevelopments.com/board/ootp-mods/218004-ootp-online-leagues-manager-mod.html" target="_blank">Official Thread</a><br />
             </p>
             <p>
-                Consider a donation to help support  OOTP Open Web Platform Development</p>
+                Consider a donation to help support the OOTP Open Web Platform</p>
             <div style="text-align:center;">
                 <form action="https://www.paypal.com/cgi-bin/webscr" method="post">
                     <input type="hidden" name="cmd" value="_donations">
