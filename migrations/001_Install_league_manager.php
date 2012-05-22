@@ -1,42 +1,22 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
 class Migration_Install_league_manager extends Migration {
-	
-	public function up() 
+
+    private $permission_array = array(
+        'League_Manager.Settings.Manage' => 'Moderate Comments Content.',
+        'League_Manager.SQL.Manage' => 'Moderate Comments Content.',
+        'League_Manager.Sim.Manage' => 'Moderate Comments Content.',
+    );
+    public function up()
 	{
 		$prefix = $this->db->dbprefix;
-		
-		$data = array(
-			'name'        => 'OOLM.Site.Manage' ,
-			'description' => 'Manage OOTP Online Settings and Content' 
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-		
-		$permission_id = $this->db->insert_id();
-		
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
-		
-		$data = array(
-			'name'        => 'OOLM.SQL.Manage' ,
-			'description' => 'Manage SQL Loading and Settings' 
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-		
-		$permission_id = $this->db->insert_id();
-		
-		// change the roles which don't have any specific login_destination set
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
 
-        $data = array(
-			'name'        => 'OOLM.Sim.Manage' ,
-			'description' => 'Manage Sim details and Settings'
-		);
-		$this->db->insert("{$prefix}permissions", $data);
-
-		$permission_id = $this->db->insert_id();
-
-		// change the roles which don't have any specific login_destination set
-		$this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1, ".$permission_id.")");
+        foreach ($this->permission_array as $name => $description)
+        {
+            $this->db->query("INSERT INTO {$prefix}permissions(name, description) VALUES('".$name."', '".$description."')");
+            // give current role (or administrators if fresh install) full right to manage permissions
+            $this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1,".$this->db->insert_id().")");
+        }
 
 		// SQL Table List
         $this->dbforge->add_field('`id` int(11) NOT NULL AUTO_INCREMENT');
@@ -128,7 +108,7 @@ class Migration_Install_league_manager extends Migration {
 			INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES
 			 ('ootp.league_id', 'ootp', '100'),
 			 ('ootp.use_ootp_details', 'ootp', '1'),
-			 ('ootp.game_version', 'ootp', '12'),
+			 ('ootp.game_version', 'ootp', '13'),
 			 ('ootp.league_name', 'ootp', ''),
 			 ('ootp.league_abbr', 'ootp', ''),
 			 ('ootp.league_icon', 'ootp', ''),
@@ -165,33 +145,19 @@ class Migration_Install_league_manager extends Migration {
 	public function down() 
 	{
 		$prefix = $this->db->dbprefix;
-		
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOLM.Site.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOLM.Site.Manage')");
 
-		$query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOLM.SQL.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOLM.SQL.Manage')");
-
-        $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = 'OOLM.Sim.Manage'");
-		foreach ($query->result_array() as $row)
-		{
-			$permission_id = $row['permission_id'];
-			$this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
-		}
-		//delete the permission
-		$this->db->query("DELETE FROM {$prefix}permissions WHERE (name = 'OOLM.Sim.Manage')");
+        //delete the permission
+        foreach ($this->permission_array as $name => $description)
+        {
+            $query = $this->db->query("SELECT permission_id FROM {$prefix}permissions WHERE name = '".$name."'");
+            foreach ($query->result_array() as $row)
+            {
+                $permission_id = $row['permission_id'];
+                $this->db->query("DELETE FROM {$prefix}role_permissions WHERE permission_id='$permission_id';");
+            }
+            //delete the role
+            $this->db->query("DELETE FROM {$prefix}permissions WHERE (name = '".$name."')");
+        }
 
 		$this->dbforge->drop_table('sql_tables');
         $this->dbforge->drop_table('teams_owners');

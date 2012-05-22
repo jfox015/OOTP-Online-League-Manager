@@ -63,7 +63,7 @@
               <img src="<?php echo Template::theme_url('images/icons/database_up.png'); ?>" width="24" height="24" border="0" />
 			 </div>
 			 <div class="span6">
-              <b><?php echo anchor(SITE_AREA.'/custom/league_manager/load_all_sql','Load OOTP MySQL Data'); ?></b>
+              <b><?php echo anchor(SITE_AREA.'/custom/league_manager/load_sql','Load OOTP MySQL Data'); ?></b>
               <p>Automatically load all MySQL data. You can limit the loading to only those files that are 
 			  marked as required on the <?php echo anchor(SITE_AREA.'/custom/league_manager/table_list','required table editor'); ?> page.</p>
             </div><!--/span-->

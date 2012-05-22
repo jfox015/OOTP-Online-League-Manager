@@ -10,8 +10,7 @@ class Custom extends Admin_Controller {
 	{
 		parent::__construct();
 
-		$this->auth->restrict('OOLM.Site.Manage');
-		$this->auth->restrict('OOLM.SQL.Manage');
+		$this->auth->restrict('League_Manager.Custom.View');
 
 		$this->lang->load('manager');
         $this->lang->load('sqlload');
@@ -228,7 +227,7 @@ class Custom extends Admin_Controller {
 	function sim_details() 
 	{
 
-        $this->auth->restrict('OOLM.Sim.Manage');
+        $this->auth->restrict('League_Manager.Sim.Manage');
 
         if ($this->input->post('submit')) {
 		
@@ -246,7 +245,7 @@ class Custom extends Admin_Controller {
 			if ($this->form_validation->run() !== FALSE) {
 
 				$this->load->helper('date');
-				$dates = text_date_to_int(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
+				//$dates = text_date_to_int(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
 				$data = array(
                     array('name' => 'ootp.auto_sim_length', 'value' => ($this->input->post('auto_sim_length')) ? 1 : -1),
                     array('name' => 'ootp.calc_length', 'value' => $this->input->post('calc_length')),
@@ -254,9 +253,9 @@ class Custom extends Admin_Controller {
                     array('name' => 'ootp.sims_per_week', 'value' => $this->input->post('sims_per_week')),
                     array('name' => 'ootp.sims_occur_on', 'value' => serialize($this->input->post('sims_occur_on'))),
                     array('name' => 'ootp.sim_details', 'value' => ($this->input->post('sim_details')) ? 1 : -1),
-                    array('name' => 'ootp.next_sim', 'value' => $dates['next_sim']),
-					array('name' => 'ootp.league_file_date', 'value' => $dates['league_file_date']),
-					array('name' => 'ootp.league_date', 'value' => $dates['league_date']),
+                    array('name' => 'ootp.next_sim', 'value' => ($this->input->post('next_sim') ? $this->format_dates($this->input->post('next_sim')):'')),
+					array('name' => 'ootp.league_file_date', 'value' => ($this->input->post('league_file_date') ? $this->format_dates($this->input->post('league_file_date')):'')),
+					array('name' => 'ootp.league_date', 'value' => ($this->input->post('league_date') ? $this->format_dates($this->input->post('league_date')):'')),
                     array('name' => 'ootp.league_event', 'value' => $this->input->post('league_event')),
 				);
 				
@@ -326,6 +325,7 @@ class Custom extends Admin_Controller {
 	function load_sql() 
 	{
 		//$this->getURIData();
+        $this->auth->restrict('League_Manager.SQL.Manage');
 
         if (!function_exists('loadSQLFiles')) 
 		{
@@ -420,6 +420,14 @@ class Custom extends Admin_Controller {
 
         $settings = $this->settings_lib->find_all_by('module','ootp');
         $latest_load = $this->sql_model->get_latest_load_time();
+        if (!function_exists('loadSQLFiles'))
+        {
+            $this->load->helper('sql');
+        }
+        if (!function_exists('return_bytes'))
+        {
+            $this->load->helper('ootp_web_toolkit/general');
+        }
         if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
 			$fileList = $this->sql_model->get_required_tables();
 		} else {
@@ -584,4 +592,14 @@ class Custom extends Admin_Controller {
 		}
 		return true;
 	}
+    private function format_dates ( $date = '', $text = true )
+    {
+        if ( $date == '' )
+        {
+            return time();
+        }
+
+        return strtotime($date);
+
+    }
 }

@@ -7,9 +7,8 @@ class Settings extends Admin_Controller {
 	public function __construct() 
 	{
 		parent::__construct();
-		
-		$this->auth->restrict('Site.Settings.View');
-		//$this->auth->restrict('OOTP.Manager.View');
+
+        $this->auth->restrict('League_Manager.Settings.View');
 
         if (!class_exists('Activity_model'))
         {
@@ -38,6 +37,7 @@ class Settings extends Admin_Controller {
     {
         if ($this->input->post('submit'))
         {
+            $this->auth->restrict('League_Manager.Settings.Manage');
             if ($this->save_settings())
             {
                 Template::set_message('League settings successfully saved.', 'success');
