@@ -17,7 +17,6 @@ class Migration_League_permission_update extends Migration {
             // give current role (or administrators if fresh install) full right to manage permissions
             $this->db->query("INSERT INTO {$prefix}role_permissions VALUES(1,".$this->db->insert_id().")");
         }
-
     }
 	
 	//--------------------------------------------------------------------

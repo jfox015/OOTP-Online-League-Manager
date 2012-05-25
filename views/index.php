@@ -5,7 +5,7 @@
 			<div class="profile">
                 <h3>Welcome <?php echo (isset($username) ? $username : '').(isset($user_name) ? $user_name : '') ?></h3>
 				<ul>
-					<li><a href="<?php echo site_url('admin');?>">Admin Dashboard</a></li>
+					<li><a href="<?php echo site_url(SITE_AREA);?>">Admin Dashboard</a></li>
 					<br />
                 </ul>
 				<a href="<?php echo site_url('users/profile');?>">Edit Profile</a> |
@@ -31,7 +31,8 @@
                     <?php endif; ?>
 
                 <div class="submits">
-                    <input type="submit" name="submit" id="submit" value="Let Me In" tabindex="5" />
+                    <input type="submit" name="submit" id="submit" value="Login" tabindex="5" />&nbsp;
+                    <a href="<?php echo site_url('register');?>">Register</a>
                 </div>
 
                 <?php echo form_close(); ?>
