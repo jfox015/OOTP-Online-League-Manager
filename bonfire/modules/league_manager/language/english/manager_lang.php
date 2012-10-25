@@ -10,11 +10,14 @@ $lang['lm_updated']					= 'Settings Last Updated: [DATE_TIME] AM by [USER_NAME]'
 
 $lang['lm_league_settings']			= 'League Settings';
 $lang['lm_settings_general']		= 'General Settings';
-$lang['lm_settings_gamever']		= 'OOTP Game Version';
-$lang['lm_game_version_note']		= 'Versions 10 and higher supported';
-$lang['lm_settings_leagueid']		= 'League ID';
-$lang['lm_settings_leagueid_note']	= 'Usually 100';
-$lang['lm_settings_useootp']		= 'Use OOTP League Details';
+$lang['lm_settings_sport']			= 'Sport';
+$lang['lm_game_sport_note']		= 'Select major site sport';
+$lang['lm_settings_source']			= 'Data Source';
+$lang['lm_game_source_note']		= 'Select a game and version';
+$lang['lm_settings_source_version']	= 'Game Version';
+$lang['lm_settings_leagueid']		= 'Primary League ID';
+$lang['lm_settings_leagueid_note']	= 'Select 100 for OOTP games.';
+$lang['lm_settings_usedetails']		= 'Use League Details';
 
 $lang['lm_settings_details']		= 'Game Details';
 $lang['lm_settings_lgname']			= 'League Name';

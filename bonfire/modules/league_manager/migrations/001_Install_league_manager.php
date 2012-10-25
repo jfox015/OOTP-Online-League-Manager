@@ -3,9 +3,9 @@
 class Migration_Install_league_manager extends Migration {
 
     private $permission_array = array(
-        'League_Manager.Settings.Manage' => 'Moderate Comments Content.',
-        'League_Manager.SQL.Manage' => 'Moderate Comments Content.',
-        'League_Manager.Sim.Manage' => 'Moderate Comments Content.',
+        'League_Manager.Settings.Manage' => 'Moderate League Manager Settings.',
+        'League_Manager.SQL.Manage' => 'Moderate SQL Data loading and updating.',
+        'League_Manager.Sim.Manage' => 'Moderate Sim Details.',
     );
     public function up()
 	{

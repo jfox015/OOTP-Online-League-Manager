@@ -27,7 +27,7 @@
 			foreach ($team_owners as $team):
 				$team_name = $team->name." ".$team->nickname; ?>
 			<tr>
-				<td><img src="<?php echo $settings['ootp.asset_url'].'images/'.str_replace(".","_50.",$team->logo_file); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /></td>
+				<td><img src="<?php echo $settings['ootp.team_logo_url'].str_replace(".","_50.",$team->logo_file); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /></td>
 				<td><?php echo $team_name; ?></td>
 				<td>
 				<?php 

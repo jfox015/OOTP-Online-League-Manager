@@ -11,7 +11,7 @@ class League_Manager extends Front_Controller {
 		// Load our current settings
 		if (!isset($this->leagues_model)) 
 		{
-			$this->load->model('ootp_web_toolkit/leagues_model');
+			$this->load->model('open_sports_toolkit/leagues_model');
 		}
         $this->lang->load('manager');
 
@@ -121,9 +121,9 @@ class League_Manager extends Front_Controller {
 
 		if (!isset($this->leagues_events_model)) 
 		{
-			$this->load->model('ootp_web_toolkit/leagues_events_model');
+			$this->load->model('open_sports_toolkit/leagues_events_model');
 		}
-		$league = $this->leagues_model->find_by('league_id',$settings['ootp.league_id']);
+		$league = $this->leagues_model->find_by('league_id',$settings['osp.league_id']);
 		
 		$league_file_date = false;
 		$league_date = false;

@@ -13,23 +13,77 @@
     <fieldset>
         <legend><?php echo lang('lm_settings_general') ?></legend>
 		
-			<!-- GAME VERSION -->
-        <div class="control-group <?php echo form_error('game_version') ? 'error' : '' ?>">
-            <label class="control-label"><?php echo lang('lm_settings_gamever') ?></label>
+			<!-- SPORT -->
+        <div class="control-group <?php echo form_error('game_sport') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('lm_settings_sport') ?></label>
             <div class="controls">
-                <select id="game_version" name="game_version" class="span2">
+                <select id="game_sport" name="game_sport" class="span2">
 				<?php
-					$versions = loadOOTPVersions();
-					foreach( $versions as $ver => $label){
-						echo('<option value="'.$ver.'"');
-						if (isset($settings['ootp.game_version']) && $settings['ootp.game_version'] == $ver) {
-							echo(' selected="selected"');
-						}
-						echo('">'.$label.'</option>');
-					} 
+					$sport_id = 0;
+					$sports = sports_map();
+					if (isset($sports) && is_array($sports) && count($sports)) :
+							foreach( $sports as $id => $label) :
+							echo('<option value="'.$id.'"');
+							if (isset($settings['osp.game_sport']) && $settings['osp.game_sport'] == $id) {
+								echo(' selected="selected"');
+								$sport_id = $id;
+							}
+							echo('">'.$label.'</option>');
+						endforeach;
+					endif;
 				?>
 				</select>
-                <span class="help-inline"><?php if (form_error('game_version')) echo form_error('game_version'); else echo lang('lm_game_version_note'); ?></span>
+                <span class="help-inline"><?php if (form_error('game_sport')) echo form_error('game_sport'); else echo lang('lm_game_sport_note'); ?></span>
+            </div>
+        </div>	
+			<!-- SOURCE -->
+        <div class="control-group <?php echo form_error('game_source') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('lm_settings_source') ?></label>
+            <div class="controls">
+                <select id="game_source" name="game_source" class="span3" <?php if (!isset($sport_id)) { echo('disabled="disabled"'); } ?>>
+				<?php
+					$source_id = '';
+					$sources = source_map();
+					if (isset($sport_id)) {
+						$source_list = $sources[$sport_id];
+					}
+					if (isset($source_list) && is_array($source_list) && count($source_list)) :
+						foreach( $source_list as $id => $label) :
+							echo('<option value="'.$id.'"');
+							if (isset($settings['osp.game_source']) && $settings['osp.game_source'] == $id) {
+								echo(' selected="selected"');
+								$source_id = $id;
+							}
+							echo('">'.$label.'</option>');
+						endforeach;
+					endif;
+				?>
+				</select>
+                <span class="help-inline"><?php if (form_error('game_source')) echo form_error('game_source'); else echo lang('lm_game_source_note'); ?></span>
+            </div>
+        </div>	
+			<!-- SOURCE VERSION -->
+        <div class="control-group <?php echo form_error('source_version') ? 'error' : '' ?>">
+            <label class="control-label"><?php echo lang('lm_settings_source_version') ?></label>
+            <div class="controls">
+                <select id="source_version" name="source_version" class="span2" <?php if (!isset($source_id)) { echo('disabled="disabled"'); } ?>>
+				<?php
+					$versions = source_version_map();
+					if (isset($source_id)) {
+						$versions_list = $versions[$source_id];
+					}
+					if (isset($versions_list) && is_array($versions_list) && count($versions_list)) :
+						foreach( $versions_list as $id => $label) :
+							echo('<option value="'.$id.'"');
+							if (isset($settings['osp.source_version']) && $settings['osp.source_version'] == $id) {
+								echo(' selected="selected"');
+							}
+							echo('">'.$label.'</option>');
+						endforeach;
+					endif;
+				?>
+				</select>
+                <span class="help-inline"><?php if (form_error('source_version')) { echo form_error('source_version'); } ?></span>
             </div>
         </div>
 		
@@ -37,16 +91,16 @@
         <div class="control-group <?php echo form_error('league_id') ? 'error' : '' ?>">
             <label class="control-label"><?php echo lang('lm_settings_leagueid') ?></label>
             <div class="controls">
-                <input type="text" class="span1" id="league_id" name="league_id" value="<?php echo (isset($settings['ootp.league_id'])) ? $settings['ootp.league_id']: set_value('ootp.league_id'); ?>" />
+                <input type="text" class="span1" id="league_id" name="league_id" value="<?php echo (isset($settings['osp.league_id'])) ? $settings['osp.league_id']: set_value('osp.league_id'); ?>" />
 				<span class="help-inline"><?php if (form_error('league_id')) echo form_error('league_id'); else echo lang('lm_settings_leagueid_note'); ?></span>
             </div>
         </div>
 			<!-- OOTP DETAILS OVERRIDE -->
 		<div class="control-group <?php echo form_error('use_ootp_details') ? 'error' : '' ?>">
-            <label class="control-label"><?php echo lang('lm_settings_useootp') ?></label>
+            <label class="control-label"><?php echo lang('lm_settings_usedetails') ?></label>
             <div class="controls">
 			<?php
-			$use_selection = ((isset($settings['ootp.use_ootp_details']) && $settings['ootp.use_ootp_details'] == 1) || !isset($settings['ootp.use_ootp_details'])) ? true : false;
+			$use_selection = ((isset($settings['osp.use_game_details']) && $settings['osp.use_game_details'] == 1) || !isset($settings['osp.use_game_details'])) ? true : false;
 			echo form_checkbox('use_ootp_details',1, $use_selection,'id="use_ootp_details"');
 			?>
 			</div>

@@ -48,7 +48,8 @@ class Settings extends Admin_Controller {
             }
         }
         // Read our current settings
-        $this->load->helper('ootp_web_toolkit/datalist');
+        $this->load->helper('open_sports_toolkit/general');
+        $this->load->helper('open_sports_toolkit/datalist');
         $settings = $this->settings_lib->find_all();
         Template::set('settings', $settings);
 		Assets::add_js($this->load->view('settings/settings_js.php',null,true),'inline');
@@ -69,7 +70,9 @@ class Settings extends Admin_Controller {
 
 		$this->load->library('form_validation');
 
-        $this->form_validation->set_rules('game_version', lang('lm_settings_gamever'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('game_sport', lang('lm_settings_sport'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('game_source', lang('lm_settings_source'), 'required|trim|xss_clean');
+        $this->form_validation->set_rules('source_version', lang('lm_settings_source_version'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('league_id', lang('lm_settings_leagueid'), 'required|numeric|trim|xss_clean');
         $this->form_validation->set_rules('league_name', lang('lm_settings_lgname'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_abbr', lang('lm_settings_lgabbr'), 'trim|xss_clean');
@@ -97,7 +100,9 @@ class Settings extends Admin_Controller {
         }
 
 		$data = array(
-            array('name' => 'ootp.game_version', 'value' => $this->input->post('game_version')),
+            array('name' => 'ootp.game_sport', 'value' => $this->input->post('game_sport')),
+            array('name' => 'ootp.game_source', 'value' => $this->input->post('game_source')),
+            array('name' => 'ootp.source_version', 'value' => $this->input->post('source_version')),
             array('name' => 'ootp.league_id', 'value' => $this->input->post('league_id')),
             array('name' => 'ootp.use_ootp_details', 'value' => ($this->input->post('use_ootp_details')) ? 1 : -1),
             array('name' => 'ootp.league_name', 'value' => $this->input->post('league_name')),

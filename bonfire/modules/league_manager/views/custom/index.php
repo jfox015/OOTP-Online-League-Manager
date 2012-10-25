@@ -57,7 +57,7 @@
 		  
 		  <?php
 
-                if ($tables_loaded == 0) { ?>
+          if ($tables_loaded == 0) { ?>
 		  <div class="row-fluid">
             <div class="span1">
               <img src="<?php echo Template::theme_url('images/icons/database_up.png'); ?>" width="24" height="24" border="0" />

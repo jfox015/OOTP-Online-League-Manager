@@ -49,7 +49,7 @@
 				 collaboartive OOTP web development platform.
             </p>
             <p>
-                <b>Version:</b> 0.2<br />
+                <b>Version:</b> 0.3<br />
                 <b>Author:</b> 	<a href="http://www.aeoliandigital.com/" target="_blank">Jeff Fox</a><br />
                 <b>License:</b> <?php echo anchor('admin/custom/league_manager/license','MIT License'); ?><br />
                 <b>Forums:</b> <a href="http://www.ootpdevelopments.com/board/ootp-mods/218004-ootp-online-leagues-manager-mod.html" target="_blank">Official Thread</a><br />
