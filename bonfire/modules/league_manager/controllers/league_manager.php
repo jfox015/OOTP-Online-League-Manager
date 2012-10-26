@@ -72,15 +72,15 @@ class League_Manager extends Front_Controller {
 		
 		$settings = $this->settings_lib->find_all_by('module','ootp');
         
-        if (isset($settings['ootp.twitter_string'])) 
+        if (isset($settings['osp.twitter_string'])) 
 		{
 		
-            $tweets = json_decode(@file_get_contents('http://twitter.com/statuses/user_timeline/' . $settings['ootp.twitter_string'] . '.json'));
+            $tweets = json_decode(@file_get_contents('http://twitter.com/statuses/user_timeline/' . $settings['osp.twitter_string'] . '.json'));
 
             // If no number provided, just get 5
-            $settings['ootp.tweet_count'] = 3;
+            $settings['osp.tweet_count'] = 3;
 
-            $tweets = is_array($tweets) ? array_slice($tweets, 0, $settings['ootp.tweet_count']) : array();
+            $tweets = is_array($tweets) ? array_slice($tweets, 0, $settings['osp.tweet_count']) : array();
 
             $patterns = array(
                 // Detect URL's
@@ -96,13 +96,13 @@ class League_Manager extends Front_Controller {
             foreach ($tweets as &$tweet)
             {
                 $tweet->id		= sprintf('%.0f', $tweet->id);
-                $tweet->text	= str_replace($settings['ootp.twitter_string'] . ': ', '', $tweet->text);
+                $tweet->text	= str_replace($settings['osp.twitter_string'] . ': ', '', $tweet->text);
                 $tweet->text	= preg_replace(array_keys($patterns), $patterns, $tweet->text);
             }
 
             // Store the feed items
             return array(
-                'username'	=> $settings['ootp.twitter_string'],
+                'username'	=> $settings['osp.twitter_string'],
                 'tweets'	=> $tweets
             );
         } 
@@ -131,21 +131,21 @@ class League_Manager extends Front_Controller {
 		$league_event = '';
 		
 		if (isset($league) && $league !== false && count($league) &&
-		(!isset($settings['ootp.sims_details']) || 
-		(isset($settings['ootp.sims_details']) && empty($settings['ootp.sims_details'])) || 
-		(isset($settings['ootp.sims_details']) && $settings['ootp.sims_details'] == -1))) 
+		(!isset($settings['osp.sims_details']) || 
+		(isset($settings['osp.sims_details']) && empty($settings['osp.sims_details'])) || 
+		(isset($settings['osp.sims_details']) && $settings['osp.sims_details'] == -1))) 
 		{
 			// GET League File 
-			if (isset($settings['ootp.league_file_path']) && 
-				!empty($settings['ootp.league_file_path']) && 
-				file_exists($settings['ootp.league_file_path'])) 
+			if (isset($settings['osp.league_file_path']) && 
+				!empty($settings['osp.league_file_path']) && 
+				file_exists($settings['osp.league_file_path'])) 
 			{
-				$league_file_date = filemtime($settings['ootp.league_file_path']);
+				$league_file_date = filemtime($settings['osp.league_file_path']);
 			}
 			// Determine Next Sim Date
 			$day_count = 0;
 			$update_day = date('N',$league_file_date);
-			$sim_days = unserialize($settings['ootp.sims_occur_on']);
+			$sim_days = unserialize($settings['osp.sims_occur_on']);
 			if (sizeof($sim_days) == 1) 
 			{
 				$day_count = 7;
@@ -184,10 +184,10 @@ class League_Manager extends Front_Controller {
 		}
 		else 
 		{
-			$league_file_date = strtotime($settings['ootp.league_file_date']);
-			$next_sim = strtotime($settings['ootp.next_sim']);
-			$league_date = strtotime($settings['ootp.league_date']);
-			$league_event = $settings['ootp.league_event'];
+			$league_file_date = strtotime($settings['osp.league_file_date']);
+			$next_sim = strtotime($settings['osp.next_sim']);
+			$league_date = strtotime($settings['osp.league_date']);
+			$league_event = $settings['osp.league_event'];
 		}
 		
 		return array('league_file_date'=>(($league_file_date !== false) ? date('m/d',$league_file_date) : lang('sim_date_na')),

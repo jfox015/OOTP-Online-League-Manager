@@ -32,7 +32,7 @@
 		$team_name = $owner['team_name']." ".$owner['team_nick']; ?>
 		<tr>
 			<td><?php echo $owner['first_name']." ".$owner['last_name']; ?></td>
-			<td><img src="<?php echo $settings['ootp.asset_url'].'/images/'.str_replace(".","_50.",$owner['logo_file']); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /> <?php echo $team_name; ?></td>
+			<td><img src="<?php echo $settings['osp.asset_url'].'/images/'.str_replace(".","_50.",$owner['logo_file']); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /> <?php echo $team_name; ?></td>
 			<td><?php echo $owner['username']; ?></td>
 			<td><?php echo form_checkbox($owner['team_id'], $owner['user_id'], 'Set as owner', false); ?></td>
 		</tr>
@@ -67,7 +67,7 @@
 		foreach ($non_matches as $owner):
 		$team_name = $owner['team_name']." ".$owner['team_nick']; ?>
 		<tr valign="middle">
-			<td><img src="<?php echo $settings['ootp.asset_url'].'images/'.str_replace(".","_50.",$owner['logo_file']); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /></td>
+			<td><img src="<?php echo $settings['osp.asset_url'].'images/'.str_replace(".","_50.",$owner['logo_file']); ?>" width="50" height="50" border="0" alt="<?php echo $team_name; ?>" title="<?php echo $team_name; ?>" /></td>
             <td><?php echo $team_name; ?></td>
 			<td><?php echo $owner['first_name']." ".$owner['last_name']; ?></td>
 			<td><input type="text" class="span2" name="<?php echo $owner['human_manager_id']; ?>_display_name" value="<?php echo set_value($owner['human_manager_id']."_display_name"); ?>" /></td>

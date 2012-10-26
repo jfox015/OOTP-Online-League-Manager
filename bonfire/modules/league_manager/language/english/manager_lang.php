@@ -19,6 +19,7 @@ $lang['lm_settings_leagueid']		= 'Primary League ID';
 $lang['lm_settings_leagueid_note']	= 'Select 100 for OOTP games.';
 $lang['lm_settings_usedetails']		= 'Use League Details';
 
+$lang['lm_settings_ootp']			= 'Out of the Park Baseball Settings';
 $lang['lm_settings_details']		= 'Game Details';
 $lang['lm_settings_lgname']			= 'League Name';
 $lang['lm_settings_lgabbr']			= 'Abbreviation';

@@ -29,7 +29,7 @@ class Custom extends Admin_Controller {
 		$settings = $this->settings_lib->find_all();
         $tables = false;
         $tables_loaded = 0;
-        if (!isset($settings['ootp.sql_path']) || empty($settings['ootp.sql_path']))
+        if (!isset($settings['osp.sql_path']) || empty($settings['osp.sql_path']))
         {
             Template::set('settings_incomplete', true);
         }
@@ -58,20 +58,20 @@ class Custom extends Admin_Controller {
             {
                 $this->load->helper('sql');
             }
-            $file_list = getSQLFileList($settings['ootp.sql_path']);
+            $file_list = getSQLFileList($settings['osp.sql_path']);
             Template::set('missing_files', $this->sql_model->validate_loaded_files($file_list));
             Template::set('missing_tables', $this->sql_model->getMissingTables());
             $last_load = $this->sql_model->get_latest_load_time();
             Template::set('last_loaded', ($last_load != '0') ? date('M d, Y h:i:s A',$last_load): "- - - ");
 
             $latestTime = 0;
-            if (isset($settings['ootp.sql_path']) && !empty($settings['ootp.sql_path'])) :
+            if (isset($settings['osp.sql_path']) && !empty($settings['osp.sql_path'])) :
                 $this->load->helper('file');
                 $latestTime = 0;
-                if ($dir = opendir($settings['ootp.sql_path'])) {
+                if ($dir = opendir($settings['osp.sql_path'])) {
                     $loadCnt = 0;
                     while (false !== ($file = readdir($dir)))	{
-                        $fileTime=filemtime($settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file);
+                        $fileTime=filemtime($settings['osp.sql_path'].DIRECTORY_SEPARATOR.$file);
                         if (strpos($file,".sql") === false || $fileTime < $latestTime) {continue;}
                         if ($fileTime > $latestTime) {
                             $latestTime = $fileTime;
@@ -250,16 +250,16 @@ class Custom extends Admin_Controller {
 				$this->load->helper('date');
 				//$dates = text_date_to_int(array('next_sim'=>'','league_file_date'=>'','league_date'=>''),$this->input);
 				$data = array(
-                    array('name' => 'ootp.auto_sim_length', 'value' => ($this->input->post('auto_sim_length')) ? 1 : -1),
-                    array('name' => 'ootp.calc_length', 'value' => $this->input->post('calc_length')),
-                    array('name' => 'ootp.sim_length', 'value' => $this->input->post('sim_length')),
-                    array('name' => 'ootp.sims_per_week', 'value' => $this->input->post('sims_per_week')),
-                    array('name' => 'ootp.sims_occur_on', 'value' => serialize($this->input->post('sims_occur_on'))),
-                    array('name' => 'ootp.sim_details', 'value' => ($this->input->post('sim_details')) ? 1 : -1),
-                    array('name' => 'ootp.next_sim', 'value' => ($this->input->post('next_sim') ? $this->format_dates($this->input->post('next_sim')):'')),
-					array('name' => 'ootp.league_file_date', 'value' => ($this->input->post('league_file_date') ? $this->format_dates($this->input->post('league_file_date')):'')),
-					array('name' => 'ootp.league_date', 'value' => ($this->input->post('league_date') ? $this->format_dates($this->input->post('league_date')):'')),
-                    array('name' => 'ootp.league_event', 'value' => $this->input->post('league_event')),
+                    array('name' => 'osp.auto_sim_length', 'value' => ($this->input->post('auto_sim_length')) ? 1 : -1),
+                    array('name' => 'osp.calc_length', 'value' => $this->input->post('calc_length')),
+                    array('name' => 'osp.sim_length', 'value' => $this->input->post('sim_length')),
+                    array('name' => 'osp.sims_per_week', 'value' => $this->input->post('sims_per_week')),
+                    array('name' => 'osp.sims_occur_on', 'value' => serialize($this->input->post('sims_occur_on'))),
+                    array('name' => 'osp.sim_details', 'value' => ($this->input->post('sim_details')) ? 1 : -1),
+                    array('name' => 'osp.next_sim', 'value' => ($this->input->post('next_sim') ? $this->format_dates($this->input->post('next_sim')):'')),
+					array('name' => 'osp.league_file_date', 'value' => ($this->input->post('league_file_date') ? $this->format_dates($this->input->post('league_file_date')):'')),
+					array('name' => 'osp.league_date', 'value' => ($this->input->post('league_date') ? $this->format_dates($this->input->post('league_date')):'')),
+                    array('name' => 'osp.league_event', 'value' => $this->input->post('league_event')),
 				);
 				
                 //destroy the saved update message in case they changed update preferences.
@@ -358,13 +358,13 @@ class Custom extends Admin_Controller {
 			{
 				$fileList = $_POST['loadList'];
 			}
-            else if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1)
+            else if (isset($settings['osp.limit_load']) && $settings['osp.limit_load'] == 1)
             {
                 $fileList = $required_tables;
             }
             else
             {
-                $fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
+                $fileList = getSQLFileList($settings['osp.sql_path'],$latest_load);
             }
         }
         else if (isset($this->filename) && !empty($this->filename))
@@ -372,7 +372,7 @@ class Custom extends Admin_Controller {
             $fileList = array($this->filename);
         }
         if ($fileList !== false && is_array($fileList) && sizeof($fileList) > 0) {
-			$mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
+			$mess = loadSQLFiles($settings['osp.sql_path'],$latest_load, $fileList);
 			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0))
 			{
 				if (is_array($mess))
@@ -399,7 +399,7 @@ class Custom extends Admin_Controller {
 			}
 		}
 
-		$file_list = getSQLFileList($settings['ootp.sql_path']);
+		$file_list = getSQLFileList($settings['osp.sql_path']);
 
 		Assets::add_module_css('league_manager','style.css');
 		//Assets::add_js(module_path('league_manager').'/views/custom/file_list_js.js','external');
@@ -431,14 +431,14 @@ class Custom extends Admin_Controller {
         {
             $this->load->helper('open_sports_toolkit/general');
         }
-        if (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) {
+        if (isset($settings['osp.limit_load']) && $settings['osp.limit_load'] == 1) {
 			$fileList = $this->sql_model->get_required_tables();
 		} else {
-			$fileList = getSQLFileList($settings['ootp.sql_path'],$latest_load);
+			$fileList = getSQLFileList($settings['osp.sql_path'],$latest_load);
 		}
 		
 		$files_loaded = array();
-        $mess = loadSQLFiles($settings['ootp.sql_path'],$latest_load, $fileList);
+        $mess = loadSQLFiles($settings['osp.sql_path'],$latest_load, $fileList);
 		if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0)) {
 			if (is_array($mess)) {
 				$status = "An error occured processing the SQL files.";
@@ -506,7 +506,7 @@ class Custom extends Admin_Controller {
 		
         if (isset($filename) && !empty($filename)) {
 			$settings = $this->settings_lib->find_all();
-			$mess = splitFiles($settings['ootp.sql_path'],$filename, $delete, $settings['ootp.max_sql_size']);
+			$mess = splitFiles($settings['osp.sql_path'],$filename, $delete, $settings['osp.max_sql_size']);
 		}
 		if ($mess != "OK") {
 			Template::set_message("error:".$mess,'error');

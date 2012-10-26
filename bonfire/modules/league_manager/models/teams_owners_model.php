@@ -45,7 +45,7 @@ class Teams_owners_model extends Base_ootp_model {
 	{
 		parent::__construct();
         $this->dbprefix = $this->db->dbprefix;
-		$this->use_prefix = ($this->settings_lib->item('ootp.use_db_prefix') == 1) ? true : false;
+		$this->use_prefix = ($this->settings_lib->item('osp.use_db_prefix') == 1) ? true : false;
 	}
 	
 	//---------------------------------------------------------------

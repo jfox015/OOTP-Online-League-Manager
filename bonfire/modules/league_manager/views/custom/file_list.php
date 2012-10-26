@@ -79,12 +79,12 @@
 				echo(' class="hilight"');
 			} // END if
 			echo(">".$file);
-			if (isset($files_loaded[$settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file]))
+			if (isset($files_loaded[$settings['osp.sql_path'].DIRECTORY_SEPARATOR.$file]))
 			{ 
 				echo("- <b>LOADED</b>"); 
 			} // END if
-			$fsize=filesize($settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file);
-			$fileTime = filemtime($settings['ootp.sql_path'].DIRECTORY_SEPARATOR.$file);
+			$fsize=filesize($settings['osp.sql_path'].DIRECTORY_SEPARATOR.$file);
+			$fileTime = filemtime($settings['osp.sql_path'].DIRECTORY_SEPARATOR.$file);
 			?>
 			</td>
 			<td><?php echo(date("D M j, Y H:i",$fileTime)); ?></td>

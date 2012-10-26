@@ -106,6 +106,8 @@
 			</div>
         </div>
 		
+		<legend><?php echo lang('lm_settings_ootp') ?></legend>
+		
 		<div id="ootp_block">
 				<!-- LEAGUE NAME -->
 			<div class="control-group <?php echo form_error('league_name') ? 'error' : '' ?>">
@@ -160,7 +162,7 @@
 		<div class="control-group <?php echo form_error('twitter_string') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_twitter') ?></label>
 			<div class="controls">
-				<input type="text" class="span3" id="twitter_string" name="twitter_string" value="<?php echo (isset($settings['ootp.twitter_string'])) ? $settings['ootp.twitter_string']: set_value('ootp.twitter_string'); ?>" /><br />
+				<input type="text" class="span3" id="twitter_string" name="twitter_string" value="<?php echo (isset($settings['osp.twitter_string'])) ? $settings['osp.twitter_string']: set_value('osp.twitter_string'); ?>" /><br />
 				<span class="help-inline"><?php if (form_error('twitter_string')) echo form_error('twitter_string'); else echo lang('lm_settings_twtrwnote'); ?></span>
 			</div>
 		</div>
@@ -169,7 +171,7 @@
 		<div class="control-group <?php echo form_error('tweet_count') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_tweets') ?></label>
 			<div class="controls">
-				<input type="text" class="span1" id="" name="tweet_count" value="<?php echo (isset($settings['ootp.tweet_count'])) ? $settings['ootp.tweet_count']: set_value('ootp.tweet_count'); ?>" /><br />
+				<input type="text" class="span1" id="" name="tweet_count" value="<?php echo (isset($settings['osp.tweet_count'])) ? $settings['osp.tweet_count']: set_value('osp.tweet_count'); ?>" /><br />
 				<?php if (form_error('tweet_count')) echo '<span class="help-inline">'.form_error('tweet_count').'</span>'; ?>
 			</div>
 		</div>
@@ -181,7 +183,7 @@
 		<div class="control-group <?php echo form_error('league_file_path') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_lgdfile') ?></label>
 			<div class="controls">
-				<input type="text" class="span5" id="league_file_path" name="league_file_path" value="<?php echo (isset($settings['ootp.league_file_path'])) ? $settings['ootp.league_file_path']: set_value('ootp.league_file_path'); ?>" /><br />
+				<input type="text" class="span5" id="league_file_path" name="league_file_path" value="<?php echo (isset($settings['osp.league_file_path'])) ? $settings['osp.league_file_path']: set_value('osp.league_file_path'); ?>" /><br />
 				<span class="help-inline"><?php if (form_error('league_file_path')) echo form_error('league_file_path'); else echo lang('lm_settings_lgdfilenote'); ?></span>
 			</div>
 		</div>
@@ -190,7 +192,7 @@
 		<div class="control-group <?php echo form_error('asset_path') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_assetpath') ?></label>
 			<div class="controls">
-				<input type="text" class="span5" id="asset_path" name="asset_path" value="<?php echo (isset($settings['ootp.asset_path'])) ? $settings['ootp.asset_path']: set_value('ootp.asset_path'); ?>" /><br />
+				<input type="text" class="span5" id="asset_path" name="asset_path" value="<?php echo (isset($settings['osp.asset_path'])) ? $settings['osp.asset_path']: set_value('osp.asset_path'); ?>" /><br />
 				<span class="help-inline"><?php if (form_error('asset_path')) echo form_error('asset_path'); else echo lang('lm_settings_assetpnote'); ?></span>
 			</div>
 		</div>
@@ -199,7 +201,7 @@
 		<div class="control-group <?php echo form_error('asset_url') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_asseturl') ?></label>
 			<div class="controls">
-				<input type="text" class="span5" id="asset_url" name="asset_url" value="<?php echo (isset($settings['ootp.asset_url'])) ? $settings['ootp.asset_url']: set_value('ootp.asset_url'); ?>" /><br />
+				<input type="text" class="span5" id="asset_url" name="asset_url" value="<?php echo (isset($settings['osp.asset_url'])) ? $settings['osp.asset_url']: set_value('osp.asset_url'); ?>" /><br />
 				<span class="help-inline"><?php if (form_error('asset_url')) echo form_error('asset_url'); else echo lang('lm_settings_assetunote'); ?></span>
 			</div>
 		</div>
@@ -211,7 +213,7 @@
 		<div class="control-group <?php echo form_error('sql_path') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sql_settings_mysqlpath') ?></label>
 			<div class="controls">
-				<input type="text" class="span5" id="sql_path" name="sql_path" value="<?php echo (isset($settings['ootp.sql_path'])) ? $settings['ootp.sql_path']: set_value('ootp.sql_path'); ?>" /><br />
+				<input type="text" class="span5" id="sql_path" name="sql_path" value="<?php echo (isset($settings['osp.sql_path'])) ? $settings['osp.sql_path']: set_value('osp.sql_path'); ?>" /><br />
 				<span class="help-inline"><?php if (form_error('sql_path')) echo form_error('sql_path'); else echo lang('sql_settings_path_note'); ?></span>
 			</div>
 		</div>
@@ -221,7 +223,7 @@
 			<label class="control-label"><?php echo lang('sql_use_db_prefix') ?></label>
 			<div class="controls">
 				<?php
-				$use_selection = ((isset($settings['ootp.use_db_prefix']) && $settings['ootp.use_db_prefix'] == 1)) ? true : false;
+				$use_selection = ((isset($settings['osp.use_db_prefix']) && $settings['osp.use_db_prefix'] == 1)) ? true : false;
 				echo form_checkbox('use_db_prefix',1, $use_selection,'id="use_db_prefix"');
 				?>
 				<span class="help-inline"><?php if (form_error('use_db_prefix')) echo form_error('use_db_prefix'); else echo lang('sql_use_db_prefix_note'); ?></span>
@@ -232,7 +234,7 @@
 		<div class="control-group <?php echo form_error('max_sql_size') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('sql_settings_max') ?></label>
 			<div class="controls">
-				<input type="text" class="span1" id="max_sql_size" name="max_sql_size" value="<?php echo (isset($settings['ootp.max_sql_size'])) ? $settings['ootp.max_sql_size']: set_value('ootp.max_sql_size'); ?>" />
+				<input type="text" class="span1" id="max_sql_size" name="max_sql_size" value="<?php echo (isset($settings['osp.max_sql_size'])) ? $settings['osp.max_sql_size']: set_value('osp.max_sql_size'); ?>" />
 				<span class="help-inline"><?php if (form_error('max_sql_size')) echo form_error('max_sql_size'); else echo lang('sql_settings_max_note'); ?></span>
 			</div>
 		</div>
@@ -242,8 +244,8 @@
 			<label class="control-label"><?php echo lang('sql_settings_autosplit') ?></label>
 			<div class="controls">
 				<?php
-				$use_selection = ((isset($settings['ootp.auto_split']) && $settings['ootp.auto_split'] == 1)) ? true : false;
-				echo form_checkbox('ootp.auto_split',1, $use_selection,'id="auto_split"');
+				$use_selection = ((isset($settings['osp.auto_split']) && $settings['osp.auto_split'] == 1)) ? true : false;
+				echo form_checkbox('osp.auto_split',1, $use_selection,'id="auto_split"');
 				?>
 				<span class="help-inline"><?php if (form_error('auto_split')) echo form_error('auto_split'); else echo lang('sql_settings_autosplit_note'); ?></span>
 			</div>
@@ -254,13 +256,13 @@
 			<label class="control-label"><?php echo lang('sql_settings_auto_load') ?></label>
 			<div class="controls">
 				<?php
-				$limit_selection = (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == 1) ? true : false;
+				$limit_selection = (isset($settings['osp.limit_load']) && $settings['osp.limit_load'] == 1) ? true : false;
 				echo form_radio('limit_load',1, $limit_selection);
 				echo(lang('sql_settings_load_limit')."<br />");
 				?>
 				<label for="limit_load">&nbsp;</label>
 				<?php
-				$limit_selection = (isset($settings['ootp.limit_load']) && $settings['ootp.limit_load'] == -1) ? true : false;
+				$limit_selection = (isset($settings['osp.limit_load']) && $settings['osp.limit_load'] == -1) ? true : false;
 				echo form_radio('limit_load',-1, $limit_selection);
 				echo(lang('sql_settings_load_all'));
 				?>
