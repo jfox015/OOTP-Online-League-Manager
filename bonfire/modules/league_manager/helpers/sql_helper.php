@@ -189,9 +189,9 @@ function splitFiles($sqlLoadPath,$filename = false, $delete = false, $max_file_s
 				$fileSize=filesize($filename);
 				
 				#echo "$file :: $fileTime : $loadTime<br/>\n";
-				if ($fileSize<$max_file_size) {continue;} // END if
+				if ($fileSize<intval($max_file_size)) {continue;} // END if
 	
-				$numSplits=ceil($fileSize/$max_file_size)+1;
+				$numSplits=ceil($fileSize/intval($max_file_size))+1;
 				unset($queries);
 				if (($ex[$last]=="sql") && ($file!=".") && ($file!="..")) {
 					$e=explode(".",$file);

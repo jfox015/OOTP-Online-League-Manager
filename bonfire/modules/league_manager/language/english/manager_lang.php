@@ -2,8 +2,8 @@
 
 $lang['lm_settings_title']			= 'League Management Tools';
 $lang['lm_unauthorized']			= 'Unauthorized. Sorry you do not have the appropriate permission to this area.';
-$lang['sql_settings_title']			= 'OOTP SQL Data Loader';
-$lang['lm_about_title']			    = 'About the OOTP Online League Manager';
+$lang['sql_settings_title']			= 'SQL Data Loader';
+$lang['lm_about_title']			    = 'About the Online League Manager';
 $lang['lm_license_title']			= 'License';
 $lang['lm_required_title']			= 'Manage Required Tables';
 $lang['lm_updated']					= 'Settings Last Updated: [DATE_TIME] AM by [USER_NAME]';
@@ -11,13 +11,13 @@ $lang['lm_updated']					= 'Settings Last Updated: [DATE_TIME] AM by [USER_NAME]'
 $lang['lm_league_settings']			= 'League Settings';
 $lang['lm_settings_general']		= 'General Settings';
 $lang['lm_settings_sport']			= 'Sport';
-$lang['lm_game_sport_note']		= 'Select major site sport';
+$lang['lm_game_sport_note']		    = 'Select major site sport';
 $lang['lm_settings_source']			= 'Data Source';
 $lang['lm_game_source_note']		= 'Select a game and version';
 $lang['lm_settings_source_version']	= 'Game Version';
 $lang['lm_settings_leagueid']		= 'Primary League ID';
 $lang['lm_settings_leagueid_note']	= 'Select 100 for OOTP games.';
-$lang['lm_settings_usedetails']		= 'Use League Details';
+$lang['lm_settings_usedetails']		= 'Use Game Details';
 
 $lang['lm_settings_ootp']			= 'Out of the Park Baseball Settings';
 $lang['lm_settings_details']		= 'Game Details';
@@ -29,11 +29,11 @@ $lang['lm_settings_bgcolor']		= 'Background Color';
 
 $lang['lm_settings_paths']			= 'Paths and Reports';
 $lang['lm_settings_lgdfile']		= 'League File Path';
-$lang['lm_settings_lgdfilenote']	= 'Full Server path to OOTP league file, Including file name!';
+$lang['lm_settings_lgdfilenote']	= 'Full Server path to online league file, Including file name!';
 $lang['lm_settings_assetpath']		= 'Asset Path';
-$lang['lm_settings_assetpnote']		= 'Full server path to OOTP HTML assets folder. NO TRAILING SLASH!';
+$lang['lm_settings_assetpnote']		= 'Full server path to the static league assets folder. NO TRAILING SLASH!';
 $lang['lm_settings_asseturl']		= 'Asset URL:';
-$lang['lm_settings_assetunote']		= 'Web accessible URL to the OOTP HTML assets folder.';
+$lang['lm_settings_assetunote']		= 'Web accessible URL to the static league assets folder.';
 
 $lang['lm_settings_home']			= 'Home Page Settings';
 
@@ -56,8 +56,10 @@ $lang['lm_site_account_created']	= 'A new account on [SITE_TITLE] has been creat
 $lang['sql_settings_subhead']		 	= 'SQL Settings';
 $lang['sql_settings_path_note']			= 'Server path to MySQL Data Upload directory. NO TRAILING SLASH.';
 $lang['sql_settings_mysqlpath']			= 'MySQL File Load Path:';
-$lang['sql_use_db_prefix']			    = 'Use Database Prefix for OOTP data tables';
-$lang['sql_use_db_prefix_note']			= 'Check this if your OOTP data tables use the same prefix as the site database. IF ootp table have no prefix, uncheck this option.';
+$lang['sql_use_db_prefix']			    = 'Use Database Prefix for data tables';
+$lang['sql_use_db_prefix_note']			= 'Check this if your data tables use the same prefix as the site database. IF ootp table have no prefix, uncheck this option.';
+$lang['sql_settings_timeout']		    = 'Max SQL Execution Time';
+$lang['sql_settings_timeout_note']		= 'If your SQL imports are timing out, adjust the value of this setting to a higher number';
 $lang['sql_settings_max']			    = 'Max SQL File Size';
 $lang['sql_settings_max_note']			= 'Specify in Megabytes (mB)';
 $lang['sql_settings_autosplit']			= 'Auto split files over max?';

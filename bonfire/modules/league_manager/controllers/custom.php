@@ -372,7 +372,7 @@ class Custom extends Admin_Controller {
             $fileList = array($this->filename);
         }
         if ($fileList !== false && is_array($fileList) && sizeof($fileList) > 0) {
-			$mess = loadSQLFiles($settings['osp.sql_path'],$latest_load, $fileList);
+			$mess = loadSQLFiles($settings['osp.sql_path'],$latest_load, $fileList, $settings['osp.sql_timeout']);
 			if (!is_array($mess) || (is_array($mess) && sizeof($mess) == 0))
 			{
 				if (is_array($mess))
@@ -506,7 +506,7 @@ class Custom extends Admin_Controller {
 		
         if (isset($filename) && !empty($filename)) {
 			$settings = $this->settings_lib->find_all();
-			$mess = splitFiles($settings['osp.sql_path'],$filename, $delete, $settings['osp.max_sql_size']);
+			$mess = splitFiles($settings['osp.sql_path'],$filename, $delete, $settings['osp.max_sql_size'],$settings['osp.sql_timeout']);
 		}
 		if ($mess != "OK") {
 			Template::set_message("error:".$mess,'error');

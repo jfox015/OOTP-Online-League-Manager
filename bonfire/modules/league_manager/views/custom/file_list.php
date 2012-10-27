@@ -211,7 +211,7 @@
     } // END function
 </script>
 <?php
-    echo("Module path = ".module_path('league_manager')."<br />");
+    //echo("Module path = ".module_path('league_manager')."<br />");
 	$outJs = '';
 	if (isset($splitParents) && sizeof($splitParents) > 0) {
 		$outJs .= 'uncheckSplitParents();';

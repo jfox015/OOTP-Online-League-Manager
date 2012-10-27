@@ -23,10 +23,10 @@
 					$sports = sports_map();
 					if (isset($sports) && is_array($sports) && count($sports)) :
 							foreach( $sports as $id => $label) :
-							echo('<option value="'.$id.'"');
+							echo('<option value="'.$label.'"');
 							if (isset($settings['osp.game_sport']) && $settings['osp.game_sport'] == $id) {
 								echo(' selected="selected"');
-								$sport_id = $id;
+								$sport_id = $label;
 							}
 							echo('">'.$label.'</option>');
 						endforeach;
@@ -96,12 +96,12 @@
             </div>
         </div>
 			<!-- OOTP DETAILS OVERRIDE -->
-		<div class="control-group <?php echo form_error('use_ootp_details') ? 'error' : '' ?>">
+		<div class="control-group <?php echo form_error('use_game_details') ? 'error' : '' ?>">
             <label class="control-label"><?php echo lang('lm_settings_usedetails') ?></label>
             <div class="controls">
 			<?php
 			$use_selection = ((isset($settings['osp.use_game_details']) && $settings['osp.use_game_details'] == 1) || !isset($settings['osp.use_game_details'])) ? true : false;
-			echo form_checkbox('use_ootp_details',1, $use_selection,'id="use_ootp_details"');
+			echo form_checkbox('use_game_details',1, $use_selection,'id="use_game_details"');
 			?>
 			</div>
         </div>
@@ -236,6 +236,15 @@
 			<div class="controls">
 				<input type="text" class="span1" id="max_sql_size" name="max_sql_size" value="<?php echo (isset($settings['osp.max_sql_size'])) ? $settings['osp.max_sql_size']: set_value('osp.max_sql_size'); ?>" />
 				<span class="help-inline"><?php if (form_error('max_sql_size')) echo form_error('max_sql_size'); else echo lang('sql_settings_max_note'); ?></span>
+			</div>
+		</div>
+
+			<!-- SQL TImeout -->
+		<div class="control-group <?php echo form_error('sql_timeout') ? 'error' : '' ?>">
+			<label class="control-label"><?php echo lang('sql_settings_timeout') ?></label>
+			<div class="controls">
+				<input type="text" class="span1" id="sql_timeout" name="sql_timeout" value="<?php echo (isset($settings['osp.sql_timeout'])) ? $settings['osp.sql_timeout']: set_value('osp.sql_timeout'); ?>" />
+				<span class="help-inline"><?php if (form_error('sql_timeout')) echo form_error('sql_timeout'); else echo lang('sql_settings_timeout_note'); ?></span>
 			</div>
 		</div>
 

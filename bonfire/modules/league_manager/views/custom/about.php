@@ -4,7 +4,9 @@
         <div class="span9">
 
             <div class="row-fluid">
-                <div class="span9"><p>&nbsp;</p></div>
+                <div class="span9"><p style="text-align:center;"><img src="<?php echo Template::theme_url('images/img_logo_olm.png'); ?>" align="absmiddle" /></p>
+                    <p>&nbsp;</p>
+                </div>
             </div>
             <div class="row-fluid">
                 <div class="span9">
@@ -44,7 +46,10 @@
         </div><!--/span-->
 
         <div class="span3">
-             <p>
+            <p style="text-align:center;">
+                <img src="<?php echo Template::theme_url('images/img_logo_fosp.png'); ?>" align="absmiddle" />
+            </p>
+            </p>
                 The OSP::Online League Manager is a free collection of standard web based tools and
                 ultilities for running sports driven online league web sites. It is the primary module of the
                  <a href="http://www.ootpdevelopments.com/board/ootp-mods/220959-ootp-open-web-platform-oowp.html" target="_blank">Fox Open Sports Platform</a>, a 

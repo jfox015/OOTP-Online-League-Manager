@@ -52,7 +52,7 @@ class Settings extends Admin_Controller {
         $this->load->helper('open_sports_toolkit/datalist');
         $settings = $this->settings_lib->find_all();
         Template::set('settings', $settings);
-		Assets::add_js($this->load->view('settings/settings_js.php',null,true),'inline');
+		Assets::add_js($this->load->view('settings/settings_js.php',array('sports'=>sports_map(), 'sources'=>source_map(), 'versions'=>source_version_map()),true),'inline');
 
         Template::set('toolbar_title', lang('lm_settings_title'));
         Template::set_view('league_manager/settings/index');
@@ -74,6 +74,7 @@ class Settings extends Admin_Controller {
         $this->form_validation->set_rules('game_source', lang('lm_settings_source'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('source_version', lang('lm_settings_source_version'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('league_id', lang('lm_settings_leagueid'), 'required|numeric|trim|xss_clean');
+        $this->form_validation->set_rules('use_game_details', lang('lm_settings_usedetails'), 'required|numeric|trim|xss_clean');
         $this->form_validation->set_rules('league_name', lang('lm_settings_lgname'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_abbr', lang('lm_settings_lgabbr'), 'trim|xss_clean');
         $this->form_validation->set_rules('league_icon', lang('lm_settings_lgicon'), 'trim|xss_clean');
@@ -90,6 +91,7 @@ class Settings extends Admin_Controller {
 
         $this->form_validation->set_rules('sql_path', lang('sql_settings_mysqlpath'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('max_sql_size', lang('sql_settings_max'), 'numeric|xss_clean');
+        $this->form_validation->set_rules('sql_timeout', lang('sql_settings_timeout'), 'numeric|xss_clean');
         $this->form_validation->set_rules('auto_split', lang('sql_settings_autosplit'), 'numeric|xss_clean');
         $this->form_validation->set_rules('use_db_prefix', lang('sql_use_db_prefix'), 'numeric|xss_clean');
         $this->form_validation->set_rules('limit_load', lang('sql_settings_auto_load'), 'required|numeric|xss_clean');
@@ -120,6 +122,7 @@ class Settings extends Admin_Controller {
             array('name' => 'osp.auto_split', 'value' => ($this->input->post('auto_split')?1:0)),
             array('name' => 'osp.use_db_prefix', 'value' => ($this->input->post('use_db_prefix')?1:0)),
             array('name' => 'osp.max_sql_size', 'value' => $this->input->post('max_sql_size')),
+            array('name' => 'osp.sql_timeout', 'value' => $this->input->post('sql_timeout')),
             array('name' => 'osp.limit_load', 'value' => $this->input->post('limit_load')),
 
         );

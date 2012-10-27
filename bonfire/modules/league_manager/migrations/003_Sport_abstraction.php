@@ -29,7 +29,8 @@ class Migration_Sport_abstraction extends Migration {
 	);
 	private $new_settings = array(
 		'osp.game_sport'=>'0',
-		'osp.game_source'=>'ootp'
+		'osp.game_source'=>'ootp',
+        'osp.sql_timeout'=>'120'
 	);
 	private $ignore_fields = "
 		'ootp.league_name',
@@ -53,6 +54,7 @@ class Migration_Sport_abstraction extends Migration {
 		}
         $this->db->query("INSERT INTO `{$prefix}settings` (`name`, `module`, `value`) VALUES ".$newStr);
 	}
+
 	
 	//--------------------------------------------------------------------
 	
