@@ -23,10 +23,10 @@
 					$sports = sports_map();
 					if (isset($sports) && is_array($sports) && count($sports)) :
 							foreach( $sports as $id => $label) :
-							echo('<option value="'.$label.'"');
+							echo('<option value="'.$id.'"');
 							if (isset($settings['osp.game_sport']) && $settings['osp.game_sport'] == $id) {
 								echo(' selected="selected"');
-								$sport_id = $label;
+								$sport_id = $id;
 							}
 							echo('">'.$label.'</option>');
 						endforeach;

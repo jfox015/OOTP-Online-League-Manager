@@ -70,7 +70,7 @@ class League_Manager extends Front_Controller {
 	
 	public function get_tweets() {
 		
-		$settings = $this->settings_lib->find_all_by('module','ootp');
+		$settings = $this->settings_lib->find_all();
         
         if (isset($settings['osp.twitter_string'])) 
 		{
@@ -117,7 +117,7 @@ class League_Manager extends Front_Controller {
 	public function sim_details()
 	{
 		
-		$settings = $this->settings_lib->find_all_by('module','ootp');
+		$settings = $this->settings_lib->find_all();
 
 		if (!isset($this->leagues_events_model)) 
 		{
