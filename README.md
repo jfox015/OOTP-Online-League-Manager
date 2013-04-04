@@ -1,15 +1,16 @@
-# OOTP Online Leagues Manager Module
+# FOSP::Online League Manager Module
 
-A custom online league administration module for OOTP Online Leagues. Built using the Bonfire HMVC Admin Dashboard mod for CodeIgniter 2.0+. 
+The Flagship module of the Fox Open Sports Platform (FOSP). Provides a custom online league administration module for Online Sports Sim Leagues like Out of the Park Baseball (OOTP). Built using the Bonfire HMVC Admin Dashboard mod for CodeIgniter 2.0+. 
 
 ## Features
 
-- Default Online League Home Page
+- Online League Home Page
 - Customizable League Details
-- Set site members as team owners
--Create site members for unclaimed teams
+- Set site members as sport sim team owners
+- Create site members for unclaimed teams
 - SQL Data Loading Manager
-- Sim Update control panel
+- Sim Update Control Panel
+- Integration with other FOSP and Bonfire modules
 
 ## Keep Current on the Mod
 
@@ -19,13 +20,17 @@ Follow the official Twitter feed [ootpFox07](http://twitter.com/#!/ootpFox07).
 
 - [Jeff Fox](http://www.aeoliandigital.com/) - Lead Developer
 
+## Special Thanks
+
+- Frank Esselink - Creator of the StatsLab mod for OOTP.
+
 ## Contribute to the development
 
 This mod is a 100% free and open source project. The source code is publicly available on GitHub.com. If you want to contribute to the development, simply fork the project, hack the code and send pull requests with your updates.
 
 ## License
 
-Copyright (c) 2012 Jeff Fox.
+Copyright (c) 2012-13 Jeff Fox.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
