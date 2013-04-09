@@ -182,7 +182,7 @@ class Custom extends Admin_Controller {
 	function create_members_from_game() 
 	{
         $settings = $this->settings_lib->find_all();
-		if (!isset($this->human_managers_model))
+        if (!isset($this->human_managers_model))
 		{
 			$this->load->model('open_sports_toolkit/human_managers_model');
 		}
@@ -209,8 +209,11 @@ class Custom extends Admin_Controller {
 					Template::set_message('Error saving owner information.','error');
 				}
 			}
-			Template::set('settings',$settings);
-			$arrays = $this->human_managers_model->get_owner_user_matches($settings['osp.league_id']);
+            $this->load->helper('open_sports_toolkit/general');
+            // ASSURE PATH COMPLIANCE TO OOPT VERSION
+            $settings = get_asset_path($settings);
+            Template::set('settings',$settings);
+            $arrays = $this->human_managers_model->get_owner_user_matches($settings['osp.league_id']);
 			Template::set('owner_matches',$arrays[0]);
 			Template::set('non_matches',$arrays[1]);
 			Template::set('use_usernames',$use_usernames);
