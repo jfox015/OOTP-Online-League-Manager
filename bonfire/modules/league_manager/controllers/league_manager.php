@@ -48,8 +48,8 @@ class League_Manager extends Front_Controller {
         Template::set('home_news_block',modules::run('news/get_articles',2));
 		$data['articles'] = modules::run('news/get_article_list',5,2);
 		Template::set('home_news_list',$this->load->view('news/news_list',$data, true));
-		Template::set('sim_details',$this->load->view('league_manager/sim_details',$this->sim_details(), true));
-		Template::set('tweets',$this->load->view('league_manager/tweets',$this->get_tweets(), true));
+		Template::set('sim_details',$this->load->view('league_manager/partials/sim_details',$this->sim_details(), true));
+		Template::set('tweets',$this->load->view('league_manager/partials/tweets',$this->get_tweets(), true));
 		Template::set('settings', $settings);
 
         Assets::add_css( Template::theme_url() .'css/bootstrap-responsive.min.css','screen');
