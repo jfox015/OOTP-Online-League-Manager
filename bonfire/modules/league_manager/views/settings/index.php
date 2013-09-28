@@ -275,7 +275,7 @@
 				echo form_radio('limit_load',-1, $limit_selection);
 				echo(lang('sql_settings_load_all'));
 				?>
-				<span class="help-inline"><?php if (form_error('limit_load')) echo form_error('limit_load'); else echo lang(''); ?></span>
+				<span class="help-inline"><?php if (form_error('limit_load')) echo form_error('limit_load'); ?></span>
 			</div>
 		</div>
 	</fieldset>

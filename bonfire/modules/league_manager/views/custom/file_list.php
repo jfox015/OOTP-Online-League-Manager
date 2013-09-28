@@ -50,12 +50,25 @@
 	if ($loadCnt>0) {asort($file_list);}
 	$isSplit=0;
 	$splitParents = array();
+	$pick_list = array();
+	if (isset($required_tables) && is_array($required_tables) && sizeof($required_tables) > 0) 
+	{
+		foreach ($required_tables as $table_name) 
+		{
+			array_push($pick_list, $table_name->name);
+		}
+	}
 	foreach ($file_list as $file){
+		if (!isset($last_file)) { $last_file = ''; }
 		$file_parts = explode(".",$file);
 		$tblName=$file_parts[0];
-		if (($isSplit == 0) && (substr_count($file,".mysql_") > 0)) 
+		$isSplit = 0;
+		if (preg_match('^(\w)*\.mysql_(.)*',$file)) 
 		{  
 			$isSplit=1; 
+		} else if (preg_match('/^(\w)*_(\d){1,3}\.mysql/', $file))
+		{
+			$isSplit = 2;
 		}
 		?>
 		<tr>
@@ -63,11 +76,21 @@
 			<?php
 			$fileArr = explode(".",$file);
 			$hilite = false;
-			if (isset($required_tables) && is_array($required_tables) && sizeof($required_tables) > 0) 
+			if (sizeof($pick_list) > 0)
 			{
-				foreach ($required_tables as $table_name) 
+				foreach ($pick_list as $table_name)
 				{
-					if ($table_name->name == $fileArr[0])
+					if (($isSplit == 1 && preg_match('/^'.$table_name.'\.mysql_(\d){1,3}(.)*/',$file)) ||
+						($isSplit == 2 && preg_match('/^'.$table_name.'_(\d){1,3}(.)*/',$file)))
+					{
+						$hilite = true;
+						if (!in_array($fileArr[0],$pick_list)) 
+						{
+							array_push($pick_list, $fileArr[0]);
+						}
+						break;
+					} 
+					else if ($table_name == $fileArr[0])
 					{
 						$hilite = true;
 						break;
@@ -113,12 +136,11 @@
 			<td><?php echo(formatBytes($fsize)); ?></td>
 			<td><?php echo(anchor('admin/custom/league_manager/load_sql/'.urlencode($file),'Load')); ?>
 			<?php 
-			/*--------------------------------------
-			/ Identify files with splits and add them 
-			/	to an array so the larger parent file
-			/ is skipped in favor of the splits.
-			/----------------------------------------*/
-			if (strpos($file,".mysql_") > 0) 
+			/*---------------------------------------------------------------------------------
+			/ For FOSP based splits, add them to an array so the larger parent file
+			/ is skipped in favor of only loading the splits.
+			/---------------------------------------------------------------------------------*/
+			if (preg_match('^(\w)*\.mysql_(.)*',$file))
 			{ 
 				echo(anchor('admin/custom/league_manager/splitSQLFile/'.urlencode($file).'/1','Delete'));
 				if (!in_array($fileArr[0].".mysql.sql",$splitParents)) 
@@ -128,13 +150,18 @@
 			}
 			else
 			{ 
-				echo(anchor('admin/custom/league_manager/splitSQLFile/'.urlencode($file),'Split'));
+				// OOTP includes split files in which the parent is part of the list, so ignore these files for splits
+				if (!preg_match('/^(\w)*_(\d){1,2}\.mysql(.)*/', $file))
+				{
+					echo(anchor('admin/custom/league_manager/splitSQLFile/'.urlencode($file),'Split'));
+				}
 			} // END if
 			?>
 			</td>
 			<td><input type='checkbox' name='loadList[]' value='<?php echo($file); ?>' /></td>
 		</tr>
 		<?php 
+		$last_file = $fileArr[0];
 		$cnt++;
 	} // END foreach
 	?>
@@ -216,11 +243,11 @@
 	if (isset($splitParents) && sizeof($splitParents) > 0) {
 		$outJs .= 'uncheckSplitParents();';
 	}
-	if (isset($required_tables) && sizeof($required_tables) > 0) {
-		$outJs .= 'required = new Array('.sizeof($required_tables).');';
+	if (isset($pick_list) && sizeof($pick_list) > 0) {
+		$outJs .= 'required = new Array('.sizeof($pick_list).');';
 		$count = 0;
-		foreach ($required_tables as $tableName) {
-			$outJs .= 'required['.$count.'] = "'.$tableName->name.'";';
+		foreach ($pick_list as $tableName) {
+			$outJs .= 'required['.$count.'] = "'.$tableName.'";';
 			$count++;
 		}
 	}

@@ -237,12 +237,12 @@ class Custom extends Admin_Controller {
 
         if ($this->input->post('submit')) {
 		
-			$this->form_validation->set_rules('auto_sim_length', lang('sim_ettings_autocalc'), 'number|xss_clean');
+			$this->form_validation->set_rules('auto_sim_length', lang('sim_settings_autocalc'), 'number|xss_clean');
 			$this->form_validation->set_rules('calc_length', lang('sim_settings_calclen'), 'number|xss_clean');
 			$this->form_validation->set_rules('sim_length', lang('sim_setting_simlen'), 'number|xss_clean');
 			$this->form_validation->set_rules('sims_per_week', lang('sim_setting_perweek'), 'required|number|xss_clean');
 			$this->form_validation->set_rules('sims_occur_on', lang('sim_setting_occuron'), 'required|xss_clean');
-			$this->form_validation->set_rules('sim_details', lang('lm_settings_useootp'), 'number|xss_clean');
+			$this->form_validation->set_rules('sim_details', lang('sim_settings_useootp'), 'number|xss_clean');
 			$this->form_validation->set_rules('league_file_date', lang('sim_setting_league_file_date'), 'trim|xss_clean');
 			$this->form_validation->set_rules('next_sim', lang('sim_setting_next_sim'), 'trim|xss_clean');
 			$this->form_validation->set_rules('league_date', lang('sim_setting_league_date'), 'trim|xss_clean');
@@ -266,13 +266,13 @@ class Custom extends Admin_Controller {
 				);
 				
                 //destroy the saved update message in case they changed update preferences.
-                if ($this->cache->get('update_message'))
+                /*if ($this->cache->get('update_message'))
                 {
                     if (!is_writeable(FCPATH.APPPATH.'cache/'))
                     {
                         $this->cache->delete('update_message');
                     }
-                }
+                }*/
                 // Log the activity
                 //$this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'ootp');
 
@@ -483,9 +483,9 @@ class Custom extends Admin_Controller {
 			}
 		}
 		
-		Template::set('table_list', $this->sql_model->get_tables());
+		$settings = $this->settings_lib->find_all();
+        Template::set('table_list', $this->sql_model->get_tables($settings['osp.source_version']));
 		Template::set('required_tables', $this->sql_model->get_required_tables());
-        $settings = $this->settings_lib->find_all();
         Template::set('ootp_version', $settings['osp.source_version']);
 
         Template::set('toolbar_title', lang('lm_required_title'));

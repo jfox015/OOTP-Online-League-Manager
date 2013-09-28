@@ -52,6 +52,7 @@ class SQL_model extends BF_Model
 		$this->db->select('id, name');
 		$this->db->where('version_min <= '.$ootp_version);
         $this->db->where('version_max >= '.$ootp_version);
+		$this->order_by('name');
         return $this->find_all();
 	}
 	/**

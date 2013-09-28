@@ -85,9 +85,8 @@ class Settings extends Admin_Controller {
         $this->form_validation->set_rules('asset_path', lang('lm_settings_assetpath'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('asset_url', lang('lm_settings_asseturl'), 'required|trim|xss_clean');
 
-        $this->form_validation->set_rules('header_img', lang('home_settings_header'), 'trim|xss_clean');
-        $this->form_validation->set_rules('twitter_string', lang('home_settings_twitter'), 'trim|xss_clean');
-        $this->form_validation->set_rules('tweet_count', lang('home_settings_tweets'), 'trim|xss_clean');
+        $this->form_validation->set_rules('twitter_string', lang('lm_settings_twitter'), 'trim|xss_clean');
+        $this->form_validation->set_rules('tweet_count', lang('lm_settings_tweets'), 'trim|xss_clean');
 
         $this->form_validation->set_rules('sql_path', lang('sql_settings_mysqlpath'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('max_sql_size', lang('sql_settings_max'), 'numeric|xss_clean');
@@ -127,13 +126,13 @@ class Settings extends Admin_Controller {
 
         );
         //destroy the saved update message in case they changed update preferences.
-        if ($this->cache->get('update_message'))
+        /*if ($this->cache->get('update_message'))
         {
             if (!is_writeable(FCPATH.APPPATH.'cache/'))
             {
                 $this->cache->delete('update_message');
             }
-        }
+        }*/
 
         // Log the activity
         $this->activity_model->log_activity($this->auth->user_id(), lang('bf_act_settings_saved').': ' . $this->input->ip_address(), 'core');

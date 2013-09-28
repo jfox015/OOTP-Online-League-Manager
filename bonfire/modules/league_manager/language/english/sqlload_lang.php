@@ -17,7 +17,7 @@ $lang['sql_settings_max']			    = 'Max SQL File Size';
 $lang['sql_settings_max_note']			= 'Specify Max File Size in Megabytes';
 $lang['sql_settings_autosplit']			= 'Auto split files over max?';
 $lang['sql_settings_autosplit_note']	= 'Action will occur every time the SQL Loader page is viewed and no splits are fouind for files over max mB size.';
-$lang['sql_settings_auto_load']			= '�Load All Files� action';
+$lang['sql_settings_auto_load']			= 'Load All Files action';
 $lang['sql_settings_load_limit']		= 'Limit to only required';
 $lang['sql_settings_load_all']		    = 'No limit, load all available files';
 
