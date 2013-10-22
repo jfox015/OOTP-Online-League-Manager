@@ -45,12 +45,21 @@ class League_Manager extends Front_Controller {
 		Template::set('username', $username);
 		Template::set('user_name', $user_name);
 		
-        Template::set('home_news_block',modules::run('news/get_articles',2));
-		$data['articles'] = modules::run('news/get_article_list',5,2);
-		Template::set('home_news_list',$this->load->view('news/news_list',$data, true));
+		if (in_array('news',module_list(true)))
+		{
+			Template::set('home_news_block',modules::run('news/get_articles',2));
+			$data['articles'] = modules::run('news/get_article_list',5,2);
+			Template::set('home_news_list',$this->load->view('news/news_list',$data, true));
+		} 
+		else 
+		{
+			Template::set('home_news_block',array());
+			Template::set('home_news_list',array());
+		}
 		Template::set('sim_details',$this->load->view('league_manager/partials/sim_details',$this->sim_details(), true));
 		Template::set('tweets',$this->load->view('league_manager/partials/tweets',$this->get_tweets(), true));
 		Template::set('settings', $settings);
+		Template::set('site_title', $this->settings_lib->item('site.title'));
 
         Assets::add_css( Template::theme_url() .'css/bootstrap-responsive.min.css','screen');
         if (!isset($loggedIn) || !$loggedIn) 

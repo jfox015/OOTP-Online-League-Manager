@@ -63,10 +63,10 @@
 		$file_parts = explode(".",$file);
 		$tblName=$file_parts[0];
 		$isSplit = 0;
-		if (preg_match('^(\w)*\.mysql_(.)*',$file)) 
+		if (preg_match('/(\w)*\.mysql_(.)*/',$file)) 
 		{  
 			$isSplit=1; 
-		} else if (preg_match('/^(\w)*_(\d){1,3}\.mysql/', $file))
+		} else if (preg_match('/(\w)*_(\d){1,3}\.mysql/', $file))
 		{
 			$isSplit = 2;
 		}
@@ -80,8 +80,8 @@
 			{
 				foreach ($pick_list as $table_name)
 				{
-					if (($isSplit == 1 && preg_match('/^'.$table_name.'\.mysql_(\d){1,3}(.)*/',$file)) ||
-						($isSplit == 2 && preg_match('/^'.$table_name.'_(\d){1,3}(.)*/',$file)))
+					if (($isSplit == 1 && preg_match('/'.$table_name.'\.mysql_(\d){1,3}(.)*/',$file)) ||
+						($isSplit == 2 && preg_match('/'.$table_name.'_(\d){1,3}(.)*/',$file)))
 					{
 						$hilite = true;
 						if (!in_array($fileArr[0],$pick_list)) 
@@ -140,7 +140,7 @@
 			/ For FOSP based splits, add them to an array so the larger parent file
 			/ is skipped in favor of only loading the splits.
 			/---------------------------------------------------------------------------------*/
-			if (preg_match('^(\w)*\.mysql_(.)*',$file))
+			if (preg_match('/(\w)*\.mysql_(.)*/',$file))
 			{ 
 				echo(anchor('admin/custom/league_manager/splitSQLFile/'.urlencode($file).'/1','Delete'));
 				if (!in_array($fileArr[0].".mysql.sql",$splitParents)) 

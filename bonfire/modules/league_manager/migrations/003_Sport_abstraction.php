@@ -22,6 +22,7 @@ class Migration_Sport_abstraction extends Migration {
 		'ootp.calc_length'=>'osp.calc_length',
 		'ootp.sims_occur_on'=>'osp.sims_occur_on',
 		'ootp.sims_details'=>'osp.sims_details',
+		'ootp.league_file_path'=>'osp.league_file_path',
 		'ootp.league_file_date'=>'osp.league_file_date',
 		'ootp.next_sim'=>'osp.next_sim',
 		'ootp.league_date'=>'osp.league_date',
