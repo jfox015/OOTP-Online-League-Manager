@@ -44,9 +44,9 @@
 
             <?php echo($home_news_list); ?>
 
-            <div class="clearfix break"></div>
+            <!--div class="clearfix break"></div-->
 
-            <?php echo($tweets); ?>
+            <?php //echo($tweets); ?>
 		</div>
 		
 		<div class="main">

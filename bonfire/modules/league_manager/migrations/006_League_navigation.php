@@ -26,14 +26,6 @@ class Migration_League_navigation extends Migration {
 						  'parent_id'=>0,
 						  'has_kids'=>0);
 			$this->db->insert("{$prefix}navigation",$data);
-			$data = array('nav_id'=>0,
-						  'title'=>'Last Sim',
-						  'url'=>'/lastsim',
-						  'nav_group_id'=>$nav_group_id,
-						  'position'=>2,
-						  'parent_id'=>0,
-						  'has_kids'=>0);
-			$this->db->insert("{$prefix}navigation",$data);
 		}
 	}
 	

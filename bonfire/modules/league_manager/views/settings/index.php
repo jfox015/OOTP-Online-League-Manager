@@ -156,9 +156,9 @@
 			
 		</div>
 
-		<legend><?php echo lang('lm_settings_home'); ?></legend>
+		<!--legend><?php /*echo lang('lm_settings_home'); ?></legend>
 
-			<!-- Twitter Handle -->
+			<!-- Twitter Handle >
 		<div class="control-group <?php echo form_error('twitter_string') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_twitter') ?></label>
 			<div class="controls">
@@ -167,16 +167,16 @@
 			</div>
 		</div>
 
-			<!-- Tweet Count -->
+			<!-- Tweet Count >
 		<div class="control-group <?php echo form_error('tweet_count') ? 'error' : '' ?>">
 			<label class="control-label"><?php echo lang('lm_settings_tweets') ?></label>
 			<div class="controls">
 				<input type="text" class="span1" id="" name="tweet_count" value="<?php echo (isset($settings['osp.tweet_count'])) ? $settings['osp.tweet_count']: set_value('osp.tweet_count'); ?>" /><br />
 				<?php if (form_error('tweet_count')) echo '<span class="help-inline">'.form_error('tweet_count').'</span>'; ?>
 			</div>
-		</div>
+		</div-->
 
-		<legend><?php echo lang('lm_settings_paths'); ?></legend>
+		<legend><?php echo lang('lm_settings_paths'); */ ?></legend>
 
 
 			<!-- League File Server Path -->

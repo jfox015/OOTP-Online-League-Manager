@@ -31,8 +31,8 @@
 	
 	<?php if (isset($file_list) && sizeof($file_list) > 0) { ?>
 	
-	<form action='<?php echo(site_url($this->uri->uri_string())); ?>' method='post' name="file_list" id="file_list">
-
+	<?php echo form_open(site_url($this->uri->uri_string()), array("method"=>"post","name"=>"file_list","id"=>"file_list")) ?>
+	
 	<table class="table table-striped">
 		<thead>
 			<tr>
@@ -191,8 +191,8 @@
 		</div>
 	</div>
 
-   </form>
    <?php 
+   echo form_close();
    } 
    else 
    {

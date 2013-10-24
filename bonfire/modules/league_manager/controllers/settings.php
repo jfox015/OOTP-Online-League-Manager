@@ -85,8 +85,9 @@ class Settings extends Admin_Controller {
         $this->form_validation->set_rules('asset_path', lang('lm_settings_assetpath'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('asset_url', lang('lm_settings_asseturl'), 'required|trim|xss_clean');
 
-        $this->form_validation->set_rules('twitter_string', lang('lm_settings_twitter'), 'trim|xss_clean');
-        $this->form_validation->set_rules('tweet_count', lang('lm_settings_tweets'), 'trim|xss_clean');
+		// removed for twitter api upgrade
+        //$this->form_validation->set_rules('twitter_string', lang('lm_settings_twitter'), 'trim|xss_clean');
+        //$this->form_validation->set_rules('tweet_count', lang('lm_settings_tweets'), 'trim|xss_clean');
 
         $this->form_validation->set_rules('sql_path', lang('sql_settings_mysqlpath'), 'required|trim|xss_clean');
         $this->form_validation->set_rules('max_sql_size', lang('sql_settings_max'), 'numeric|xss_clean');
@@ -115,8 +116,8 @@ class Settings extends Admin_Controller {
             array('name' => 'osp.asset_path', 'value' => $this->input->post('asset_path')),
             array('name' => 'osp.asset_url', 'value' => $this->input->post('asset_url')),
             array('name' => 'osp.header_img', 'value' => $this->input->post('header_img')),
-            array('name' => 'osp.twitter_string', 'value' => $this->input->post('twitter_string')),
-            array('name' => 'osp.tweet_count', 'value' => $this->input->post('tweet_count')),
+            //array('name' => 'osp.twitter_string', 'value' => $this->input->post('twitter_string')),
+            //array('name' => 'osp.tweet_count', 'value' => $this->input->post('tweet_count')),
             array('name' => 'osp.sql_path', 'value' => $this->input->post('sql_path')),
             array('name' => 'osp.auto_split', 'value' => ($this->input->post('auto_split')?1:0)),
             array('name' => 'osp.use_db_prefix', 'value' => ($this->input->post('use_db_prefix')?1:0)),
